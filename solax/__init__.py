@@ -69,7 +69,7 @@ class SolaxRequestError(Exception):
 
 
 async def async_solax_real_time_request(schema, ip_address, retry,
-                                        t_wait=0):
+                                        t_wait=0):  # pragma: no cover
     """Make call to inverter endpoint."""
     if t_wait > 0:
         msg = "Timeout connecting to Solax inverter, waiting %d to retry."
