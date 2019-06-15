@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="solax",
-    version="0.0.6",
+    version="0.0.3",
     author="Robin Wohlers-Reichel",
     author_email="me@robinwr.com",
     description="Solax inverter API client",
