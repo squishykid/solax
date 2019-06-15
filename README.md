@@ -28,8 +28,8 @@ asyncio.set_event_loop(loop)
 data = loop.run_until_complete(r.get_data())
 ```
 
-## Supported Inverters
+## Confirmed Supported Inverters
 
-These inverters have been tested and confirmed to be working. If you own an inverter which is not listed below, please create an issue so we can add support 😊.
+These inverters have been tested and confirmed to be working. If your inverter is not listed below, this library may still work- please create an issue so we can add your inverter to the list 😊.
 
 * SK-TL5000E
