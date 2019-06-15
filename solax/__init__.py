@@ -74,7 +74,7 @@ async def async_solax_real_time_request(schema, ip_address, retry,
     if t_wait > 0:
         msg = "Timeout connecting to Solax inverter, waiting %d to retry."
         _LOGGER.error(msg, t_wait)
-        asyncio.sleep(t_wait)
+        await asyncio.sleep(t_wait)
     new_wait = (t_wait*2)+5
     retry = retry - 1
     try:
