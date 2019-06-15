@@ -4,8 +4,8 @@ python:
 - '3.7'
 cache: pip
 install:
-- pip install flake8 pylint pytest pytest-cov pytest-asyncio aiohttp async_timeout
-  voluptuous
+- python setup.py install
+- pip install flake8 pylint pytest pytest-cov pytest-asyncio
 script:
 - flake8 solax tests
 - pylint -d 'C0111' solax tests
