@@ -3,11 +3,11 @@ import asyncio
 import json
 
 import logging
+from collections import namedtuple
 
 import aiohttp
 import async_timeout
 import voluptuous as vol
-from collections import namedtuple
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -107,7 +107,8 @@ async def async_solax_real_time_request(schema, ip_address, retry,
     raise SolaxRequestError
 
 
-RealTimeResponse = namedtuple('RealTimeResponse', 'data, serial_number, version, type, status')
+RealTimeResponse = namedtuple('RealTimeResponse',
+                              'data, serial_number, version, type, status')
 
 
 def parse_solax_real_time_response(response):
