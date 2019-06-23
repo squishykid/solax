@@ -7,6 +7,7 @@ import logging
 import aiohttp
 import async_timeout
 import voluptuous as vol
+from collections import namedtuple
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -106,6 +107,9 @@ async def async_solax_real_time_request(schema, ip_address, retry,
     raise SolaxRequestError
 
 
+RealTimeResponse = namedtuple('RealTimeResponse', 'data, serial_number, version, type, status')
+
+
 def parse_solax_real_time_response(response):
     """Manipulate the response from solax real time api."""
     data_list = response['Data']
@@ -113,7 +117,11 @@ def parse_solax_real_time_response(response):
     for name, index in INVERTER_SENSORS.items():
         response_index = index[0]
         result[name] = data_list[response_index]
-    return result
+    return RealTimeResponse(data=result,
+                            serial_number=response['SN'],
+                            version=response['version'],
+                            type=response['type'],
+                            status=response['Status'])
 
 
 class RealTimeAPI:  # pragma: no cover
