@@ -82,8 +82,8 @@ async def async_solax_real_time_request(schema, ip_address, retry,
         async with aiohttp.ClientSession() as session:
             with async_timeout.timeout(REQUEST_TIMEOUT):
                 url = REAL_TIME_DATA_ENDPOINT.format(ip_address=ip_address)
-                req = await session.get(url)
-        garbage = await req.read()
+                async with session.get(url) as req:
+                    garbage = await req.read()
         formatted = garbage.decode("utf-8")
         formatted = formatted.replace(",,", ",0.0,").replace(",,", ",0.0,")
         json_response = json.loads(formatted)
