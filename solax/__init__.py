@@ -38,7 +38,7 @@ INVERTER_SENSORS = {
     'Battery Temperature':        (16, 'C'),
     'Battery Remaining Capacity': (17, '%'),
 
-    'Battery Energy':             (19, 'kWh'),
+    'Month\'s Energy':            (19, 'kWh'),
 
     'Grid Frequency':             (50, 'Hz'),
     'EPS Voltage':                (53, 'V'),
