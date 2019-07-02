@@ -16,7 +16,7 @@ def test_parse_response():
 
     expected = {'Today\'s Energy': 17.0,
                 'Battery Current': -6.36,
-                'Battery Energy': 126.0,
+                'Month\'s Energy': 126.0,
                 'Battery Power': -357,
                 'Battery Remaining Capacity': 92,
                 'Battery Temperature': 27,
