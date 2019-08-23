@@ -9,6 +9,8 @@ import aiohttp
 import async_timeout
 import voluptuous as vol
 
+from solax import inverter
+
 _LOGGER = logging.getLogger(__name__)
 
 # key: name of sensor
@@ -49,28 +51,11 @@ INVERTER_SENSORS = {
 
 REQUEST_TIMEOUT = 5
 
-REAL_TIME_DATA_ENDPOINT = 'http://{ip_address}/api/realTimeData.htm'
-
-DATA_SCHEMA = vol.Schema(
-    vol.All([vol.Coerce(float)], vol.Length(min=68, max=68))
-)
-
-REAL_TIME_DATA_SCHEMA = vol.Schema({
-    vol.Required('method'): str,
-    vol.Required('version'): str,
-    vol.Required('type'): str,
-    vol.Required('SN'): str,
-    vol.Required('Data'): DATA_SCHEMA,
-    vol.Required('Status'): vol.All(vol.Coerce(int), vol.Range(min=0)),
-}, extra=vol.REMOVE_EXTRA)
-
-
 class SolaxRequestError(Exception):
     """Error to indicate a Solax API request has failed."""
 
 
-async def async_solax_real_time_request(schema, ip_address, retry,
-                                        t_wait=0):  # pragma: no cover
+async def rt_request(inverter, retry, t_wait=0):
     """Make call to inverter endpoint."""
     if t_wait > 0:
         msg = "Timeout connecting to Solax inverter, waiting %d to retry."
@@ -79,32 +64,15 @@ async def async_solax_real_time_request(schema, ip_address, retry,
     new_wait = (t_wait*2)+5
     retry = retry - 1
     try:
-        async with aiohttp.ClientSession() as session:
-            with async_timeout.timeout(REQUEST_TIMEOUT):
-                url = REAL_TIME_DATA_ENDPOINT.format(ip_address=ip_address)
-                async with session.get(url) as req:
-                    garbage = await req.read()
-        formatted = garbage.decode("utf-8")
-        formatted = formatted.replace(",,", ",0.0,").replace(",,", ",0.0,")
-        json_response = json.loads(formatted)
-        return schema(json_response)
+        with async_timeout.timeout(REQUEST_TIMEOUT):
+            return await inverter.get_data()
     except asyncio.TimeoutError:
         if retry > 0:
-            return await async_solax_real_time_request(schema,
-                                                       ip_address,
-                                                       retry,
-                                                       new_wait)
+            return await rt_request(inverter,
+                                    retry,
+                                    new_wait)
         _LOGGER.error("Too many timeouts connecting to Solax.")
-    except (aiohttp.ClientError) as client_err:
-        _LOGGER.error("Could not connect to Solax API endpoint")
-        _LOGGER.error(client_err)
-    except ValueError:
-        _LOGGER.error("Received non-JSON data from Solax API endpoint")
-    except vol.Invalid as err:
-        _LOGGER.error("Received unexpected JSON from Solax"
-                      " API endpoint: %s", err)
-        _LOGGER.error(json_response)
-    raise SolaxRequestError
+        raise
 
 
 RealTimeResponse = namedtuple('RealTimeResponse',
@@ -129,13 +97,12 @@ class RealTimeAPI:  # pragma: no cover
     """Solax inverter real time API"""
     # pylint: disable=too-few-public-methods
 
-    def __init__(self, ip_address):
+    async def __init__(self, ip_address):
         """Initialize the API client."""
-        self.ip_address = ip_address
+        self.inverter = await inverter.discover(ip_address, 80)
 
     async def get_data(self):
         """Query the real time API"""
-        resp = await async_solax_real_time_request(REAL_TIME_DATA_SCHEMA,
-                                                   self.ip_address,
-                                                   3)
+        resp = await rt_request(self.inverter,
+                                3)
         return parse_solax_real_time_response(resp)
