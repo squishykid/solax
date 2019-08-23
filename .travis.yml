@@ -5,7 +5,7 @@ python:
 cache: pip
 install:
 - python setup.py install
-- pip install flake8 pylint pytest pytest-cov pytest-asyncio
+- pip install flake8 pylint pytest pytest-cov pytest-asyncio pytest-httpserver
 script:
 - flake8 solax tests
 - pylint -d 'C0111' solax tests
