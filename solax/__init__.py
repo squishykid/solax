@@ -1,13 +1,10 @@
 """Support for Solax inverter via local API."""
 import asyncio
-import json
 
 import logging
 from collections import namedtuple
 
-import aiohttp
 import async_timeout
-import voluptuous as vol
 
 from solax import inverter
 
@@ -51,11 +48,12 @@ INVERTER_SENSORS = {
 
 REQUEST_TIMEOUT = 5
 
+
 class SolaxRequestError(Exception):
     """Error to indicate a Solax API request has failed."""
 
 
-async def rt_request(inverter, retry, t_wait=0):
+async def rt_request(inv, retry, t_wait=0):
     """Make call to inverter endpoint."""
     if t_wait > 0:
         msg = "Timeout connecting to Solax inverter, waiting %d to retry."
@@ -65,10 +63,10 @@ async def rt_request(inverter, retry, t_wait=0):
     retry = retry - 1
     try:
         with async_timeout.timeout(REQUEST_TIMEOUT):
-            return await inverter.get_data()
+            return await inv.get_data()
     except asyncio.TimeoutError:
         if retry > 0:
-            return await rt_request(inverter,
+            return await rt_request(inv,
                                     retry,
                                     new_wait)
         _LOGGER.error("Too many timeouts connecting to Solax.")
@@ -93,13 +91,18 @@ def parse_solax_real_time_response(response):
                             status=response['Status'])
 
 
-class RealTimeAPI:  # pragma: no cover
+async def real_time_api(ip_address, port=80):
+    i = await inverter.discover(ip_address, port)
+    return RealTimeAPI(i)
+
+
+class RealTimeAPI:
     """Solax inverter real time API"""
     # pylint: disable=too-few-public-methods
 
-    async def __init__(self, ip_address):
+    def __init__(self, inv):
         """Initialize the API client."""
-        self.inverter = await inverter.discover(ip_address, 80)
+        self.inverter = inv
 
     async def get_data(self):
         """Query the real time API"""

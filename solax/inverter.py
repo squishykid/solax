@@ -1,12 +1,16 @@
-import aiohttp
 import json
+
+import aiohttp
 import voluptuous as vol
+
 
 class InverterError(Exception):
     """Indicates error communicating with inverter"""
 
+
 class DiscoveryError(Exception):
     """Raised when unable to discover inverter"""
+
 
 class Inverter:
     """Base wrapper around Inverter HTTP API"""
@@ -38,6 +42,7 @@ class Inverter:
         """
         raise NotImplementedError()
 
+
 async def discover(host, port) -> Inverter:
     for inverter in REGISTRY:
         i = inverter(host, port)
@@ -47,6 +52,7 @@ async def discover(host, port) -> Inverter:
         except InverterError:
             pass
     raise DiscoveryError()
+
 
 class XHybrid(Inverter):
     """
@@ -68,9 +74,9 @@ class XHybrid(Inverter):
     }, extra=vol.REMOVE_EXTRA)
 
     @classmethod
-    async def make_request(cls, hostname, port=80):
+    async def make_request(cls, host, port=80):
         base = 'http://{}:{}/api/realTimeData.htm'
-        url = base.format(hostname, port)
+        url = base.format(host, port)
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as req:
                 garbage = await req.read()
@@ -78,6 +84,7 @@ class XHybrid(Inverter):
         formatted = formatted.replace(",,", ",0.0,").replace(",,", ",0.0,")
         json_response = json.loads(formatted)
         return cls.__schema(json_response)
+
 
 class X3(Inverter):
     __schema = vol.Schema({
@@ -98,15 +105,16 @@ class X3(Inverter):
     }, extra=vol.REMOVE_EXTRA)
 
     @classmethod
-    async def make_request(cls, hostname, port=80):
+    async def make_request(cls, host, port=80):
         base = 'http://{}:{}/?optType=ReadRealTimeData'
-        url = base.format(hostname, port)
+        url = base.format(host, port)
         async with aiohttp.ClientSession() as session:
             async with session.post(url) as req:
                 resp = await req.read()
         raw_json = resp.decode("utf-8")
         json_response = json.loads(raw_json)
         return cls.__schema(json_response)
+
 
 # registry of inverters
 REGISTRY = [XHybrid, X3]

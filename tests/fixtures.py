@@ -1,7 +1,5 @@
 import pytest
 
-import http.server as server
-
 XHYBRID_RESPONSE = {
     'method': 'uploadsn',
     'version': 'Solax_SI_CH_2nd_20160912_DE02',
@@ -18,9 +16,9 @@ XHYBRID_RESPONSE = {
 }
 
 X3_MIC_RESPONSE = {
-    "type":"X3-MIC",
-    "SN":"X3X3ZZYYXX",
-    "ver":"2.033.20",
+    "type": "X3-MIC",
+    "SN": "X3X3ZZYYXX",
+    "ver": "2.033.20",
     "Data": [8.0, 8.7, 457.8, 454.8, 10.6, 236.9, 7299, 30, 0.0, 10.9,
              0, 3620, 3928, 0, 0, 0, 0, 0, 0, 0,
              0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -36,16 +34,18 @@ X3_MIC_RESPONSE = {
                     1, 1.10, 1.02, 1.09, 1.02]
 }
 
+
 @pytest.fixture()
-def XHybridFixture(httpserver):
+def x_hybrid_fixture(httpserver):
     httpserver.expect_request(
         uri="/api/realTimeData.htm",
         method='GET'
     ).respond_with_json(XHYBRID_RESPONSE)
     yield (httpserver.host, httpserver.port)
 
+
 @pytest.fixture()
-def X3Fixture(httpserver):
+def x3_fixture(httpserver):
     httpserver.expect_request(
         uri="/",
         method='POST',
@@ -53,8 +53,9 @@ def X3Fixture(httpserver):
     ).respond_with_json(X3_MIC_RESPONSE)
     yield (httpserver.host, httpserver.port)
 
+
 @pytest.fixture()
-def SimpleHttpFixture(httpserver):
+def simple_http_fixture(httpserver):
     httpserver.expect_request(
         uri="/",
         method='GET',

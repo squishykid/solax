@@ -1,9 +1,3 @@
-import solax
-
-import unittest
-from unittest.mock import Mock
-import pytest
-
 def test_wait_between_retries():
     # first try at t=0, then t=5, then t=15
     pass
@@ -31,8 +25,3 @@ def test_html_response():
 
 def test_malformed_json_response():
     pass
-
-
-
-
-
