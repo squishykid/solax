@@ -15,6 +15,35 @@ XHYBRID_RESPONSE = {
     'Status': 2
 }
 
+
+XHYBRID_VALUES = {
+    'Today\'s Energy': 17.0,
+    'Battery Current': -6.36,
+    'Month\'s Energy': 126.0,
+    'Battery Power': -357,
+    'Battery Remaining Capacity': 92,
+    'Battery Temperature': 27,
+    'Battery Voltage': 56.01,
+    'EPS Current': 0,
+    'EPS Frequency': 0,
+    'EPS Power': 0,
+    'EPS Voltage': 0.0,
+    'Exported Power': -15,
+    'Grid Frequency': 50.02,
+    'Inverter Temperature': 40,
+    'Network Voltage': 234.0,
+    'Output Current': 2.0,
+    'PV1 Current': 0.5,
+    'PV1 Power': 101,
+    'PV1 Voltage': 202.0,
+    'PV2 Current': 0.4,
+    'PV2 Power': 77,
+    'PV2 Voltage': 194.3,
+    'Power Now': 444,
+    'Total Energy': 238.2
+}
+
+
 X3_MIC_RESPONSE = {
     "type": "X3-MIC",
     "SN": "X3X3ZZYYXX",
@@ -41,6 +70,15 @@ def x_hybrid_fixture(httpserver):
         uri="/api/realTimeData.htm",
         method='GET'
     ).respond_with_json(XHYBRID_RESPONSE)
+    yield (httpserver.host, httpserver.port)
+
+
+@pytest.fixture()
+def x_hybrid_garbage_fixture(httpserver):
+    httpserver.expect_request(
+        uri="/api/realTimeData.htm",
+        method='GET'
+    ).respond_with_json({'hello': 'world'})
     yield (httpserver.host, httpserver.port)
 
 
