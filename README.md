@@ -21,11 +21,14 @@ Then from within your project:
 import solax
 import asyncio
 
-r = solax.RealTimeAPI('10.0.0.1')
+async def work():
+    r = await solax.real_time_api('10.0.0.1')
+    return await r.get_data()
 
 loop = asyncio.new_event_loop()
 asyncio.set_event_loop(loop)
-data = loop.run_until_complete(r.get_data())
+data = loop.run_until_complete(work())
+print(data)
 ```
 
 ## Confirmed Supported Inverters
