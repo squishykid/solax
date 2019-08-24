@@ -49,10 +49,6 @@ INVERTER_SENSORS = {
 REQUEST_TIMEOUT = 5
 
 
-class SolaxRequestError(Exception):
-    """Error to indicate a Solax API request has failed."""
-
-
 async def rt_request(inv, retry, t_wait=0):
     """Make call to inverter endpoint."""
     if t_wait > 0:
