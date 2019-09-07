@@ -113,7 +113,10 @@ class X3(Inverter):
                 resp = await req.read()
         raw_json = resp.decode("utf-8")
         json_response = json.loads(raw_json)
-        return cls.__schema(json_response)
+        clean_response = cls.__schema(json_response)
+        clean_response['version'] = clean_response['ver']
+        del clean_response['ver']
+        return clean_response
 
 
 # registry of inverters

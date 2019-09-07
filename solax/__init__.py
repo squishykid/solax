@@ -70,7 +70,7 @@ async def rt_request(inv, retry, t_wait=0):
 
 
 RealTimeResponse = namedtuple('RealTimeResponse',
-                              'data, serial_number, version, type, status')
+                              'data, serial_number, version, type')
 
 
 def parse_solax_real_time_response(response):
@@ -83,8 +83,7 @@ def parse_solax_real_time_response(response):
     return RealTimeResponse(data=result,
                             serial_number=response['SN'],
                             version=response['version'],
-                            type=response['type'],
-                            status=response['Status'])
+                            type=response['type'])
 
 
 async def real_time_api(ip_address, port=80):
