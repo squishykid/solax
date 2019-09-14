@@ -1,4 +1,5 @@
 import json
+from collections import namedtuple
 
 import aiohttp
 import voluptuous as vol
@@ -10,6 +11,10 @@ class InverterError(Exception):
 
 class DiscoveryError(Exception):
     """Raised when unable to discover inverter"""
+
+
+InverterResponse = namedtuple('InverterResponse',
+                              'data, serial_number, version, type')
 
 
 class Inverter:
@@ -37,10 +42,18 @@ class Inverter:
     @classmethod
     async def make_request(cls, host, port):
         """
-        Return dictionary of named sensor values
+        Return instance of 'InverterResponse'
         Raise exception if unable to get data
         """
         raise NotImplementedError()
+
+    @staticmethod
+    def map_response(resp_data, sensor_map):
+        return {
+            sensor_name: resp_data[i]
+            for sensor_name, (i, _)
+            in sensor_map.items()
+        }
 
 
 async def discover(host, port) -> Inverter:
@@ -73,6 +86,42 @@ class XHybrid(Inverter):
         vol.Required('Status'): vol.All(vol.Coerce(int), vol.Range(min=0)),
     }, extra=vol.REMOVE_EXTRA)
 
+    # key: name of sensor
+    # value.0: index
+    # value.1: unit (String) or None
+    # from https://github.com/GitHobi/solax/wiki/direct-data-retrieval
+    __sensor_map = {
+        'PV1 Current':                (0, 'A'),
+        'PV2 Current':                (1, 'A'),
+        'PV1 Voltage':                (2, 'V'),
+        'PV2 Voltage':                (3, 'V'),
+
+        'Output Current':             (4, 'A'),
+        'Network Voltage':            (5, 'V'),
+        'Power Now':                  (6, 'W'),
+
+        'Inverter Temperature':       (7, 'C'),
+        'Today\'s Energy':            (8, 'kWh'),
+        'Total Energy':               (9, 'kWh'),
+        'Exported Power':             (10, 'W'),
+        'PV1 Power':                  (11, 'W'),
+        'PV2 Power':                  (12, 'W'),
+
+        'Battery Voltage':            (13, 'V'),
+        'Battery Current':            (14, 'A'),
+        'Battery Power':              (15, 'W'),
+        'Battery Temperature':        (16, 'C'),
+        'Battery Remaining Capacity': (17, '%'),
+
+        'Month\'s Energy':            (19, 'kWh'),
+
+        'Grid Frequency':             (50, 'Hz'),
+        'EPS Voltage':                (53, 'V'),
+        'EPS Current':                (54, 'A'),
+        'EPS Power':                  (55, 'W'),
+        'EPS Frequency':              (56, 'Hz'),
+    }
+
     @classmethod
     async def make_request(cls, host, port=80):
         base = 'http://{}:{}/api/realTimeData.htm'
@@ -83,7 +132,13 @@ class XHybrid(Inverter):
         formatted = garbage.decode("utf-8")
         formatted = formatted.replace(",,", ",0.0,").replace(",,", ",0.0,")
         json_response = json.loads(formatted)
-        return cls.__schema(json_response)
+        response = cls.__schema(json_response)
+        return InverterResponse(
+            data=cls.map_response(response['Data'], cls.__sensor_map),
+            serial_number=response['SN'],
+            version=response['version'],
+            type=response['type']
+        )
 
 
 class X3(Inverter):
@@ -104,6 +159,47 @@ class X3(Inverter):
             ),
     }, extra=vol.REMOVE_EXTRA)
 
+    __sensor_map = {
+        'PV1 Current':                (0, 'A'),
+        'PV2 Current':                (1, 'A'),
+        'PV1 Voltage':                (2, 'V'),
+        'PV2 Voltage':                (3, 'V'),
+
+        'Output Current Phase 1':     (4, 'A'),
+        'Network Voltage Phase 1':    (5, 'V'),
+        'Power Now Phase 1':          (6, 'W'),
+
+        'Inverter Temperature':       (7, 'C'),
+        'Today\'s Energy':            (8, 'kWh'),
+        'Total Energy':               (9, 'kWh'),
+        'Exported Power':             (10, 'W'),
+        'PV1 Power':                  (11, 'W'),
+        'PV2 Power':                  (12, 'W'),
+
+        'Battery Voltage':            (13, 'V'),
+        'Battery Current':            (14, 'A'),
+        'Battery Power':              (15, 'W'),
+        'Battery Temperature':        (16, 'C'),
+        'Battery Remaining Capacity': (17, '%'),
+
+        'Month\'s Energy':            (19, 'kWh'),
+
+        'Power Now Phase 2':          (44, 'W'),
+        'Power Now Phase 3':          (45, 'W'),
+        'Output Current Phase 2':     (46, 'A'),
+        'Output Current Phase 3':     (47, 'A'),
+        'Network Voltage Phase 2':    (48, 'V'),
+        'Network Voltage Phase 3':    (49, 'V'),
+
+        'Grid Frequency Phase 1':     (50, 'Hz'),
+        'Grid Frequency Phase 2':     (51, 'Hz'),
+        'Grid Frequency Phase 3':     (52, 'Hz'),
+        'EPS Voltage':                (53, 'V'),
+        'EPS Current':                (54, 'A'),
+        'EPS Power':                  (55, 'W'),
+        'EPS Frequency':              (56, 'Hz'),
+    }
+
     @classmethod
     async def make_request(cls, host, port=80):
         base = 'http://{}:{}/?optType=ReadRealTimeData'
@@ -113,10 +209,13 @@ class X3(Inverter):
                 resp = await req.read()
         raw_json = resp.decode("utf-8")
         json_response = json.loads(raw_json)
-        clean_response = cls.__schema(json_response)
-        clean_response['version'] = clean_response['ver']
-        del clean_response['ver']
-        return clean_response
+        response = cls.__schema(json_response)
+        return InverterResponse(
+            data=cls.map_response(response['Data'], cls.__sensor_map),
+            serial_number=response['SN'],
+            version=response['ver'],
+            type=response['type']
+        )
 
 
 # registry of inverters

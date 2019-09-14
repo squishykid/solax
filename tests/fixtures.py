@@ -36,7 +36,7 @@ X3_MIC_RESPONSE = {
 }
 
 
-VALUES = {
+XHYBRID_VALUES = {
     'Today\'s Energy': 8.0,
     'Battery Current': 14.0,
     'Month\'s Energy': 19.0,
@@ -61,6 +61,44 @@ VALUES = {
     'PV2 Voltage': 3,
     'Power Now': 6,
     'Total Energy': 9
+}
+
+
+X3_VALUES = {
+    'PV1 Current': 0,
+    'PV2 Current': 1,
+    'PV1 Voltage': 2,
+    'PV2 Voltage': 3,
+    'PV1 Power': 11,
+    'PV2 Power': 12,
+
+    'Output Current Phase 1': 4,
+    'Output Current Phase 2': 46,
+    'Output Current Phase 3': 47,
+    'Network Voltage Phase 1': 5,
+    'Network Voltage Phase 2': 48,
+    'Network Voltage Phase 3': 49,
+    'Grid Frequency Phase 1': 50,
+    'Grid Frequency Phase 2': 51,
+    'Grid Frequency Phase 3': 52,
+    'Power Now Phase 1': 6,
+    'Power Now Phase 2': 44,
+    'Power Now Phase 3': 45,
+
+    'Inverter Temperature': 7,
+    'Today\'s Energy': 8,
+    'Total Energy': 9,
+    'Exported Power': 10,
+    'Battery Voltage': 13,
+    'Battery Current': 14,
+    'Battery Power': 15,
+    'Battery Temperature': 16,
+    'Battery Remaining Capacity': 17,
+    'Month\'s Energy': 19,
+    'EPS Voltage': 53,
+    'EPS Current': 54,
+    'EPS Power': 55,
+    'EPS Frequency': 56,
 }
 
 
