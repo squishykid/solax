@@ -11,12 +11,6 @@ async def test_discovery_xhybrid(x_hybrid_fixture):
 
 
 @pytest.mark.asyncio
-async def test_discovery_x3(x3_fixture):
-    rt_api = await solax.real_time_api(*x3_fixture)
-    assert rt_api.inverter.__class__ == inverter.X3
-
-
-@pytest.mark.asyncio
 async def test_discovery_no_host():
     with pytest.raises(inverter.DiscoveryError):
         await solax.real_time_api('localhost', 2)
