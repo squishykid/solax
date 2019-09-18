@@ -1,4 +1,6 @@
 import pytest
+from solax import inverter
+from collections import namedtuple
 
 XHYBRID_RESPONSE = {
     'method': 'uploadsn',
@@ -138,3 +140,40 @@ def simple_http_fixture(httpserver):
         query_string='index.html'
     ).respond_with_json({'hello': 'world'})
     yield (httpserver.host, httpserver.port)
+
+
+InverterUnderTest = namedtuple('InverterUnderTest',
+                               'uri, method, query_string, response, inverter, values')
+
+INVERTERS_UNDER_TEST = [
+    InverterUnderTest(
+        uri='/api/realTimeData.htm',
+        method='GET',
+        query_string=None,
+        response=XHYBRID_RESPONSE,
+        inverter=inverter.XHybrid,
+        values=XHYBRID_VALUES,
+    ),
+    InverterUnderTest(
+        uri="/",
+        method='POST',
+        query_string='optType=ReadRealTimeData',
+        response=X3_MIC_RESPONSE,
+        inverter=inverter.X3,
+        values=X3_VALUES,
+    )
+]
+
+
+@pytest.fixture(params=INVERTERS_UNDER_TEST)
+def inverters_fixture(httpserver, request):
+    httpserver.expect_request(
+        uri=request.param.uri,
+        method=request.param.method,
+        query_string=request.param.query_string
+    ).respond_with_json(request.param.response)
+    yield (
+        (httpserver.host, httpserver.port),
+        request.param.inverter,
+        request.param.values
+    )
