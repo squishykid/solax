@@ -167,7 +167,7 @@ class X3(Inverter):
 
         'Output Current Phase 1':     (4, 'A'),
         'Network Voltage Phase 1':    (5, 'V'),
-        'Power Now Phase 1':          (6, 'W'),
+        'AC Power':                   (6, 'W'),
 
         'Inverter Temperature':       (7, 'C'),
         'Today\'s Energy':            (8, 'kWh'),
@@ -180,10 +180,12 @@ class X3(Inverter):
         'Battery Current':            (14, 'A'),
         'Battery Power':              (15, 'W'),
         'Battery Temperature':        (16, 'C'),
-        'Battery Remaining Capacity': (17, '%'),
+        'Battery Remaining Capacity': (21, '%'),
 
-        'Month\'s Energy':            (19, 'kWh'),
+        'Total Feed-in Energy':       (41, 'kWh'),
+        'Total Consumption':          (42, 'kWh'),
 
+        'Power Now Phase 1':          (43, 'W'),
         'Power Now Phase 2':          (44, 'W'),
         'Power Now Phase 3':          (45, 'W'),
         'Output Current Phase 2':     (46, 'A'),
@@ -194,6 +196,7 @@ class X3(Inverter):
         'Grid Frequency Phase 1':     (50, 'Hz'),
         'Grid Frequency Phase 2':     (51, 'Hz'),
         'Grid Frequency Phase 3':     (52, 'Hz'),
+
         'EPS Voltage':                (53, 'V'),
         'EPS Current':                (54, 'A'),
         'EPS Power':                  (55, 'W'),

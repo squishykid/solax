@@ -12,6 +12,8 @@ async def test_smoke(inverters_fixture):
     rt_api = solax.RealTimeAPI(inv)
     parsed = await rt_api.get_data()
 
+    msg = 'data size should match expected values'
+    assert len(values) == len(parsed.data), msg
     for sensor, value in values.items():
         assert parsed.data[sensor] == value
 
