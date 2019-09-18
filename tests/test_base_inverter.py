@@ -9,6 +9,11 @@ async def test_unimplemented_make_request():
         await inverter.Inverter.make_request('localhost', 80)
 
 
+def test_unimplemented_sensor_map():
+    with pytest.raises(NotImplementedError):
+        inverter.Inverter.sensor_map()
+
+
 def test_all_registered_inverters_inherit_from_base():
     for i in inverter.REGISTRY:
         assert issubclass(i, inverter.Inverter)

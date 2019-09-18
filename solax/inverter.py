@@ -47,6 +47,13 @@ class Inverter:
         """
         raise NotImplementedError()
 
+    @classmethod
+    def sensor_map(cls):
+        """
+        Return sensor map
+        """
+        raise NotImplementedError()
+
     @staticmethod
     def map_response(resp_data, sensor_map):
         return {
@@ -139,6 +146,13 @@ class XHybrid(Inverter):
             version=response['version'],
             type=response['type']
         )
+
+    @classmethod
+    def sensor_map(cls):
+        """
+        Return sensor map
+        """
+        return cls.__sensor_map
 
 
 # registry of inverters

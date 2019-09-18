@@ -28,3 +28,16 @@ def test_registry_matches_inverters_under_test():
     test_inverters = {i.inverter for i in fixtures.INVERTERS_UNDER_TEST}
     registry_inverters = set(inverter.REGISTRY)
     assert test_inverters == registry_inverters, 'tests do not match registry'
+
+
+def test_inverter_sensors_match():
+    test_values = (
+        (i.inverter, i.values)
+        for i
+        in fixtures.INVERTERS_UNDER_TEST
+    )
+    for i, expected_values in test_values:
+        sensor_map = i.sensor_map()
+        assert len(sensor_map) == len(expected_values)
+        for name, _ in sensor_map.items():
+            assert name in expected_values
