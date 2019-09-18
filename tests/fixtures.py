@@ -166,7 +166,7 @@ INVERTERS_UNDER_TEST = [
         response=X3_MIC_RESPONSE,
         inverter=inverter.X3,
         values=X3_VALUES,
-    )
+    ),
 ]
 
 
