@@ -2,7 +2,22 @@ from collections import namedtuple
 import pytest
 from solax import inverter
 
-XHYBRID_RESPONSE = {
+XHYBRID_DE01_RESPONSE = {
+    'method': 'uploadsn',
+    'version': 'Solax_SI_CH_2nd_20160912_DE02',
+    'type': 'AL_SE',
+    'SN': 'XXXXXXX',
+    'Data': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+             10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+             20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+             30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+             40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
+             50, 51, 52, 53, 54, 55, 56, 57],
+    'Status': 2
+}
+
+
+XHYBRID_DE02_RESPONSE = {
     'method': 'uploadsn',
     'version': 'Solax_SI_CH_2nd_20160912_DE02',
     'type': 'AL_SE',
@@ -66,7 +81,15 @@ INVERTERS_UNDER_TEST = [
         uri='/api/realTimeData.htm',
         method='GET',
         query_string=None,
-        response=XHYBRID_RESPONSE,
+        response=XHYBRID_DE01_RESPONSE,
+        inverter=inverter.XHybrid,
+        values=XHYBRID_VALUES,
+    ),
+    InverterUnderTest(
+        uri='/api/realTimeData.htm',
+        method='GET',
+        query_string=None,
+        response=XHYBRID_DE02_RESPONSE,
         inverter=inverter.XHybrid,
         values=XHYBRID_VALUES,
     ),
