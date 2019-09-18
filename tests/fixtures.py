@@ -1,6 +1,6 @@
+from collections import namedtuple
 import pytest
 from solax import inverter
-from collections import namedtuple
 
 XHYBRID_RESPONSE = {
     'method': 'uploadsn',
@@ -74,8 +74,10 @@ def simple_http_fixture(httpserver):
     yield (httpserver.host, httpserver.port)
 
 
-InverterUnderTest = namedtuple('InverterUnderTest',
-                               'uri, method, query_string, response, inverter, values')
+InverterUnderTest = namedtuple(
+    'InverterUnderTest',
+    'uri, method, query_string, response, inverter, values'
+)
 
 INVERTERS_UNDER_TEST = [
     InverterUnderTest(

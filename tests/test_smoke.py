@@ -17,6 +17,7 @@ async def test_x_hybrid_smoke(x_hybrid_fixture):
     assert parsed.version == 'Solax_SI_CH_2nd_20160912_DE02'
     assert parsed.type == 'AL_SE'
 
+
 @pytest.mark.asyncio
 async def test_smoke(inverters_fixture):
     conn, inverter_class, values = inverters_fixture
@@ -27,7 +28,8 @@ async def test_smoke(inverters_fixture):
     for sensor, value in values.items():
         assert parsed.data[sensor] == value
 
+
 def test_registry_matches_inverters_under_test():
-    test_inverters = set([i.inverter for i in fixtures.INVERTERS_UNDER_TEST])
+    test_inverters = {i.inverter for i in fixtures.INVERTERS_UNDER_TEST}
     registry_inverters = set(inverter.REGISTRY)
     assert test_inverters == registry_inverters, 'tests do not match registry'
