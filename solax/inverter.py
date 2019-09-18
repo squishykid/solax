@@ -80,7 +80,7 @@ class XHybrid(Inverter):
         vol.Required('Data'): vol.Schema(
             vol.All(
                 [vol.Coerce(float)],
-                vol.Length(min=68, max=68)
+                vol.Any(vol.Length(min=58, max=58), vol.Length(min=68, max=68))
                 )
             ),
         vol.Required('Status'): vol.All(vol.Coerce(int), vol.Range(min=0)),
