@@ -18,6 +18,26 @@ XHYBRID_RESPONSE = {
 }
 
 
+X3_MIC_RESPONSE = {
+    "type": "X3-MIC",
+    "SN": "X3X3ZZYYXX",
+    "ver": "2.033.20",
+    "Data": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+             10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+             20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+             30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+             40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
+             50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
+             60, 61, 62, 63, 64, 65, 66, 67, 68, 69,
+             70, 71, 72, 73, 74, 75, 76, 77, 78, 79,
+             80, 81, 82, 83, 84, 85, 86, 87, 88, 89,
+             90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
+             100, 101, 102],
+    "Information": [8.000, 7, "X3-MIC", "MC802TF3194008",
+                    1, 1.10, 1.02, 1.09, 1.02]
+}
+
+
 XHYBRID_VALUES = {
     'Today\'s Energy': 8.0,
     'Battery Current': 14.0,
@@ -46,6 +66,44 @@ XHYBRID_VALUES = {
 }
 
 
+X3_VALUES = {
+    'PV1 Current': 0,
+    'PV2 Current': 1,
+    'PV1 Voltage': 2,
+    'PV2 Voltage': 3,
+    'PV1 Power': 11,
+    'PV2 Power': 12,
+
+    'Output Current Phase 1': 4,
+    'Output Current Phase 2': 46,
+    'Output Current Phase 3': 47,
+    'Network Voltage Phase 1': 5,
+    'Network Voltage Phase 2': 48,
+    'Network Voltage Phase 3': 49,
+    'Grid Frequency Phase 1': 50,
+    'Grid Frequency Phase 2': 51,
+    'Grid Frequency Phase 3': 52,
+    'Power Now Phase 1': 6,
+    'Power Now Phase 2': 44,
+    'Power Now Phase 3': 45,
+
+    'Inverter Temperature': 7,
+    'Today\'s Energy': 8,
+    'Total Energy': 9,
+    'Exported Power': 10,
+    'Battery Voltage': 13,
+    'Battery Current': 14,
+    'Battery Power': 15,
+    'Battery Temperature': 16,
+    'Battery Remaining Capacity': 17,
+    'Month\'s Energy': 19,
+    'EPS Voltage': 53,
+    'EPS Current': 54,
+    'EPS Power': 55,
+    'EPS Frequency': 56,
+}
+
+
 @pytest.fixture()
 def simple_http_fixture(httpserver):
     httpserver.expect_request(
@@ -70,6 +128,14 @@ INVERTERS_UNDER_TEST = [
         inverter=inverter.XHybrid,
         values=XHYBRID_VALUES,
     ),
+    InverterUnderTest(
+        uri="/",
+        method='POST',
+        query_string='optType=ReadRealTimeData',
+        response=X3_MIC_RESPONSE,
+        inverter=inverter.X3,
+        values=X3_VALUES,
+    )
 ]
 
 
