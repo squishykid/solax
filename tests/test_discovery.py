@@ -5,9 +5,10 @@ from solax import inverter
 
 
 @pytest.mark.asyncio
-async def test_discovery_xhybrid(x_hybrid_fixture):
-    rt_api = await solax.real_time_api(*x_hybrid_fixture)
-    assert rt_api.inverter.__class__ == inverter.XHybrid
+async def test_discovery(inverters_fixture):
+    conn, inverter_class, _ = inverters_fixture
+    rt_api = await solax.real_time_api(*conn)
+    assert rt_api.inverter.__class__ == inverter_class
 
 
 @pytest.mark.asyncio

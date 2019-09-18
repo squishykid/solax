@@ -6,19 +6,6 @@ from tests import fixtures
 
 
 @pytest.mark.asyncio
-async def test_x_hybrid_smoke(x_hybrid_fixture):
-    inv = inverter.XHybrid(*x_hybrid_fixture)
-    rt_api = solax.RealTimeAPI(inv)
-    parsed = await rt_api.get_data()
-
-    for sensor, value in fixtures.XHYBRID_VALUES.items():
-        assert parsed.data[sensor] == value
-    assert parsed.serial_number == 'XXXXXXX'
-    assert parsed.version == 'Solax_SI_CH_2nd_20160912_DE02'
-    assert parsed.type == 'AL_SE'
-
-
-@pytest.mark.asyncio
 async def test_smoke(inverters_fixture):
     conn, inverter_class, values = inverters_fixture
     inv = inverter_class(*conn)
@@ -27,6 +14,14 @@ async def test_smoke(inverters_fixture):
 
     for sensor, value in values.items():
         assert parsed.data[sensor] == value
+
+
+@pytest.mark.asyncio
+async def test_throws_when_unable_to_parse(inverters_garbage_fixture):
+    conn, inverter_class = inverters_garbage_fixture
+    with pytest.raises(inverter.InverterError):
+        i = inverter_class(*conn)
+        await i.get_data()
 
 
 def test_registry_matches_inverters_under_test():

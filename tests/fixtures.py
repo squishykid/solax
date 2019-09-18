@@ -47,24 +47,6 @@ XHYBRID_VALUES = {
 
 
 @pytest.fixture()
-def x_hybrid_fixture(httpserver):
-    httpserver.expect_request(
-        uri="/api/realTimeData.htm",
-        method='GET'
-    ).respond_with_json(XHYBRID_RESPONSE)
-    yield (httpserver.host, httpserver.port)
-
-
-@pytest.fixture()
-def x_hybrid_garbage_fixture(httpserver):
-    httpserver.expect_request(
-        uri="/api/realTimeData.htm",
-        method='GET'
-    ).respond_with_json({'hello': 'world'})
-    yield (httpserver.host, httpserver.port)
-
-
-@pytest.fixture()
 def simple_http_fixture(httpserver):
     httpserver.expect_request(
         uri="/",
@@ -102,4 +84,17 @@ def inverters_fixture(httpserver, request):
         (httpserver.host, httpserver.port),
         request.param.inverter,
         request.param.values
+    )
+
+
+@pytest.fixture(params=INVERTERS_UNDER_TEST)
+def inverters_garbage_fixture(httpserver, request):
+    httpserver.expect_request(
+        uri=request.param.uri,
+        method=request.param.method,
+        query_string=request.param.query_string
+    ).respond_with_json({'bingo': 'bango'})
+    yield (
+        (httpserver.host, httpserver.port),
+        request.param.inverter
     )
