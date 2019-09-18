@@ -40,6 +40,8 @@ async def test_smoke(inverters_fixture):
 
     for sensor, value in values.items():
         assert parsed.data[sensor] == value
-    assert parsed.serial_number == 'XXXXXXX'
-    assert parsed.version == 'Solax_SI_CH_2nd_20160912_DE02'
-    assert parsed.type == 'AL_SE'
+
+def test_registry_matches_inverters_under_test():
+    test_inverters = set([i.inverter for i in fixtures.INVERTERS_UNDER_TEST])
+    registry_inverters = set(inverter.REGISTRY)
+    assert test_inverters == registry_inverters, 'tests do not match registry'
