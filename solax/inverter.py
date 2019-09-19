@@ -234,6 +234,13 @@ class X3(Inverter):
             type=response['type']
         )
 
+    @classmethod
+    def sensor_map(cls):
+        """
+        Return sensor map
+        """
+        return cls.__sensor_map
+
 
 # registry of inverters
 REGISTRY = [XHybrid, X3]
