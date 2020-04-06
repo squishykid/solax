@@ -30,13 +30,13 @@ class Inverter:
             )
         except aiohttp.ClientError as ex:
             msg = "Could not connect to inverter endpoint"
-            raise InverterError(msg) from ex
+            raise InverterError(msg, str(self.__class__.__name__)) from ex
         except ValueError as ex:
             msg = "Received non-JSON data from inverter endpoint"
-            raise InverterError(msg) from ex
+            raise InverterError(msg, str(self.__class__.__name__)) from ex
         except vol.Invalid as ex:
             msg = "Received malformed JSON from inverter"
-            raise InverterError(msg) from ex
+            raise InverterError(msg, str(self.__class__.__name__)) from ex
         return data
 
     @classmethod
@@ -64,14 +64,21 @@ class Inverter:
 
 
 async def discover(host, port) -> Inverter:
+    failures = []
     for inverter in REGISTRY:
         i = inverter(host, port)
         try:
             await i.get_data()
             return i
-        except InverterError:
-            pass
-    raise DiscoveryError()
+        except InverterError as ex:
+            failures.append(ex)
+    msg = (
+        "Unable to connect to the inverter at "
+        f"host={host} port={port}, or your inverter is not supported yet.\n"
+        "Please see https://github.com/squishykid/solax/wiki/DiscoveryError\n"
+        f"Failures={str(failures)}"
+    )
+    raise DiscoveryError(msg)
 
 
 class XHybrid(Inverter):
