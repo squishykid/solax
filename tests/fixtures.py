@@ -145,6 +145,41 @@ X3_VALUES = {
     'EPS Frequency': 56,
 }
 
+X1_VALUES = {
+    'PV1 Current': 0,
+    'PV2 Current': 1,
+    'PV1 Voltage': 2,
+    'PV2 Voltage': 3,
+
+    'Output Current': 4,
+    'Network Voltage': 5,
+    'AC Power': 6,
+
+    'Inverter Temperature': 7,
+    'Today\'s Energy': 8,
+    'Total Energy': 9,
+    'Exported Power': 10,
+    'PV1 Power': 11,
+    'PV2 Power': 12,
+
+    'Battery Voltage': 13,
+    'Battery Current': 14,
+    'Battery Power': 15,
+    'Battery Temperature': 16,
+    'Battery Remaining Capacity': 21,
+
+    'Total Feed-in Energy': 41,
+    'Total Consumption': 42,
+
+    'Grid Frequency': 50,
+    'Power Now': 43,
+
+    'EPS Voltage': 53,
+    'EPS Current': 54,
+    'EPS Power': 55,
+    'EPS Frequency': 56,
+}
+
 
 @pytest.fixture()
 def simple_http_fixture(httpserver):
@@ -191,8 +226,8 @@ INVERTERS_UNDER_TEST = [
         method='POST',
         query_string='optType=ReadRealTimeData',
         response=X1_HYBRID_G3_RESPONSE,
-        inverter=inverter.X3,
-        values=X3_VALUES,
+        inverter=inverter.X1,
+        values=X1_VALUES,
     ),
 ]
 
