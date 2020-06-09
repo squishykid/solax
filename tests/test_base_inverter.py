@@ -14,6 +14,11 @@ def test_unimplemented_sensor_map():
         inverter.Inverter.sensor_map()
 
 
+def test_unimplemented_schema():
+    with pytest.raises(NotImplementedError):
+        inverter.Inverter.schema()
+
+
 def test_all_registered_inverters_inherit_from_base():
     for i in inverter.REGISTRY:
         assert issubclass(i, inverter.Inverter)
