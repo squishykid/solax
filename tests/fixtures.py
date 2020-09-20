@@ -16,7 +16,6 @@ XHYBRID_DE01_RESPONSE = {
     'Status': 2
 }
 
-
 XHYBRID_DE02_RESPONSE = {
     'method': 'uploadsn',
     'version': 'Solax_SI_CH_2nd_20160912_DE02',
@@ -32,10 +31,24 @@ XHYBRID_DE02_RESPONSE = {
     'Status': 2
 }
 
+X1_BOOST_AIR_MINI_RESPONSE = {
+    "type": "X1-Boost-Air-Mini",
+    "SN": "XXXXXXX",
+    "ver": "2.32.6",
+    "Data": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+             10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+             20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+             30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+             40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
+             50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
+             60, 61, 62, 63, 64, 65, 66, 67, 68],
+    "Information": [2.500, 4, "X1-Boost-Air-Mini", "XXXXXXX",
+                    1, 3.25, 1.09, 1.10, 0.00]
+}
 
 X3_MIC_RESPONSE = {
     "type": "X3-MIC",
-    "SN": "X3X3ZZYYXX",
+    "SN": "XXXXXXX",
     "ver": "2.033.20",
     "Data": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
              10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
@@ -48,13 +61,13 @@ X3_MIC_RESPONSE = {
              80, 81, 82, 83, 84, 85, 86, 87, 88, 89,
              90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
              100, 101, 102],
-    "Information": [8.000, 7, "X3-MIC", "MC802TF3194008",
+    "Information": [8.000, 7, "X3-MIC", "XXXXXXX",
                     1, 1.10, 1.02, 1.09, 1.02]
 }
 
 X1_HYBRID_G3_RESPONSE = {
     "type": "X1-Hybiyd-G3",
-    "SN": "X3X3ZZYYXX",
+    "SN": "XXXXXXX",
     "ver": "2.033.20",
     "Data": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
              10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
@@ -67,10 +80,28 @@ X1_HYBRID_G3_RESPONSE = {
              80, 81, 82, 83, 84, 85, 86, 87, 88, 89,
              90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
              100, 101],
-    "Information": [8.000, 7, "X3-MIC", "MC802TF3194008",
+    "Information": [8.000, 7, "X3-MIC", "XXXXXXX",
                     1, 1.10, 1.02, 1.09, 1.02]
 }
 
+X3_HYBRID_G3_RESPONSE = {
+    "type": "X3-Hybiyd-G3",
+    "SN": "XXXXXXX",
+    "ver": "2.32.6",
+    "Data": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+             10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+             20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+             30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+             40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
+             50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
+             60, 61, 62, 63, 64, 65, 66, 67, 68, 69,
+             70, 71, 72, 73, 74, 75, 76, 77, 78, 79,
+             80, 81, 82, 83, 84, 85, 86, 87, 88, 89,
+             90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
+             100, 101],
+    "Information": [0.000, 5, "X3-Hybiyd-G3", "XXXXXXX",
+                    1, 3.00, 0.00, 3.17, 1.01]
+}
 
 XHYBRID_VALUES = {
     'Today\'s Energy': 8.0,
@@ -180,6 +211,30 @@ X1_VALUES = {
     'EPS Frequency': 56,
 }
 
+X1_MINI_VALUES = {
+    'PV1 Current': 0,
+    'PV2 Current': 1,
+    'PV1 Voltage': 2,
+    'PV2 Voltage': 3,
+
+    'Output Current': 4,
+    'Network Voltage': 5,
+    'AC Power': 6,
+
+    'Inverter Temperature': 7,
+    'Today\'s Energy': 8,
+    'Total Energy': 9,
+    'Exported Power': 10,
+    'PV1 Power': 11,
+    'PV2 Power': 12,
+
+    'Total Feed-in Energy': 41,
+    'Total Consumption': 42,
+
+    'Power Now': 43,
+    'Grid Frequency': 50,
+}
+
 
 @pytest.fixture()
 def simple_http_fixture(httpserver):
@@ -217,7 +272,23 @@ INVERTERS_UNDER_TEST = [
         uri="/",
         method='POST',
         query_string='optType=ReadRealTimeData',
+        response=X1_BOOST_AIR_MINI_RESPONSE,
+        inverter=inverter.X1Mini,
+        values=X1_MINI_VALUES,
+    ),
+    InverterUnderTest(
+        uri="/",
+        method='POST',
+        query_string='optType=ReadRealTimeData',
         response=X3_MIC_RESPONSE,
+        inverter=inverter.X3,
+        values=X3_VALUES,
+    ),
+    InverterUnderTest(
+        uri="/",
+        method='POST',
+        query_string='optType=ReadRealTimeData',
+        response=X3_HYBRID_G3_RESPONSE,
         inverter=inverter.X3,
         values=X3_VALUES,
     ),
