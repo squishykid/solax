@@ -84,7 +84,7 @@ X1_HYBRID_G3_RESPONSE = {
                     1, 1.10, 1.02, 1.09, 1.02]
 }
 
-X1_HYBRID_G3_2x_MPPT_RESPONSE = {
+X1_HYBRID_G3_2X_MPPT_RESPONSE = {
     "type": "X1-Hybiyd-G3",
     "SN": "XXXXXXXXXX",
     "ver": "2.033.20",
@@ -99,7 +99,8 @@ X1_HYBRID_G3_2x_MPPT_RESPONSE = {
              80, 81, 82, 83, 84, 85, 86, 87, 88, 89,
              90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
              100, 101, 102, 103, 104, 105, 106],
-    "Information": [3.000, 3, "X1-Hybiyd-G3", "YYYYYYYYYYYYYY", 1, 3.11, 0.00, 3.13, 1.05],
+    "Information": [3.000, 3, "X1-Hybiyd-G3", "YYYYYYYYYYYYYY",
+                    1, 3.11, 0.00, 3.13, 1.05],
     "battery": {
         "brand": "0",
         "masterVer": "0.00",
@@ -329,7 +330,7 @@ INVERTERS_UNDER_TEST = [
         uri="/",
         method='POST',
         query_string='optType=ReadRealTimeData',
-        response=X1_HYBRID_G3_2x_MPPT_RESPONSE,
+        response=X1_HYBRID_G3_2X_MPPT_RESPONSE,
         inverter=inverter.X1,
         values=X1_VALUES,
     )
