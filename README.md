@@ -1,6 +1,6 @@
 # Solax
 
-[![Build Status](https://travis-ci.org/squishykid/solax.svg?branch=master)](https://travis-ci.org/squishykid/solax)
+![Build Status](https://github.com/squishykid/solax/workflows/tests/badge.svg)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/solax.svg)](https://pypi.org/project/solax)
 
 Read energy usage data from the real-time API on Solax solar inverters.
