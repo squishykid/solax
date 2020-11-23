@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="solax",
-    version="0.2.4",
+    use_scm_version=True,
     author="Robin Wohlers-Reichel",
     author_email="me@robinwr.com",
     description="Solax inverter API client",
@@ -16,6 +16,9 @@ setuptools.setup(
     install_requires=[
         'aiohttp>=3.5.4',
         'voluptuous>=0.11.5'
+    ],
+    setup_requires=[
+        'setuptools_scm',
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
