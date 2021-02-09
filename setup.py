@@ -11,6 +11,7 @@ setuptools.setup(
     description="Solax inverter API client",
     long_description=long_description,
     long_description_content_type="text/markdown",
+    license="MIT",
     url="https://github.com/squishykid/solax",
     packages=setuptools.find_packages(exclude=['tests', 'tests.*']),
     install_requires=[
