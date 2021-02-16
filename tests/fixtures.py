@@ -129,6 +129,28 @@ X3_HYBRID_G3_RESPONSE = {
                     1, 3.00, 0.00, 3.17, 1.01]
 }
 
+X3_HYBRID_G3_2X_MPPT_RESPONSE = {
+    "type": "X3-Hybiyd-G3",
+    "SN": "XXXXXXXXXX",
+    "ver": "2.033.20",
+    "Data": [0.0, 0.0, 0.0, 0.0, 0.9, 234.0, 3189, 42, 15.2, 27.0, -25, 0, 0,
+             210.30, -15.70, -3321, 24, 8.6, 0, 11.0, 1, 68, 232.4, 170.0,
+             31.0, 35.0, 22.6, 20.7, 3.8, 3.8, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             2.03, 23.41, 123, 1344, 1722, 5.4, 6.9, 250.0, 251.9, 50.01,
+             50.01, 50.01, 0.0, 0.0, 0, 0.00, 0, 0, 0, 0.00, 0, 0, 0, 0, 0.00,
+             0, 0, 2, 1, 26, 1.00, 0, 100, 10, 25.00, 25.00, 0, 0, 0, 0, 0.0,
+             10.8, 24.4, 0.0, 0, 2, 0.0, 0.0, 0, 0.0, 0.0, 0, 0, 0, 0, 1, 1,
+             0, 0, 0.00, 0.00, 1, 273, 212.3, -16.2, -3439],
+    "Information": [8.000, 5, "X3-Hybiyd-G3", "XXXXXXXX", 1, 4.47, 0.00, 4.34,
+                    1.05],
+    "battery": {
+      "brand": "83",
+      "masterVer": "1.11",
+      "slaveNum": "4",
+      "slaveVer": [1.13, 1.13, 1.13, 1.13]
+    }
+}
+
 XHYBRID_VALUES = {
     'Today\'s Energy': 8.0,
     'Battery Current': 14.0,
@@ -200,6 +222,49 @@ X3_VALUES = {
     'EPS Current': 54,
     'EPS Power': 55,
     'EPS Frequency': 56,
+}
+
+X3_HYBRID_VALUES = {
+    'PV1 Current': 0,
+    'PV2 Current': 0,
+    'PV1 Voltage': 0,
+    'PV2 Voltage': 0,
+
+    'Output Current Phase 1': 0.9,
+    'Network Voltage Phase 1': 234,
+    'AC Power': 3189,
+
+    'Inverter Temperature': 42,
+    'Today\'s Energy': 15.2,
+    'Total Energy': 27,
+    'Exported Power': -25,
+    'PV1 Power': 0,
+    'PV2 Power': 0,
+
+    'Battery Voltage': 210.3,
+    'Battery Current': -15.7,
+    'Battery Power': -3321,
+    'Battery Temperature': 24,
+    'Battery Remaining Capacity': 68,
+
+    'Total Feed-in Energy': 2.03,
+    'Total Consumption': 23.41,
+
+    'Output Current Phase 2': 5.4,
+    'Output Current Phase 3': 6.9,
+    'Network Voltage Phase 2': 250,
+    'Network Voltage Phase 3': 251.9,
+    'Grid Frequency Phase 1': 50.01,
+    'Grid Frequency Phase 2': 50.01,
+    'Grid Frequency Phase 3': 50.01,
+    'Power Now Phase 1': 123,
+    'Power Now Phase 2': 1344,
+    'Power Now Phase 3': 1722,
+
+    'EPS Voltage': 0,
+    'EPS Current': 0,
+    'EPS Power': 0,
+    'EPS Frequency': 0,
 }
 
 X1_VALUES = {
@@ -333,6 +398,14 @@ INVERTERS_UNDER_TEST = [
         response=X1_HYBRID_G3_2X_MPPT_RESPONSE,
         inverter=inverter.X1,
         values=X1_VALUES,
+    ),
+    InverterUnderTest(
+        uri="/",
+        method='POST',
+        query_string='optType=ReadRealTimeData',
+        response=X3_HYBRID_G3_2X_MPPT_RESPONSE,
+        inverter=inverter.X3,
+        values=X3_HYBRID_VALUES,
     )
 ]
 
