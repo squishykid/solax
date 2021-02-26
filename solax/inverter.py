@@ -214,8 +214,8 @@ class X3(InverterPost):
             vol.All(
                 [vol.Coerce(float)],
                 vol.Any(
-                    vol.Length(min=102, max=102),
-                    vol.Length(min=103, max=103)),
+                    vol.Length(min=102, max=103),
+                    vol.Length(min=107, max=107)),
                 )
             ),
         vol.Required('Information'): vol.Schema(
