@@ -29,4 +29,4 @@ jobs:
         pylint -d 'C0111' solax tests
     - name: Test with pytest
       run: |
-        pytest .
+        pytest --cov=solax --cov-fail-under=100 --cov-branch --cov-report=term-missing .
