@@ -20,6 +20,7 @@ InverterResponse = namedtuple('InverterResponse',
 
 class Inverter:
     """Base wrapper around Inverter HTTP API"""
+
     def __init__(self, host, port):
         self.host = host
         self.port = port
@@ -112,8 +113,8 @@ class XHybrid(Inverter):
             vol.All(
                 [vol.Coerce(float)],
                 vol.Any(vol.Length(min=58, max=58), vol.Length(min=68, max=68))
-                )
-            ),
+            )
+        ),
         vol.Required('Status'): vol.All(vol.Coerce(int), vol.Range(min=0)),
     }, extra=vol.REMOVE_EXTRA)
 
@@ -181,13 +182,16 @@ class XHybrid(Inverter):
 
 
 class InverterPost(Inverter):
+    
+    def make_url(self, host, port):
+        base = 'http://{}:{}/?optType=ReadRealTimeData'
+        return base.format(host, port)
+
     # This is an intermediate abstract class,
     #  so we can disable the pylint warning
     # pylint: disable=W0223
-    @classmethod
-    async def make_request(cls, host, port=80):
-        base = 'http://{}:{}/?optType=ReadRealTimeData'
-        url = base.format(host, port)
+    async def make_request(self, cls, host, port=80):
+        url = self.make_url(host, port)
         async with aiohttp.ClientSession() as session:
             async with session.post(url) as req:
                 resp = await req.read()
@@ -200,6 +204,13 @@ class InverterPost(Inverter):
             version=response['ver'],
             type=response['type']
         )
+
+
+class InverterPostWithPassword(InverterPost):
+    @classmethod
+    def make_url(self, host, port):
+        base = 'http://{}:{}/?optType=ReadRealTimeData&pw=admin&'
+        return base.format(host, port)
 
 
 class X3(InverterPost):
@@ -216,13 +227,13 @@ class X3(InverterPost):
                 vol.Any(
                     vol.Length(min=102, max=103),
                     vol.Length(min=107, max=107)),
-                )
-            ),
+            )
+        ),
         vol.Required('Information'): vol.Schema(
             vol.All(
                 vol.Length(min=9, max=9)
-                )
-            ),
+            )
+        ),
     }, extra=vol.REMOVE_EXTRA)
 
     __sensor_map = {
@@ -302,8 +313,8 @@ class X1(InverterPost):
         vol.Required('Information'): vol.Schema(
             vol.All(
                 vol.Length(min=9, max=9)
-                )
-            ),
+            )
+        ),
     }, extra=vol.REMOVE_EXTRA)
 
     __sensor_map = {
@@ -367,8 +378,8 @@ class X1Mini(InverterPost):
         vol.Required('Information'): vol.Schema(
             vol.All(
                 vol.Length(min=9, max=9)
-                )
-            ),
+            )
+        ),
     }, extra=vol.REMOVE_EXTRA)
 
     __sensor_map = {
@@ -404,5 +415,14 @@ class X1Mini(InverterPost):
         return cls.__schema
 
 
+class X1WithPassword(X1, InverterPostWithPassword):
+    pass
+
+
+class X1MiniWithPassword(X1Mini, InverterPostWithPassword):
+    pass
+
+
 # registry of inverters
-REGISTRY = [XHybrid, X3, X1, X1Mini]
+REGISTRY = [XHybrid, X3, X1WithPassword, X1MiniWithPassword, X1, X1Mini]
+#REGISTRY = [XHybrid, X3, X1, X1Mini]
