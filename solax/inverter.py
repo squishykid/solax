@@ -182,7 +182,6 @@ class XHybrid(Inverter):
 
 
 class InverterPost(Inverter):
-
     def make_url(self, host, port):
         base = 'http://{}:{}/?optType=ReadRealTimeData'
         return base.format(host, port)
@@ -207,7 +206,6 @@ class InverterPost(Inverter):
 
 
 class InverterPostWithPassword(InverterPost):
-    @classmethod
     def make_url(self, host, port):
         base = 'http://{}:{}/?optType=ReadRealTimeData&pw=admin&'
         return base.format(host, port)
