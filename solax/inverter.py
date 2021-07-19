@@ -182,7 +182,7 @@ class XHybrid(Inverter):
 
 
 class InverterPost(Inverter):
-    
+
     def make_url(self, host, port):
         base = 'http://{}:{}/?optType=ReadRealTimeData'
         return base.format(host, port)
@@ -425,4 +425,3 @@ class X1MiniWithPassword(X1Mini, InverterPostWithPassword):
 
 # registry of inverters
 REGISTRY = [XHybrid, X3, X1WithPassword, X1MiniWithPassword, X1, X1Mini]
-#REGISTRY = [XHybrid, X3, X1, X1Mini]
