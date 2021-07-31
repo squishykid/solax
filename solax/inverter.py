@@ -21,14 +21,15 @@ InverterResponse = namedtuple('InverterResponse',
 class Inverter:
     """Base wrapper around Inverter HTTP API"""
 
-    def __init__(self, host, port):
+    def __init__(self, host, port, pwd=''):
         self.host = host
         self.port = port
+        self.pwd = pwd
 
     async def get_data(self):
         try:
             data = await self.make_request(
-                self.host, self.port
+                self.host, self.port, self.pwd
             )
         except aiohttp.ClientError as ex:
             msg = "Could not connect to inverter endpoint"
@@ -42,7 +43,7 @@ class Inverter:
         return data
 
     @classmethod
-    async def make_request(cls, host, port):
+    async def make_request(cls, host, port, pwd=''):
         """
         Return instance of 'InverterResponse'
         Raise exception if unable to get data
@@ -72,10 +73,10 @@ class Inverter:
         }
 
 
-async def discover(host, port) -> Inverter:
+async def discover(host, port, pwd='') -> Inverter:
     failures = []
     for inverter in REGISTRY:
-        i = inverter(host, port)
+        i = inverter(host, port, pwd)
         try:
             await i.get_data()
             return i
@@ -155,7 +156,7 @@ class XHybrid(Inverter):
     }
 
     @classmethod
-    async def make_request(cls, host, port=80):
+    async def make_request(cls, host, port=80, pwd=''):
         base = 'http://{}:{}/api/realTimeData.htm'
         url = base.format(host, port)
         async with aiohttp.ClientSession() as session:
@@ -182,15 +183,20 @@ class XHybrid(Inverter):
 
 
 class InverterPost(Inverter):
-    def make_url(self, host, port):
-        base = 'http://{}:{}/?optType=ReadRealTimeData'
-        return base.format(host, port)
+    @classmethod
+    def make_url(cls, host, port, pwd=''):
+        if not pwd:
+            base = 'http://{}:{}/?optType=ReadRealTimeData'
+            return base.format(host, port)
+        base = 'http://{}:{}/?optType=ReadRealTimeData&pwd={}&'
+        return base.format(host, port, pwd)
 
     # This is an intermediate abstract class,
     #  so we can disable the pylint warning
     # pylint: disable=W0223
-    async def make_request(self, cls, host, port=80):
-        url = self.make_url(host, port)
+    @classmethod
+    async def make_request(cls, host, port=80, pwd=''):
+        url = cls.make_url(host, port, pwd)
         async with aiohttp.ClientSession() as session:
             async with session.post(url) as req:
                 resp = await req.read()
@@ -203,12 +209,6 @@ class InverterPost(Inverter):
             version=response['ver'],
             type=response['type']
         )
-
-
-class InverterPostWithPassword(InverterPost):
-    def make_url(self, host, port):
-        base = 'http://{}:{}/?optType=ReadRealTimeData&pw=admin&'
-        return base.format(host, port)
 
 
 class X3(InverterPost):
@@ -413,13 +413,5 @@ class X1Mini(InverterPost):
         return cls.__schema
 
 
-class X1WithPassword(X1, InverterPostWithPassword):
-    pass
-
-
-class X1MiniWithPassword(X1Mini, InverterPostWithPassword):
-    pass
-
-
 # registry of inverters
-REGISTRY = [XHybrid, X3, X1WithPassword, X1MiniWithPassword, X1, X1Mini]
+REGISTRY = [XHybrid, X3, X1, X1Mini]
