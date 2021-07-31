@@ -183,20 +183,17 @@ class XHybrid(Inverter):
 
 
 class InverterPost(Inverter):
-    @classmethod
-    def make_url(cls, host, port, pwd=''):
-        if not pwd:
-            base = 'http://{}:{}/?optType=ReadRealTimeData'
-            return base.format(host, port)
-        base = 'http://{}:{}/?optType=ReadRealTimeData&pwd={}&'
-        return base.format(host, port, pwd)
-
     # This is an intermediate abstract class,
     #  so we can disable the pylint warning
     # pylint: disable=W0223
     @classmethod
     async def make_request(cls, host, port=80, pwd=''):
-        url = cls.make_url(host, port, pwd)
+        if not pwd:
+            base = 'http://{}:{}/?optType=ReadRealTimeData'
+            url = base.format(host, port)
+        else:
+            base = 'http://{}:{}/?optType=ReadRealTimeData&pwd={}&'
+            url = base.format(host, port, pwd)
         async with aiohttp.ClientSession() as session:
             async with session.post(url) as req:
                 resp = await req.read()
