@@ -114,8 +114,8 @@ class XHybrid(Inverter):
             vol.All(
                 [vol.Coerce(float)],
                 vol.Any(vol.Length(min=58, max=58), vol.Length(min=68, max=68))
-            )
-        ),
+                )
+            ),
         vol.Required('Status'): vol.All(vol.Coerce(int), vol.Range(min=0)),
     }, extra=vol.REMOVE_EXTRA)
 
@@ -222,13 +222,13 @@ class X3(InverterPost):
                 vol.Any(
                     vol.Length(min=102, max=103),
                     vol.Length(min=107, max=107)),
-            )
-        ),
+                )
+            ),
         vol.Required('Information'): vol.Schema(
             vol.All(
                 vol.Length(min=9, max=9)
-            )
-        ),
+                )
+            ),
     }, extra=vol.REMOVE_EXTRA)
 
     __sensor_map = {
@@ -308,8 +308,8 @@ class X1(InverterPost):
         vol.Required('Information'): vol.Schema(
             vol.All(
                 vol.Length(min=9, max=9)
-            )
-        ),
+                )
+            ),
     }, extra=vol.REMOVE_EXTRA)
 
     __sensor_map = {
@@ -373,8 +373,8 @@ class X1Mini(InverterPost):
         vol.Required('Information'): vol.Schema(
             vol.All(
                 vol.Length(min=9, max=9)
-            )
-        ),
+                )
+            ),
     }, extra=vol.REMOVE_EXTRA)
 
     __sensor_map = {
