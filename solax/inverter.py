@@ -66,11 +66,18 @@ class Inverter:
 
     @staticmethod
     def map_response(resp_data, sensor_map):
-        return {
-            sensor_name: resp_data[i]
-            for sensor_name, (i, _)
-            in sensor_map.items()
-        }
+        result = {}
+        for sensor_name, (idx, unit, *conv) in sensor_map.items():
+          if conv:
+            val = conv[0](resp_data[idx])
+          else:
+            val = resp_data[idx]
+          result[sensor_name] = val
+        return result
+
+    @classmethod
+    def postprocess_response(cls, response):
+      return response
 
 
 async def discover(host, port, pwd='') -> Inverter:
@@ -201,7 +208,9 @@ class InverterPost(Inverter):
         json_response = json.loads(raw_json)
         response = cls.schema()(json_response)
         return InverterResponse(
-            data=cls.map_response(response['Data'], cls.sensor_map()),
+            data=cls.postprocess_response(
+              cls.map_response(response['Data'], cls.sensor_map())
+            ),
             serial_number=response['SN'],
             version=response['ver'],
             type=response['type']
@@ -274,6 +283,101 @@ class X3(InverterPost):
         'EPS Power':                  (55, 'W'),
         'EPS Frequency':              (56, 'Hz'),
     }
+
+    @classmethod
+    def sensor_map(cls):
+        """
+        Return sensor map
+        """
+        return cls.__sensor_map
+
+    @classmethod
+    def schema(cls):
+        return cls.__schema
+
+
+def _div10(x):
+  return x / 10
+
+
+def _div100(x):
+  return x / 100
+
+
+def _toSigned(x):
+  if x > 32767:
+    return x - 65535
+  else:
+    return x
+
+
+class X3_V34(InverterPost):
+    __schema = vol.Schema({
+        vol.Required('type'): vol.All(str, "5"),
+        vol.Required('SN'): str,
+        vol.Required('ver'): str,
+        vol.Required('Data'): vol.Schema(
+            vol.All(
+                [vol.Coerce(float)],
+                vol.Length(min=200, max=200),
+                )
+            ),
+        vol.Required('Information'): vol.Schema(
+            vol.All(
+                vol.Length(min=10, max=10)
+                )
+            ),
+    }, extra=vol.REMOVE_EXTRA)
+
+    __sensor_map = {
+        'Network Voltage Phase 1':    (0, 'V', _div10),
+        'Network Voltage Phase 2':    (1, 'V', _div10),
+        'Network Voltage Phase 3':    (2, 'V', _div10),
+
+        'Output Current Phase 1':     (3, 'A', _div10),
+        'Output Current Phase 2':     (4, 'A', _div10),
+        'Output Current Phase 3':     (5, 'A', _div10),
+
+        'Power Now Phase 1':          (6, 'W'),
+        'Power Now Phase 2':          (7, 'W'),
+        'Power Now Phase 3':          (8, 'W'),
+
+        'PV1 Voltage':                (9, 'V', _div10),
+        'PV2 Voltage':                (10, 'V', _div10),
+        'PV1 Current':                (11, 'A', _div10),
+        'PV2 Current':                (12, 'A', _div10),
+        'PV1 Power':                  (13, 'W'),
+        'PV2 Power':                  (14, 'W'),
+
+        'Grid Frequency Phase 1':     (15, 'Hz', _div100),
+        'Grid Frequency Phase 2':     (16, 'Hz', _div100),
+        'Grid Frequency Phase 3':     (17, 'Hz', _div100),
+
+        'Total Energy':               (19, 'kWh', _div10),
+        'Today\'s Energy':            (21, 'kWh', _div10),
+
+        'Battery Voltage':            (24, 'V', _div100),
+        'Battery Current':            (25, 'A', lambda x: _div10(_toSigned(x))),
+        'Battery Power':              (26, 'W', _toSigned),
+        'Battery Temperature':        (27, 'C'),
+        'Battery Remaining Capacity': (28, '%'),
+
+        'Exported Power':             (65, 'W', _toSigned),
+        'Total Feed-in Energy':       (67, 'kWh', _div100),
+        'Total Feed-in Energy Resets':(68, ''),
+        'Total Consumption':          (69, 'kWh', _div100),
+        'Total Consumption Resets':   (70, ''),
+
+        'AC Power':                   (181, 'W'),
+    }
+
+    @classmethod
+    def postprocess_response(cls, response):
+      response['Total Feed-in Energy'] += \
+          response['Total Feed-in Energy Resets'] * 65535
+      response['Total Consumption'] += \
+          response['Total Consumption Resets'] * 65535
+      return response
 
     @classmethod
     def sensor_map(cls):
@@ -411,4 +515,4 @@ class X1Mini(InverterPost):
 
 
 # registry of inverters
-REGISTRY = [XHybrid, X3, X1, X1Mini]
+REGISTRY = [XHybrid, X3, X3_V34, X1, X1Mini]
