@@ -18,6 +18,12 @@ async def test_discovery_no_host():
 
 
 @pytest.mark.asyncio
+async def test_discovery_no_host_with_pwd():
+    with pytest.raises(inverter.DiscoveryError):
+        await solax.real_time_api('localhost', 2, 'pwd')
+
+
+@pytest.mark.asyncio
 async def test_discovery_unknown_webserver(simple_http_fixture):
     with pytest.raises(inverter.DiscoveryError):
         await solax.real_time_api(*simple_http_fixture)

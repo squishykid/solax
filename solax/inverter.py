@@ -20,14 +20,16 @@ InverterResponse = namedtuple('InverterResponse',
 
 class Inverter:
     """Base wrapper around Inverter HTTP API"""
-    def __init__(self, host, port):
+
+    def __init__(self, host, port, pwd=''):
         self.host = host
         self.port = port
+        self.pwd = pwd
 
     async def get_data(self):
         try:
             data = await self.make_request(
-                self.host, self.port
+                self.host, self.port, self.pwd
             )
         except aiohttp.ClientError as ex:
             msg = "Could not connect to inverter endpoint"
@@ -41,7 +43,7 @@ class Inverter:
         return data
 
     @classmethod
-    async def make_request(cls, host, port):
+    async def make_request(cls, host, port, pwd=''):
         """
         Return instance of 'InverterResponse'
         Raise exception if unable to get data
@@ -71,10 +73,10 @@ class Inverter:
         }
 
 
-async def discover(host, port) -> Inverter:
+async def discover(host, port, pwd='') -> Inverter:
     failures = []
     for inverter in REGISTRY:
-        i = inverter(host, port)
+        i = inverter(host, port, pwd)
         try:
             await i.get_data()
             return i
@@ -154,7 +156,7 @@ class XHybrid(Inverter):
     }
 
     @classmethod
-    async def make_request(cls, host, port=80):
+    async def make_request(cls, host, port=80, pwd=''):
         base = 'http://{}:{}/api/realTimeData.htm'
         url = base.format(host, port)
         async with aiohttp.ClientSession() as session:
@@ -185,9 +187,13 @@ class InverterPost(Inverter):
     #  so we can disable the pylint warning
     # pylint: disable=W0223
     @classmethod
-    async def make_request(cls, host, port=80):
-        base = 'http://{}:{}/?optType=ReadRealTimeData'
-        url = base.format(host, port)
+    async def make_request(cls, host, port=80, pwd=''):
+        if not pwd:
+            base = 'http://{}:{}/?optType=ReadRealTimeData'
+            url = base.format(host, port)
+        else:
+            base = 'http://{}:{}/?optType=ReadRealTimeData&pwd={}&'
+            url = base.format(host, port, pwd)
         async with aiohttp.ClientSession() as session:
             async with session.post(url) as req:
                 resp = await req.read()
