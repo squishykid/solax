@@ -3,7 +3,8 @@ from collections import namedtuple
 
 import aiohttp
 import voluptuous as vol
-from voluptuous import Invalid
+from voluptuous import Invalid, MultipleInvalid
+from voluptuous.humanize import humanize_error
 
 
 class InverterError(Exception):
@@ -206,12 +207,22 @@ class InverterPost(Inverter):
                 resp = await req.read()
         raw_json = resp.decode("utf-8")
         json_response = json.loads(raw_json)
-        response = cls.schema()(json_response)
+        response = {}
+        try:
+          response = cls.schema()(json_response)
+        except (Invalid, MultipleInvalid) as ex:
+          msg = humanize_error(json_response, ex)
+          # print(msg)
+          raise
+        if 'SN' in response:
+          serial_number = response['SN']
+        else:
+          serial_number = response['sn']
         return InverterResponse(
             data=cls.postprocess_response(
               cls.map_response(response['Data'], cls.sensor_map())
             ),
-            serial_number=response['SN'],
+            serial_number=serial_number,
             version=response['ver'],
             type=response['type']
         )
@@ -314,7 +325,7 @@ def _toSigned(x):
 class X3_V34(InverterPost):
     __schema = vol.Schema({
         vol.Required('type'): vol.All(int, 5),
-        vol.Required('SN'): str,
+        vol.Required('sn'): str,
         vol.Required('ver'): str,
         vol.Required('Data'): vol.Schema(
             vol.All(
