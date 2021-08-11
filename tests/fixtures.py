@@ -179,7 +179,7 @@ X3_HYBRID_G3_2X_MPPT_RESPONSE = {
 }
 
 X3_HYBRID_G3_2X_MPPT_RESPONSE_V34 = {
-    "type": "5",
+    "type": 5,
     "SN": "XXXXXXXXXX",
     "ver": "2.034.06",
     "Data": [2468, 2490, 2508, 13, 14, 10, 266, 284, 136, 5377, 4630, 17, 0,

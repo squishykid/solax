@@ -313,7 +313,7 @@ def _toSigned(x):
 
 class X3_V34(InverterPost):
     __schema = vol.Schema({
-        vol.Required('type'): vol.All(str, "5"),
+        vol.Required('type'): vol.All(int, 5),
         vol.Required('SN'): str,
         vol.Required('ver'): str,
         vol.Required('Data'): vol.Schema(
