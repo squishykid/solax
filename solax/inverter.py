@@ -374,9 +374,9 @@ class X3_V34(InverterPost):
         'Battery Remaining Capacity': (28, '%'),
 
         'Exported Power':             (65, 'W', _toSigned),
-        'Total Feed-in Energy':       (67, 'kWh', _div100),
+        'Total Feed-in Energy':       (67, 'kWh'),
         'Total Feed-in Energy Resets':(68, ''),
-        'Total Consumption':          (69, 'kWh', _div100),
+        'Total Consumption':          (69, 'kWh'),
         'Total Consumption Resets':   (70, ''),
 
         'AC Power':                   (181, 'W'),
@@ -386,8 +386,10 @@ class X3_V34(InverterPost):
     def postprocess_response(cls, response):
       response['Total Feed-in Energy'] += \
           response['Total Feed-in Energy Resets'] * 65535
+      response['Total Feed-in Energy'] /= 100
       response['Total Consumption'] += \
           response['Total Consumption Resets'] * 65535
+      response['Total Consumption'] /= 100
       return response
 
     @classmethod
