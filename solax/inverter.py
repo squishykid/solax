@@ -60,10 +60,10 @@ class Inverter:
 
     @classmethod
     def postprocess_map(cls):
-      """
-      Return map of functions to be applied to each sensor value
-      """
-      return {}
+        """
+        Return map of functions to be applied to each sensor value
+        """
+        return {}
 
     @classmethod
     def schema(cls):
@@ -76,15 +76,15 @@ class Inverter:
     def map_response(cls, resp_data):
         result = {}
         for sensor_name, (idx, unit, *conv) in cls.sensor_map().items():
-          if idx < 0:
-            val = None
-          elif conv:
-            val = conv[0](resp_data[idx])
-          else:
-            val = resp_data[idx]
-          result[sensor_name] = val
+            if idx < 0:
+                val = None
+            elif conv:
+                val = conv[0](resp_data[idx])
+            else:
+                val = resp_data[idx]
+            result[sensor_name] = val
         for sensor_name, processor in cls.postprocess_map().items():
-          result[sensor_name] = processor(result[sensor_name], result)
+            result[sensor_name] = processor(result[sensor_name], result)
         return result
 
 
@@ -216,15 +216,15 @@ class InverterPost(Inverter):
         json_response = json.loads(raw_json)
         response = {}
         try:
-          response = cls.schema()(json_response)
+            response = cls.schema()(json_response)
         except (Invalid, MultipleInvalid) as ex:
-          msg = humanize_error(json_response, ex)
-          # print(msg)
-          raise
+            _ = humanize_error(json_response, ex)
+            # print(_)
+            raise
         if 'SN' in response:
-          serial_number = response['SN']
+            serial_number = response['SN']
         else:
-          serial_number = response['sn']
+            serial_number = response['sn']
         return InverterResponse(
             data=cls.map_response(response['Data']),
             serial_number=serial_number,
@@ -312,35 +312,43 @@ class X3(InverterPost):
         return cls.__schema
 
 
-def _X3_V34__process_energy(value, result):
-  value += result['Total Feed-in Energy Resets'] * 65535
-  value /= 100
-  return value
+def _energy(value, result):
+    value += result['Total Feed-in Energy Resets'] * 65535
+    value /= 100
+    return value
 
 
-def _X3_V34__process_consumption(value, result):
-  value += result['Total Consumption Resets'] * 65535
-  value /= 100
-  return value
+def _consumption(value, result):
+    value += result['Total Consumption Resets'] * 65535
+    value /= 100
+    return value
 
 
-def _X3_V34__process_twoway_current(x, _):
-  return _X3_V34__to_signed(x, None) / 10
+def _twoway_current(x, _):
+    return _to_signed(x, None) / 10
 
 
-def _X3_V34__div10(x, _):
-  return x / 10
+def _div10(x, _):
+    return x / 10
 
 
-def _X3_V34__div100(x, _):
-  return x / 100
+def _div100(x, _):
+    return x / 100
 
 
-def _X3_V34__to_signed(x, _):
-  if x > 32767:
-    return x - 65535
-  else:
-    return x
+def _to_signed(x, _):
+    if x > 32767:
+        return x - 65535
+    else:
+        return x
+
+
+def _pv_power(_, r):
+    return r['PV1 Power'] + r['PV2 Power']
+
+
+def _load_power(_, r):
+    return r['AC Power'] - r['Exported Power']
 
 
 class X3_V34(InverterPost):
@@ -362,47 +370,47 @@ class X3_V34(InverterPost):
     }, extra=vol.REMOVE_EXTRA)
 
     __sensor_map = {
-        'Network Voltage Phase 1':    (0,   'V', __div10),
-        'Network Voltage Phase 2':    (1,   'V', __div10),
-        'Network Voltage Phase 3':    (2,   'V', __div10),
+        'Network Voltage Phase 1':     (0,   'V', _div10),
+        'Network Voltage Phase 2':     (1,   'V', _div10),
+        'Network Voltage Phase 3':     (2,   'V', _div10),
 
-        'Output Current Phase 1':     (3,   'A', __div10),
-        'Output Current Phase 2':     (4,   'A', __div10),
-        'Output Current Phase 3':     (5,   'A', __div10),
+        'Output Current Phase 1':      (3,   'A', _div10),
+        'Output Current Phase 2':      (4,   'A', _div10),
+        'Output Current Phase 3':      (5,   'A', _div10),
 
-        'Power Now Phase 1':          (6,   'W'),
-        'Power Now Phase 2':          (7,   'W'),
-        'Power Now Phase 3':          (8,   'W'),
+        'Power Now Phase 1':           (6,   'W'),
+        'Power Now Phase 2':           (7,   'W'),
+        'Power Now Phase 3':           (8,   'W'),
 
-        'PV1 Voltage':                (9,   'V', __div10),
-        'PV2 Voltage':                (10,  'V', __div10),
-        'PV1 Current':                (11,  'A', __div10),
-        'PV2 Current':                (12,  'A', __div10),
-        'PV1 Power':                  (13,  'W'),
-        'PV2 Power':                  (14,  'W'),
-        'Total PV Power':             (-1,   'W', lambda _, r: r['PV1 Power'] + r['PV2 Power']),
+        'PV1 Voltage':                 (9,   'V', _div10),
+        'PV2 Voltage':                 (10,  'V', _div10),
+        'PV1 Current':                 (11,  'A', _div10),
+        'PV2 Current':                 (12,  'A', _div10),
+        'PV1 Power':                   (13,  'W'),
+        'PV2 Power':                   (14,  'W'),
+        'Total PV Power':              (-1,  'W', _pv_power),
 
-        'Grid Frequency Phase 1':     (15,  'Hz', __div100),
-        'Grid Frequency Phase 2':     (16,  'Hz', __div100),
-        'Grid Frequency Phase 3':     (17,  'Hz', __div100),
+        'Grid Frequency Phase 1':      (15,  'Hz', _div100),
+        'Grid Frequency Phase 2':      (16,  'Hz', _div100),
+        'Grid Frequency Phase 3':      (17,  'Hz', _div100),
 
-        'Total Energy':               (19,  'kWh', __div10),
-        'Today\'s Energy':            (21,  'kWh', __div10),
+        'Total Energy':                (19,  'kWh', _div10),
+        'Today\'s Energy':             (21,  'kWh', _div10),
 
-        'Battery Voltage':            (24,  'V', __div100),
-        'Battery Current':            (25,  'A', __process_twoway_current),
-        'Battery Power':              (26,  'W', __to_signed),
-        'Battery Temperature':        (27,  'C'),
-        'Battery Remaining Capacity': (28,  '%'),
+        'Battery Voltage':             (24,  'V', _div100),
+        'Battery Current':             (25,  'A', _twoway_current),
+        'Battery Power':               (26,  'W', _to_signed),
+        'Battery Temperature':         (27,  'C'),
+        'Battery Remaining Capacity':  (28,  '%'),
 
-        'Exported Power':             (65,  'W', __to_signed),
-        'Total Feed-in Energy':       (67,  'kWh', __process_energy),
-        'Total Feed-in Energy Resets':(68,  ''),
-        'Total Consumption':          (69,  'kWh', __process_consumption),
-        'Total Consumption Resets':   (70,  ''),
+        'Exported Power':              (65,  'W', _to_signed),
+        'Total Feed-in Energy':        (67,  'kWh', _energy),
+        'Total Feed-in Energy Resets': (68,  ''),
+        'Total Consumption':           (69,  'kWh', _consumption),
+        'Total Consumption Resets':    (70,  ''),
 
-        'AC Power':                   (181, 'W'),
-        'Load Power':                 (-2,  'W', lambda _, r: r['AC Power'] - r['Exported Power']),
+        'AC Power':                    (181, 'W'),
+        'Load Power':                  (-2,  'W', _load_power),
     }
 
     @classmethod
@@ -412,7 +420,7 @@ class X3_V34(InverterPost):
         """
         sensors = {}
         for name, (idx, unit, *_) in cls.__sensor_map.items():
-          sensors[name] = (idx, unit)
+            sensors[name] = (idx, unit)
         return sensors
 
     @classmethod
@@ -422,8 +430,8 @@ class X3_V34(InverterPost):
         """
         sensors = {}
         for name, (_, _, *processor) in cls.__sensor_map.items():
-          if processor:
-            sensors[name] = processor[0]
+            if processor:
+                sensors[name] = processor[0]
         return sensors
 
     @classmethod
