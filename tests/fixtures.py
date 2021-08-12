@@ -46,6 +46,26 @@ X1_BOOST_AIR_MINI_RESPONSE = {
                     1, 3.25, 1.09, 1.10, 0.00]
 }
 
+X1_MINI_RESPONSE_V34 = {
+    "sn": "XXXXXXXXXX",
+    "ver": "2.034.06",
+    "type": 4,
+    "Data": [2310, 15, 349, 609, 0, 58, 0, 359, 0, 5000,
+             2, 3474, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 39, 0, 2518, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0],
+    "Information": [0.700, 4, "XXXXXXXXXXXXXX",
+                    1, 1.19, 0.00, 1.32, 0.00, 0.00, 1]
+}
+
+
 X3_MIC_RESPONSE = {
     "type": "X3-MIC",
     "SN": "XXXXXXX",
@@ -144,10 +164,10 @@ X3_HYBRID_G3_2X_MPPT_RESPONSE = {
     "Information": [8.000, 5, "X3-Hybiyd-G3", "XXXXXXXX", 1, 4.47, 0.00, 4.34,
                     1.05],
     "battery": {
-      "brand": "83",
-      "masterVer": "1.11",
-      "slaveNum": "4",
-      "slaveVer": [1.13, 1.13, 1.13, 1.13]
+        "brand": "83",
+        "masterVer": "1.11",
+        "slaveNum": "4",
+        "slaveVer": [1.13, 1.13, 1.13, 1.13]
     }
 }
 
@@ -302,7 +322,7 @@ X1_VALUES = {
     'EPS Frequency': 56,
 }
 
-X1_MINI_VALUES = {
+X1_MINI_BOOST_AIR_VALUES = {
     'PV1 Current': 0,
     'PV2 Current': 1,
     'PV1 Voltage': 2,
@@ -324,6 +344,24 @@ X1_MINI_VALUES = {
 
     'Power Now': 43,
     'Grid Frequency': 50,
+}
+
+X1_MINI_VALUES_V34 = {
+    'Network Voltage': 231.0,
+    'Output Current': 1.5,
+    'AC Power': 349,
+    'PV1 Voltage': 60.9,
+    'PV2 Voltage': 0,
+    'PV1 Current': 5.8,
+    'PV2 Current': 0,
+    'PV1 Power': 359,
+    'PV2 Power': 0,
+    'Grid Frequency': 50.0,
+    'Total Energy': 347.4,
+    'Today\'s Energy': 1.2,
+    'Total Feed-in Energy': 251.8,
+    'Total Consumption': 0,
+    'Power Now': 0,
 }
 
 
@@ -365,7 +403,15 @@ INVERTERS_UNDER_TEST = [
         query_string='optType=ReadRealTimeData',
         response=X1_BOOST_AIR_MINI_RESPONSE,
         inverter=inverter.X1Mini,
-        values=X1_MINI_VALUES,
+        values=X1_MINI_BOOST_AIR_VALUES,
+    ),
+    InverterUnderTest(
+        uri="/",
+        method='POST',
+        query_string='optType=ReadRealTimeData',
+        response=X1_MINI_RESPONSE_V34,
+        inverter=inverter.X1MiniV34,
+        values=X1_MINI_VALUES_V34,
     ),
     InverterUnderTest(
         uri="/",

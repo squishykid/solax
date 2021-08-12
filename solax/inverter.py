@@ -17,6 +17,22 @@ class DiscoveryError(Exception):
 InverterResponse = namedtuple('InverterResponse',
                               'data, serial_number, version, type')
 
+InterverTypes = {
+    1: 'X1-LX',
+    2: 'X-Hybrid',
+    3: 'X1-Hybiyd/Fit',
+    4: 'X1-Boost/Air/Mini',
+    5: 'X3-Hybiyd/Fit',
+    6: 'X3-20K/30K',
+    7: 'X3-MIC/PRO',
+    8: 'X1-Smart',
+    9: 'X1-AC',
+    10: 'A1-Hybrid',
+    11: 'A1-Fit',
+    12: 'A1-Grid',
+    13: 'J1-ESS',
+}
+
 
 class Inverter:
     """Base wrapper around Inverter HTTP API"""
@@ -67,8 +83,8 @@ class Inverter:
     @staticmethod
     def map_response(resp_data, sensor_map):
         return {
-            sensor_name: resp_data[i]
-            for sensor_name, (i, _)
+            sensor_name: round(resp_data[i] * factor, 2)
+            for sensor_name, (i, _, factor)
             in sensor_map.items()
         }
 
@@ -124,35 +140,35 @@ class XHybrid(Inverter):
     # value.1: unit (String) or None
     # from https://github.com/GitHobi/solax/wiki/direct-data-retrieval
     __sensor_map = {
-        'PV1 Current':                (0, 'A'),
-        'PV2 Current':                (1, 'A'),
-        'PV1 Voltage':                (2, 'V'),
-        'PV2 Voltage':                (3, 'V'),
+        'PV1 Current':                (0, 'A', 1),
+        'PV2 Current':                (1, 'A', 1),
+        'PV1 Voltage':                (2, 'V', 1),
+        'PV2 Voltage':                (3, 'V', 1),
 
-        'Output Current':             (4, 'A'),
-        'Network Voltage':            (5, 'V'),
-        'Power Now':                  (6, 'W'),
+        'Output Current':             (4, 'A', 1),
+        'Network Voltage':            (5, 'V', 1),
+        'Power Now':                  (6, 'W', 1),
 
-        'Inverter Temperature':       (7, 'C'),
-        'Today\'s Energy':            (8, 'kWh'),
-        'Total Energy':               (9, 'kWh'),
-        'Exported Power':             (10, 'W'),
-        'PV1 Power':                  (11, 'W'),
-        'PV2 Power':                  (12, 'W'),
+        'Inverter Temperature':       (7, 'C', 1),
+        'Today\'s Energy':            (8, 'kWh', 1),
+        'Total Energy':               (9, 'kWh', 1),
+        'Exported Power':             (10, 'W', 1),
+        'PV1 Power':                  (11, 'W', 1),
+        'PV2 Power':                  (12, 'W', 1),
 
-        'Battery Voltage':            (13, 'V'),
-        'Battery Current':            (14, 'A'),
-        'Battery Power':              (15, 'W'),
-        'Battery Temperature':        (16, 'C'),
-        'Battery Remaining Capacity': (17, '%'),
+        'Battery Voltage':            (13, 'V', 1),
+        'Battery Current':            (14, 'A', 1),
+        'Battery Power':              (15, 'W', 1),
+        'Battery Temperature':        (16, 'C', 1),
+        'Battery Remaining Capacity': (17, '%', 1),
 
-        'Month\'s Energy':            (19, 'kWh'),
+        'Month\'s Energy':            (19, 'kWh', 1),
 
-        'Grid Frequency':             (50, 'Hz'),
-        'EPS Voltage':                (53, 'V'),
-        'EPS Current':                (54, 'A'),
-        'EPS Power':                  (55, 'W'),
-        'EPS Frequency':              (56, 'Hz'),
+        'Grid Frequency':             (50, 'Hz', 1),
+        'EPS Voltage':                (53, 'V', 1),
+        'EPS Current':                (54, 'A', 1),
+        'EPS Power':                  (55, 'W', 1),
+        'EPS Frequency':              (56, 'Hz', 1),
     }
 
     @classmethod
@@ -202,9 +218,10 @@ class InverterPost(Inverter):
         response = cls.schema()(json_response)
         return InverterResponse(
             data=cls.map_response(response['Data'], cls.sensor_map()),
-            serial_number=response['SN'],
+            serial_number=response.get('SN') or response.get('sn', 1),
             version=response['ver'],
-            type=response['type']
+            type=response['type'] if not isinstance(
+                response['type'], int) else InterverTypes[response['type']]
         )
 
 
@@ -232,47 +249,47 @@ class X3(InverterPost):
     }, extra=vol.REMOVE_EXTRA)
 
     __sensor_map = {
-        'PV1 Current':                (0, 'A'),
-        'PV2 Current':                (1, 'A'),
-        'PV1 Voltage':                (2, 'V'),
-        'PV2 Voltage':                (3, 'V'),
+        'PV1 Current':                (0, 'A', 1),
+        'PV2 Current':                (1, 'A', 1),
+        'PV1 Voltage':                (2, 'V', 1),
+        'PV2 Voltage':                (3, 'V', 1),
 
-        'Output Current Phase 1':     (4, 'A'),
-        'Network Voltage Phase 1':    (5, 'V'),
-        'AC Power':                   (6, 'W'),
+        'Output Current Phase 1':     (4, 'A', 1),
+        'Network Voltage Phase 1':    (5, 'V', 1),
+        'AC Power':                   (6, 'W', 1),
 
-        'Inverter Temperature':       (7, 'C'),
-        'Today\'s Energy':            (8, 'kWh'),
-        'Total Energy':               (9, 'kWh'),
-        'Exported Power':             (10, 'W'),
-        'PV1 Power':                  (11, 'W'),
-        'PV2 Power':                  (12, 'W'),
+        'Inverter Temperature':       (7, 'C', 1),
+        'Today\'s Energy':            (8, 'kWh', 1),
+        'Total Energy':               (9, 'kWh', 1),
+        'Exported Power':             (10, 'W', 1),
+        'PV1 Power':                  (11, 'W', 1),
+        'PV2 Power':                  (12, 'W', 1),
 
-        'Battery Voltage':            (13, 'V'),
-        'Battery Current':            (14, 'A'),
-        'Battery Power':              (15, 'W'),
-        'Battery Temperature':        (16, 'C'),
-        'Battery Remaining Capacity': (21, '%'),
+        'Battery Voltage':            (13, 'V', 1),
+        'Battery Current':            (14, 'A', 1),
+        'Battery Power':              (15, 'W', 1),
+        'Battery Temperature':        (16, 'C', 1),
+        'Battery Remaining Capacity': (21, '%', 1),
 
-        'Total Feed-in Energy':       (41, 'kWh'),
-        'Total Consumption':          (42, 'kWh'),
+        'Total Feed-in Energy':       (41, 'kWh', 1),
+        'Total Consumption':          (42, 'kWh', 1),
 
-        'Power Now Phase 1':          (43, 'W'),
-        'Power Now Phase 2':          (44, 'W'),
-        'Power Now Phase 3':          (45, 'W'),
-        'Output Current Phase 2':     (46, 'A'),
-        'Output Current Phase 3':     (47, 'A'),
-        'Network Voltage Phase 2':    (48, 'V'),
-        'Network Voltage Phase 3':    (49, 'V'),
+        'Power Now Phase 1':          (43, 'W', 1),
+        'Power Now Phase 2':          (44, 'W', 1),
+        'Power Now Phase 3':          (45, 'W', 1),
+        'Output Current Phase 2':     (46, 'A', 1),
+        'Output Current Phase 3':     (47, 'A', 1),
+        'Network Voltage Phase 2':    (48, 'V', 1),
+        'Network Voltage Phase 3':    (49, 'V', 1),
 
-        'Grid Frequency Phase 1':     (50, 'Hz'),
-        'Grid Frequency Phase 2':     (51, 'Hz'),
-        'Grid Frequency Phase 3':     (52, 'Hz'),
+        'Grid Frequency Phase 1':     (50, 'Hz', 1),
+        'Grid Frequency Phase 2':     (51, 'Hz', 1),
+        'Grid Frequency Phase 3':     (52, 'Hz', 1),
 
-        'EPS Voltage':                (53, 'V'),
-        'EPS Current':                (54, 'A'),
-        'EPS Power':                  (55, 'W'),
-        'EPS Frequency':              (56, 'Hz'),
+        'EPS Voltage':                (53, 'V', 1),
+        'EPS Current':                (54, 'A', 1),
+        'EPS Power':                  (55, 'W', 1),
+        'EPS Frequency':              (56, 'Hz', 1),
     }
 
     @classmethod
@@ -313,38 +330,38 @@ class X1(InverterPost):
     }, extra=vol.REMOVE_EXTRA)
 
     __sensor_map = {
-        'PV1 Current':                (0, 'A'),
-        'PV2 Current':                (1, 'A'),
-        'PV1 Voltage':                (2, 'V'),
-        'PV2 Voltage':                (3, 'V'),
+        'PV1 Current':                (0, 'A', 1),
+        'PV2 Current':                (1, 'A', 1),
+        'PV1 Voltage':                (2, 'V', 1),
+        'PV2 Voltage':                (3, 'V', 1),
 
-        'Output Current':             (4, 'A'),
-        'Network Voltage':            (5, 'V'),
-        'AC Power':                   (6, 'W'),
+        'Output Current':             (4, 'A', 1),
+        'Network Voltage':            (5, 'V', 1),
+        'AC Power':                   (6, 'W', 1),
 
-        'Inverter Temperature':       (7, 'C'),
-        'Today\'s Energy':            (8, 'kWh'),
-        'Total Energy':               (9, 'kWh'),
-        'Exported Power':             (10, 'W'),
-        'PV1 Power':                  (11, 'W'),
-        'PV2 Power':                  (12, 'W'),
+        'Inverter Temperature':       (7, 'C', 1),
+        'Today\'s Energy':            (8, 'kWh', 1),
+        'Total Energy':               (9, 'kWh', 1),
+        'Exported Power':             (10, 'W', 1),
+        'PV1 Power':                  (11, 'W', 1),
+        'PV2 Power':                  (12, 'W', 1),
 
-        'Battery Voltage':            (13, 'V'),
-        'Battery Current':            (14, 'A'),
-        'Battery Power':              (15, 'W'),
-        'Battery Temperature':        (16, 'C'),
-        'Battery Remaining Capacity': (21, '%'),
+        'Battery Voltage':            (13, 'V', 1),
+        'Battery Current':            (14, 'A', 1),
+        'Battery Power':              (15, 'W', 1),
+        'Battery Temperature':        (16, 'C', 1),
+        'Battery Remaining Capacity': (21, '%', 1),
 
-        'Total Feed-in Energy':       (41, 'kWh'),
-        'Total Consumption':          (42, 'kWh'),
+        'Total Feed-in Energy':       (41, 'kWh', 1),
+        'Total Consumption':          (42, 'kWh', 1),
 
-        'Power Now':                  (43, 'W'),
-        'Grid Frequency':             (50, 'Hz'),
+        'Power Now':                  (43, 'W', 1),
+        'Grid Frequency':             (50, 'Hz', 1),
 
-        'EPS Voltage':                (53, 'V'),
-        'EPS Current':                (54, 'A'),
-        'EPS Power':                  (55, 'W'),
-        'EPS Frequency':              (56, 'Hz'),
+        'EPS Voltage':                (53, 'V', 1),
+        'EPS Current':                (54, 'A', 1),
+        'EPS Power':                  (55, 'W', 1),
+        'EPS Frequency':              (56, 'Hz', 1),
     }
 
     @classmethod
@@ -378,37 +395,88 @@ class X1Mini(InverterPost):
     }, extra=vol.REMOVE_EXTRA)
 
     __sensor_map = {
-        'PV1 Current':                (0, 'A'),
-        'PV2 Current':                (1, 'A'),
-        'PV1 Voltage':                (2, 'V'),
-        'PV2 Voltage':                (3, 'V'),
+        'PV1 Current':                (0, 'A', 1),
+        'PV2 Current':                (1, 'A', 1),
+        'PV1 Voltage':                (2, 'V', 1),
+        'PV2 Voltage':                (3, 'V', 1),
 
-        'Output Current':             (4, 'A'),
-        'Network Voltage':            (5, 'V'),
-        'AC Power':                   (6, 'W'),
+        'Output Current':             (4, 'A', 1),
+        'Network Voltage':            (5, 'V', 1),
+        'AC Power':                   (6, 'W', 1),
 
-        'Inverter Temperature':       (7, 'C'),
-        'Today\'s Energy':            (8, 'kWh'),
-        'Total Energy':               (9, 'kWh'),
-        'Exported Power':             (10, 'W'),
-        'PV1 Power':                  (11, 'W'),
-        'PV2 Power':                  (12, 'W'),
+        'Inverter Temperature':       (7, 'C', 1),
+        'Today\'s Energy':            (8, 'kWh', 1),
+        'Total Energy':               (9, 'kWh', 1),
+        'Exported Power':             (10, 'W', 1),
+        'PV1 Power':                  (11, 'W', 1),
+        'PV2 Power':                  (12, 'W', 1),
 
-        'Total Feed-in Energy':       (41, 'kWh'),
-        'Total Consumption':          (42, 'kWh'),
+        'Total Feed-in Energy':       (41, 'kWh', 1),
+        'Total Consumption':          (42, 'kWh', 1),
 
-        'Power Now':                  (43, 'W'),
-        'Grid Frequency':             (50, 'Hz'),
+        'Power Now':                  (43, 'W', 1),
+        'Grid Frequency':             (50, 'Hz', 1),
     }
 
-    @classmethod
+    @ classmethod
     def sensor_map(cls):
         return cls.__sensor_map
 
-    @classmethod
+    @ classmethod
+    def schema(cls):
+        return cls.__schema
+
+
+class X1MiniV34(InverterPost):
+    __schema = vol.Schema({
+        vol.Required('type', 'type'): vol.All(int, vol.Equal(4)),
+        vol.Required('sn',): str,
+        vol.Required('ver'): str,
+        vol.Required('Data'): vol.Schema(
+            vol.All(
+                [vol.Coerce(float)],
+                vol.Any(
+                    vol.Length(min=69, max=69),
+                    vol.Length(min=200, max=200),
+                )
+            )
+        ),
+        vol.Required('Information'): vol.Schema(
+            vol.Any(
+                vol.Length(min=9, max=9),
+                vol.Length(min=10, max=10)
+            )
+        ),
+    }, extra=vol.REMOVE_EXTRA)
+
+    __sensor_map = {
+        'Network Voltage':            (0, 'V', 0.1),
+        'Output Current':             (1, 'A', 0.1),
+        'AC Power':                   (2, 'W', 1),
+        'PV1 Voltage':                (3, 'V', 0.1),
+        'PV2 Voltage':                (4, 'V', 0.1),
+        'PV1 Current':                (5, 'A', 0.1),
+        'PV2 Current':                (6, 'A', 0.1),
+        'PV1 Power':                  (7, 'W', 1),
+        'PV2 Power':                  (8, 'W', 1),
+        'Grid Frequency':             (9, 'Hz', 0.01),
+        'Total Energy':               (11, 'kWh', 0.1),
+        'Today\'s Energy':            (13, 'kWh', 0.1),
+        # 'Exported Power':             (8, 'W', 0.1),
+        # 'Inverter Temperature':       (7, 'C', 0.1),
+        'Total Feed-in Energy':       (41, 'kWh', 0.1),
+        'Total Consumption':          (42, 'kWh', 0.1),
+        'Power Now':                  (43, 'W', 0.1),
+    }
+
+    @ classmethod
+    def sensor_map(cls):
+        return cls.__sensor_map
+
+    @ classmethod
     def schema(cls):
         return cls.__schema
 
 
 # registry of inverters
-REGISTRY = [XHybrid, X3, X1, X1Mini]
+REGISTRY = [XHybrid, X3, X1, X1MiniV34, X1Mini]
