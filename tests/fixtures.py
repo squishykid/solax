@@ -287,7 +287,7 @@ X3_HYBRID_VALUES = {
     'EPS Frequency': 0,
 }
 
-X3_V34_HYBRID_VALUES = {
+X3V34_HYBRID_VALUES = {
     'Network Voltage Phase 1': 246.8,
     'Network Voltage Phase 2': 249,
     'Network Voltage Phase 3': 250.8,
@@ -476,8 +476,8 @@ INVERTERS_UNDER_TEST = [
         method='POST',
         query_string='optType=ReadRealTimeData',
         response=X3_HYBRID_G3_2X_MPPT_RESPONSE_V34,
-        inverter=inverter.X3_V34,
-        values=X3_V34_HYBRID_VALUES,
+        inverter=inverter.X3V34,
+        values=X3V34_HYBRID_VALUES,
     )
 ]
 

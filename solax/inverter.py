@@ -75,7 +75,7 @@ class Inverter:
     @classmethod
     def map_response(cls, resp_data):
         result = {}
-        for sensor_name, (idx, unit, *conv) in cls.sensor_map().items():
+        for sensor_name, (idx, _, *conv) in cls.sensor_map().items():
             if idx < 0:
                 val = None
             elif conv:
@@ -324,34 +324,34 @@ def _consumption(value, result):
     return value
 
 
-def _twoway_current(x, _):
-    return _to_signed(x, None) / 10
+def _twoway_current(val, _):
+    return _to_signed(val, None) / 10
 
 
-def _div10(x, _):
-    return x / 10
+def _div10(val, _):
+    return val / 10
 
 
-def _div100(x, _):
-    return x / 100
+def _div100(val, _):
+    return val / 100
 
 
-def _to_signed(x, _):
-    if x > 32767:
-        return x - 65535
-    else:
-        return x
+def _to_signed(val, _):
+    if val > 32767:
+        val -= 65535
+    return val
 
 
-def _pv_power(_, r):
-    return r['PV1 Power'] + r['PV2 Power']
+def _pv_power(_, result):
+    return result['PV1 Power'] + result['PV2 Power']
 
 
-def _load_power(_, r):
-    return r['AC Power'] - r['Exported Power']
+def _load_power(_, result):
+    return result['AC Power'] - result['Exported Power']
 
 
-class X3_V34(InverterPost):
+class X3V34(InverterPost):
+    """X3 v2.034.06"""
     __schema = vol.Schema({
         vol.Required('type'): vol.All(int, 5),
         vol.Required('sn'): str,
@@ -563,4 +563,4 @@ class X1Mini(InverterPost):
 
 
 # registry of inverters
-REGISTRY = [XHybrid, X3, X3_V34, X1, X1Mini]
+REGISTRY = [XHybrid, X3, X3V34, X1, X1Mini]
