@@ -360,45 +360,47 @@ class X3_V34(InverterPost):
     }, extra=vol.REMOVE_EXTRA)
 
     __sensor_map = {
-        'Network Voltage Phase 1':    (0, 'V', __div10),
-        'Network Voltage Phase 2':    (1, 'V', __div10),
-        'Network Voltage Phase 3':    (2, 'V', __div10),
+        'Network Voltage Phase 1':    (0,   'V', __div10),
+        'Network Voltage Phase 2':    (1,   'V', __div10),
+        'Network Voltage Phase 3':    (2,   'V', __div10),
 
-        'Output Current Phase 1':     (3, 'A', __div10),
-        'Output Current Phase 2':     (4, 'A', __div10),
-        'Output Current Phase 3':     (5, 'A', __div10),
+        'Output Current Phase 1':     (3,   'A', __div10),
+        'Output Current Phase 2':     (4,   'A', __div10),
+        'Output Current Phase 3':     (5,   'A', __div10),
 
-        'Power Now Phase 1':          (6, 'W'),
-        'Power Now Phase 2':          (7, 'W'),
-        'Power Now Phase 3':          (8, 'W'),
+        'Power Now Phase 1':          (6,   'W'),
+        'Power Now Phase 2':          (7,   'W'),
+        'Power Now Phase 3':          (8,   'W'),
 
-        'PV1 Voltage':                (9, 'V', __div10),
-        'PV2 Voltage':                (10, 'V', __div10),
-        'PV1 Current':                (11, 'A', __div10),
-        'PV2 Current':                (12, 'A', __div10),
-        'PV1 Power':                  (13, 'W'),
-        'PV2 Power':                  (14, 'W'),
+        'PV1 Voltage':                (9,   'V', __div10),
+        'PV2 Voltage':                (10,  'V', __div10),
+        'PV1 Current':                (11,  'A', __div10),
+        'PV2 Current':                (12,  'A', __div10),
+        'PV1 Power':                  (13,  'W'),
+        'PV2 Power':                  (14,  'W'),
+        'Total PV Power':             (0,   'W', lambda _, r: r['PV1 Power'] + r['PV2 Power']),
 
-        'Grid Frequency Phase 1':     (15, 'Hz', __div100),
-        'Grid Frequency Phase 2':     (16, 'Hz', __div100),
-        'Grid Frequency Phase 3':     (17, 'Hz', __div100),
+        'Grid Frequency Phase 1':     (15,  'Hz', __div100),
+        'Grid Frequency Phase 2':     (16,  'Hz', __div100),
+        'Grid Frequency Phase 3':     (17,  'Hz', __div100),
 
-        'Total Energy':               (19, 'kWh', __div10),
-        'Today\'s Energy':            (21, 'kWh', __div10),
+        'Total Energy':               (19,  'kWh', __div10),
+        'Today\'s Energy':            (21,  'kWh', __div10),
 
-        'Battery Voltage':            (24, 'V', __div100),
-        'Battery Current':            (25, 'A', __process_twoway_current),
-        'Battery Power':              (26, 'W', __to_signed),
-        'Battery Temperature':        (27, 'C'),
-        'Battery Remaining Capacity': (28, '%'),
+        'Battery Voltage':            (24,  'V', __div100),
+        'Battery Current':            (25,  'A', __process_twoway_current),
+        'Battery Power':              (26,  'W', __to_signed),
+        'Battery Temperature':        (27,  'C'),
+        'Battery Remaining Capacity': (28,  '%'),
 
-        'Exported Power':             (65, 'W', __to_signed),
-        'Total Feed-in Energy':       (67, 'kWh', __process_energy),
-        'Total Feed-in Energy Resets':(68, ''),
-        'Total Consumption':          (69, 'kWh', __process_consumption),
-        'Total Consumption Resets':   (70, ''),
+        'Exported Power':             (65,  'W', __to_signed),
+        'Total Feed-in Energy':       (67,  'kWh', __process_energy),
+        'Total Feed-in Energy Resets':(68,  ''),
+        'Total Consumption':          (69,  'kWh', __process_consumption),
+        'Total Consumption Resets':   (70,  ''),
 
         'AC Power':                   (181, 'W'),
+        'Load Power':                 (0,   'W', lambda _, r: r['AC Power'] - r['Exported Power']),
     }
 
     @classmethod
