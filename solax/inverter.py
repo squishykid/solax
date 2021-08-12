@@ -76,7 +76,9 @@ class Inverter:
     def map_response(cls, resp_data):
         result = {}
         for sensor_name, (idx, unit, *conv) in cls.sensor_map().items():
-          if conv:
+          if idx < 0:
+            val = None
+          elif conv:
             val = conv[0](resp_data[idx])
           else:
             val = resp_data[idx]
@@ -378,7 +380,7 @@ class X3_V34(InverterPost):
         'PV2 Current':                (12,  'A', __div10),
         'PV1 Power':                  (13,  'W'),
         'PV2 Power':                  (14,  'W'),
-        'Total PV Power':             (0,   'W', lambda _, r: r['PV1 Power'] + r['PV2 Power']),
+        'Total PV Power':             (-1,   'W', lambda _, r: r['PV1 Power'] + r['PV2 Power']),
 
         'Grid Frequency Phase 1':     (15,  'Hz', __div100),
         'Grid Frequency Phase 2':     (16,  'Hz', __div100),
@@ -400,7 +402,7 @@ class X3_V34(InverterPost):
         'Total Consumption Resets':   (70,  ''),
 
         'AC Power':                   (181, 'W'),
-        'Load Power':                 (0,   'W', lambda _, r: r['AC Power'] - r['Exported Power']),
+        'Load Power':                 (-2,  'W', lambda _, r: r['AC Power'] - r['Exported Power']),
     }
 
     @classmethod
