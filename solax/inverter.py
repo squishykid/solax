@@ -75,11 +75,9 @@ class Inverter:
     @classmethod
     def map_response(cls, resp_data):
         result = {}
-        for sensor_name, (idx, _, *conv) in cls.sensor_map().items():
+        for sensor_name, (idx, _) in cls.sensor_map().items():
             if idx < 0:
                 val = None
-            elif conv:
-                val = conv[0](resp_data[idx])
             else:
                 val = resp_data[idx]
             result[sensor_name] = val
