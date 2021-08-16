@@ -129,28 +129,6 @@ X3_HYBRID_G3_RESPONSE = {
                     1, 3.00, 0.00, 3.17, 1.01]
 }
 
-X3_HYBRID_G3_2X_MPPT_RESPONSE = {
-    "type": "X3-Hybiyd-G3",
-    "SN": "XXXXXXXXXX",
-    "ver": "2.033.20",
-    "Data": [0.0, 0.0, 0.0, 0.0, 0.9, 234.0, 3189, 42, 15.2, 27.0, -25, 0, 0,
-             210.30, -15.70, -3321, 24, 8.6, 0, 11.0, 1, 68, 232.4, 170.0,
-             31.0, 35.0, 22.6, 20.7, 3.8, 3.8, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-             2.03, 23.41, 123, 1344, 1722, 5.4, 6.9, 250.0, 251.9, 50.01,
-             50.01, 50.01, 0.0, 0.0, 0, 0.00, 0, 0, 0, 0.00, 0, 0, 0, 0, 0.00,
-             0, 0, 2, 1, 26, 1.00, 0, 100, 10, 25.00, 25.00, 0, 0, 0, 0, 0.0,
-             10.8, 24.4, 0.0, 0, 2, 0.0, 0.0, 0, 0.0, 0.0, 0, 0, 0, 0, 1, 1,
-             0, 0, 0.00, 0.00, 1, 273, 212.3, -16.2, -3439],
-    "Information": [8.000, 5, "X3-Hybiyd-G3", "XXXXXXXX", 1, 4.47, 0.00, 4.34,
-                    1.05],
-    "battery": {
-      "brand": "83",
-      "masterVer": "1.11",
-      "slaveNum": "4",
-      "slaveVer": [1.13, 1.13, 1.13, 1.13]
-    }
-}
-
 XHYBRID_VALUES = {
     'Today\'s Energy': 8.0,
     'Battery Current': 14.0,
@@ -178,6 +156,48 @@ XHYBRID_VALUES = {
     'Total Energy': 9
 }
 
+X3_HYBRID_G3_2X_MPPT_RESPONSE = {
+    "type": "X3-Hybiyd-G3",
+    "SN": "XXXXXXXXXX",
+    "ver": "2.033.20",
+    "Data": [0.0, 0.0, 0.0, 0.0, 0.9, 234.0, 3189, 42, 15.2, 27.0, -25, 0, 0,
+             210.30, -15.70, -3321, 24, 8.6, 0, 11.0, 1, 68, 232.4, 170.0,
+             31.0, 35.0, 22.6, 20.7, 3.8, 3.8, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             2.03, 23.41, 123, 1344, 1722, 5.4, 6.9, 250.0, 251.9, 50.01,
+             50.01, 50.01, 0.0, 0.0, 0, 0.00, 0, 0, 0, 0.00, 0, 0, 0, 0, 0.00,
+             0, 0, 2, 1, 26, 1.00, 0, 100, 10, 25.00, 25.00, 0, 0, 0, 0, 0.0,
+             10.8, 24.4, 0.0, 0, 2, 0.0, 0.0, 0, 0.0, 0.0, 0, 0, 0, 0, 1, 1,
+             0, 0, 0.00, 0.00, 1, 273, 212.3, -16.2, -3439],
+    "Information": [8.000, 5, "X3-Hybiyd-G3", "XXXXXXXX", 1, 4.47, 0.00, 4.34,
+                    1.05],
+    "battery": {
+      "brand": "83",
+      "masterVer": "1.11",
+      "slaveNum": "4",
+      "slaveVer": [1.13, 1.13, 1.13, 1.13]
+    }
+}
+
+X3_HYBRID_G3_2X_MPPT_RESPONSE_V34 = {
+    "type": 5,
+    "sn": "XXXXXXXXXX",
+    "ver": "2.034.06",
+    "Data": [2468, 2490, 2508, 13, 14, 10, 266, 284, 136, 5377, 4630, 17, 0,
+             958, 0, 5003, 5003, 5003, 2, 14833, 0, 103, 0, 0, 22930, 90, 229,
+             22, 99, 0, 7062, 0, 125, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             100, 0, 41, 7777, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 65480,
+             0, 17372, 0, 59877, 0, 665, 41, 256, 2352, 1568, 20, 350, 202,
+             190, 41, 41, 81, 1, 1, 0, 0, 8142, 0, 17319, 0, 6, 0, 64851,
+             65535, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 83, 0, 55, 0, 0, 6, 0, 164,
+             43, 91, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 256, 12579, 783, 5381,
+             1107, 512, 8224, 8224, 0, 0, 4369, 0, 273, 2295, 5, 114, 4112,
+             4096, 25912, 31, 21302, 19778, 18003, 12355, 16697, 12354, 14132,
+             21302, 13110, 12338, 12337, 14386, 12354, 12852, 21302, 13110,
+             12338, 12337, 14386, 12354, 12340, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 686, 1, 257, 257, 1794, 1025, 0, 22930, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0],
+    "Information": [8.000, 5, "XXXXXXXX", 1, 4.47, 0.00, 4.34, 1.05, 0.0, 1]
+}
 
 X3_VALUES = {
     'PV1 Current': 0,
@@ -265,6 +285,50 @@ X3_HYBRID_VALUES = {
     'EPS Current': 0,
     'EPS Power': 0,
     'EPS Frequency': 0,
+}
+
+X3V34_HYBRID_VALUES = {
+    'Network Voltage Phase 1': 246.8,
+    'Network Voltage Phase 2': 249,
+    'Network Voltage Phase 3': 250.8,
+
+    'Output Current Phase 1': 1.3,
+    'Output Current Phase 2': 1.4,
+    'Output Current Phase 3': 1,
+
+    'Power Now Phase 1': 266,
+    'Power Now Phase 2': 284,
+    'Power Now Phase 3': 136,
+
+    'PV1 Voltage': 537.7,
+    'PV2 Voltage': 463,
+    'PV1 Current': 1.7,
+    'PV2 Current': 0,
+    'PV1 Power': 958,
+    'PV2 Power': 0,
+    'Total PV Power': 958,
+
+    'Grid Frequency Phase 1': 50.03,
+    'Grid Frequency Phase 2': 50.03,
+    'Grid Frequency Phase 3': 50.03,
+
+    'Total Energy': 1483.3,
+    'Today\'s Energy': 10.3,
+
+    'Battery Voltage': 229.3,
+    'Battery Current': 9,
+    'Battery Power': 229,
+    'Battery Temperature': 22,
+    'Battery Remaining Capacity': 99,
+
+    'Exported Power': -55,
+    'Total Feed-in Energy': 173.72,
+    'Total Feed-in Energy Resets': 0,
+    'Total Consumption': 598.77,
+    'Total Consumption Resets': 0,
+
+    'AC Power': 686,
+    'Load Power': 741,
 }
 
 X1_VALUES = {
@@ -406,6 +470,14 @@ INVERTERS_UNDER_TEST = [
         response=X3_HYBRID_G3_2X_MPPT_RESPONSE,
         inverter=inverter.X3,
         values=X3_HYBRID_VALUES,
+    ),
+    InverterUnderTest(
+        uri="/",
+        method='POST',
+        query_string='optType=ReadRealTimeData',
+        response=X3_HYBRID_G3_2X_MPPT_RESPONSE_V34,
+        inverter=inverter.X3V34,
+        values=X3V34_HYBRID_VALUES,
     )
 ]
 

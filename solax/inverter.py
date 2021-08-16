@@ -3,7 +3,8 @@ from collections import namedtuple
 
 import aiohttp
 import voluptuous as vol
-from voluptuous import Invalid
+from voluptuous import Invalid, MultipleInvalid
+from voluptuous.humanize import humanize_error
 
 
 class InverterError(Exception):
@@ -58,19 +59,31 @@ class Inverter:
         raise NotImplementedError()
 
     @classmethod
+    def postprocess_map(cls):
+        """
+        Return map of functions to be applied to each sensor value
+        """
+        return {}
+
+    @classmethod
     def schema(cls):
         """
         Return schema
         """
         raise NotImplementedError()
 
-    @staticmethod
-    def map_response(resp_data, sensor_map):
-        return {
-            sensor_name: resp_data[i]
-            for sensor_name, (i, _)
-            in sensor_map.items()
-        }
+    @classmethod
+    def map_response(cls, resp_data):
+        result = {}
+        for sensor_name, (idx, _) in cls.sensor_map().items():
+            if idx < 0:
+                val = None
+            else:
+                val = resp_data[idx]
+            result[sensor_name] = val
+        for sensor_name, processor in cls.postprocess_map().items():
+            result[sensor_name] = processor(result[sensor_name], result)
+        return result
 
 
 async def discover(host, port, pwd='') -> Inverter:
@@ -167,7 +180,7 @@ class XHybrid(Inverter):
         json_response = json.loads(formatted)
         response = cls.schema()(json_response)
         return InverterResponse(
-            data=cls.map_response(response['Data'], cls.__sensor_map),
+            data=cls.map_response(response['Data']),
             serial_number=response['SN'],
             version=response['version'],
             type=response['type']
@@ -199,10 +212,20 @@ class InverterPost(Inverter):
                 resp = await req.read()
         raw_json = resp.decode("utf-8")
         json_response = json.loads(raw_json)
-        response = cls.schema()(json_response)
+        response = {}
+        try:
+            response = cls.schema()(json_response)
+        except (Invalid, MultipleInvalid) as ex:
+            _ = humanize_error(json_response, ex)
+            # print(_)
+            raise
+        if 'SN' in response:
+            serial_number = response['SN']
+        else:
+            serial_number = response['sn']
         return InverterResponse(
-            data=cls.map_response(response['Data'], cls.sensor_map()),
-            serial_number=response['SN'],
+            data=cls.map_response(response['Data']),
+            serial_number=serial_number,
             version=response['ver'],
             type=response['type']
         )
@@ -281,6 +304,133 @@ class X3(InverterPost):
         Return sensor map
         """
         return cls.__sensor_map
+
+    @classmethod
+    def schema(cls):
+        return cls.__schema
+
+
+def _energy(value, result):
+    value += result['Total Feed-in Energy Resets'] * 65535
+    value /= 100
+    return value
+
+
+def _consumption(value, result):
+    value += result['Total Consumption Resets'] * 65535
+    value /= 100
+    return value
+
+
+def _twoway_current(val, _):
+    return _to_signed(val, None) / 10
+
+
+def _div10(val, _):
+    return val / 10
+
+
+def _div100(val, _):
+    return val / 100
+
+
+def _to_signed(val, _):
+    if val > 32767:
+        val -= 65535
+    return val
+
+
+def _pv_power(_, result):
+    return result['PV1 Power'] + result['PV2 Power']
+
+
+def _load_power(_, result):
+    return result['AC Power'] - result['Exported Power']
+
+
+class X3V34(InverterPost):
+    """X3 v2.034.06"""
+    __schema = vol.Schema({
+        vol.Required('type'): vol.All(int, 5),
+        vol.Required('sn'): str,
+        vol.Required('ver'): str,
+        vol.Required('Data'): vol.Schema(
+            vol.All(
+                [vol.Coerce(float)],
+                vol.Length(min=200, max=200),
+                )
+            ),
+        vol.Required('Information'): vol.Schema(
+            vol.All(
+                vol.Length(min=10, max=10)
+                )
+            ),
+    }, extra=vol.REMOVE_EXTRA)
+
+    __sensor_map = {
+        'Network Voltage Phase 1':     (0,   'V', _div10),
+        'Network Voltage Phase 2':     (1,   'V', _div10),
+        'Network Voltage Phase 3':     (2,   'V', _div10),
+
+        'Output Current Phase 1':      (3,   'A', _div10),
+        'Output Current Phase 2':      (4,   'A', _div10),
+        'Output Current Phase 3':      (5,   'A', _div10),
+
+        'Power Now Phase 1':           (6,   'W'),
+        'Power Now Phase 2':           (7,   'W'),
+        'Power Now Phase 3':           (8,   'W'),
+
+        'PV1 Voltage':                 (9,   'V', _div10),
+        'PV2 Voltage':                 (10,  'V', _div10),
+        'PV1 Current':                 (11,  'A', _div10),
+        'PV2 Current':                 (12,  'A', _div10),
+        'PV1 Power':                   (13,  'W'),
+        'PV2 Power':                   (14,  'W'),
+        'Total PV Power':              (-1,  'W', _pv_power),
+
+        'Grid Frequency Phase 1':      (15,  'Hz', _div100),
+        'Grid Frequency Phase 2':      (16,  'Hz', _div100),
+        'Grid Frequency Phase 3':      (17,  'Hz', _div100),
+
+        'Total Energy':                (19,  'kWh', _div10),
+        'Today\'s Energy':             (21,  'kWh', _div10),
+
+        'Battery Voltage':             (24,  'V', _div100),
+        'Battery Current':             (25,  'A', _twoway_current),
+        'Battery Power':               (26,  'W', _to_signed),
+        'Battery Temperature':         (27,  'C'),
+        'Battery Remaining Capacity':  (28,  '%'),
+
+        'Exported Power':              (65,  'W', _to_signed),
+        'Total Feed-in Energy':        (67,  'kWh', _energy),
+        'Total Feed-in Energy Resets': (68,  ''),
+        'Total Consumption':           (69,  'kWh', _consumption),
+        'Total Consumption Resets':    (70,  ''),
+
+        'AC Power':                    (181, 'W'),
+        'Load Power':                  (-2,  'W', _load_power),
+    }
+
+    @classmethod
+    def sensor_map(cls):
+        """
+        Return sensor map
+        """
+        sensors = {}
+        for name, (idx, unit, *_) in cls.__sensor_map.items():
+            sensors[name] = (idx, unit)
+        return sensors
+
+    @classmethod
+    def postprocess_map(cls):
+        """
+        Return postprocessing map
+        """
+        sensors = {}
+        for name, (_, _, *processor) in cls.__sensor_map.items():
+            if processor:
+                sensors[name] = processor[0]
+        return sensors
 
     @classmethod
     def schema(cls):
@@ -411,4 +561,4 @@ class X1Mini(InverterPost):
 
 
 # registry of inverters
-REGISTRY = [XHybrid, X3, X1, X1Mini]
+REGISTRY = [XHybrid, X3, X3V34, X1, X1Mini]
