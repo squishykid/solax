@@ -5,3 +5,5 @@
 .DS_Store
 .eggs/**
 /build/**
+.venv/**
+.coverage
