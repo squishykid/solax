@@ -306,7 +306,6 @@ X3V34_HYBRID_VALUES = {
     'PV2 Current': 0,
     'PV1 Power': 958,
     'PV2 Power': 0,
-    'Total PV Power': 958,
 
     'Grid Frequency Phase 1': 50.03,
     'Grid Frequency Phase 2': 50.03,
@@ -328,7 +327,6 @@ X3V34_HYBRID_VALUES = {
     'Total Consumption Resets': 0,
 
     'AC Power': 686,
-    'Load Power': 741,
 }
 
 X1_VALUES = {
