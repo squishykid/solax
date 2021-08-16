@@ -20,7 +20,7 @@ class DiscoveryError(Exception):
 
 
 InverterResponse = namedtuple('InverterResponse',
-                              'data, serial_number, version, type')
+                              'data, serial_number, version, type, raw_json')
 
 
 class Inverter:
@@ -184,7 +184,8 @@ class XHybrid(Inverter):
             data=cls.map_response(response['Data']),
             serial_number=response['SN'],
             version=response['version'],
-            type=response['type']
+            type=response['type'],
+            raw_json=formatted
         )
 
     @classmethod
@@ -228,7 +229,8 @@ class InverterPost(Inverter):
             data=cls.map_response(response['Data']),
             serial_number=serial_number,
             version=response['ver'],
-            type=response['type']
+            type=response['type'],
+            raw_json=raw_json
         )
 
 
