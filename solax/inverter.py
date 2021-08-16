@@ -5,7 +5,10 @@ import aiohttp
 import voluptuous as vol
 from voluptuous import Invalid, MultipleInvalid
 from voluptuous.humanize import humanize_error
-from solax.utils import div10, div100, energy, consumption, twoway_current, to_signed
+from solax.utils import (
+    div10, div100, energy,
+    consumption, twoway_current, to_signed
+)
 
 
 class InverterError(Exception):
