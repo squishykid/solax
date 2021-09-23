@@ -173,8 +173,9 @@ class XHybrid(Inverter):
     async def make_request(cls, host, port=80, pwd=''):
         base = 'http://{}:{}/api/realTimeData.htm'
         url = base.format(host, port)
+        headers = {'X-Forwarded-For':'5.8.8.8'}
         async with aiohttp.ClientSession() as session:
-            async with session.get(url) as req:
+            async with session.get(url,headers=headers) as req:
                 garbage = await req.read()
         formatted = garbage.decode("utf-8")
         formatted = formatted.replace(",,", ",0.0,").replace(",,", ",0.0,")
@@ -202,6 +203,7 @@ class InverterPost(Inverter):
     # pylint: disable=W0223
     @classmethod
     async def make_request(cls, host, port=80, pwd=''):
+        headers = {'X-Forwarded-For':'5.8.8.8'}
         if not pwd:
             base = 'http://{}:{}/?optType=ReadRealTimeData'
             url = base.format(host, port)
@@ -209,7 +211,7 @@ class InverterPost(Inverter):
             base = 'http://{}:{}/?optType=ReadRealTimeData&pwd={}&'
             url = base.format(host, port, pwd)
         async with aiohttp.ClientSession() as session:
-            async with session.post(url) as req:
+            async with session.post(url,headers=headers) as req:
                 resp = await req.read()
         raw_json = resp.decode("utf-8")
         json_response = json.loads(raw_json)
