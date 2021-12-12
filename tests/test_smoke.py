@@ -40,6 +40,8 @@ def test_inverter_sensors_match():
     )
     for i, expected_values in test_values:
         sensor_map = i.sensor_map()
-        assert len(sensor_map) == len(expected_values)
+        msg = '%s vs\n %s' % (sorted(sensor_map.keys()),
+                              sorted(expected_values.keys()))
+        assert len(sensor_map) == len(expected_values), msg
         for name, _ in sensor_map.items():
             assert name in expected_values
