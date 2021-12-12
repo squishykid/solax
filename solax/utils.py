@@ -18,11 +18,15 @@ def consumption(value, mapped_sensor_data, *_args, **_kwargs):
     return value
 
 
-def twoway_current(val, *_args, **_kwargs):
-    return to_signed(val, None) / 10
-
-
 def to_signed(val, *_args, **_kwargs):
     if val > 32767:
         val -= 65535
     return val
+
+
+def twoway_div10(val, *_args, **_kwargs):
+    return to_signed(val, None) / 10
+
+
+def twoway_div100(val, *_args, **_kwargs):
+    return to_signed(val, None) / 100
