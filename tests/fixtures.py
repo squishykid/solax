@@ -373,6 +373,7 @@ X3V34_HYBRID_VALUES = {
     'Grid Frequency Phase 3': 50.03,
 
     'Total Energy': 1483.3,
+    'Total Energy Resets': 0,
     'Today\'s Energy': 10.3,
 
     'Battery Voltage': 229.3,
@@ -414,7 +415,8 @@ X3V34_HYBRID_VALUES_NEGATIVE_POWER = {
     'Grid Frequency Phase 2': 49.98,
     'Grid Frequency Phase 3': 49.98,
 
-    'Total Energy': 1925.1,
+    'Total Energy': 8478.6,
+    'Total Energy Resets': 1,
     'Today\'s Energy': 8.4,
 
     'Battery Voltage': 204.6,
@@ -456,7 +458,8 @@ X3V34_HYBRID_VALUES_EPS_MODE = {
     'Grid Frequency Phase 2': 0,
     'Grid Frequency Phase 3': 0,
 
-    'Total Energy': 833.9,
+    'Total Energy': 7387.4,
+    'Total Energy Resets': 1,
     'Today\'s Energy': 17.8,
 
     'Battery Voltage': 228.6,

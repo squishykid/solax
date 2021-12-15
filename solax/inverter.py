@@ -6,7 +6,7 @@ import voluptuous as vol
 from voluptuous import Invalid, MultipleInvalid
 from voluptuous.humanize import humanize_error
 from solax.utils import (
-    div10, div100, energy,
+    div10, div100, feedin_energy, total_energy,
     consumption, twoway_div10, twoway_div100, to_signed
 )
 
@@ -354,7 +354,8 @@ class X3V34(InverterPost):
         'Grid Frequency Phase 2':      (16,  'Hz', div100),
         'Grid Frequency Phase 3':      (17,  'Hz', div100),
 
-        'Total Energy':                (19,  'kWh', div10),
+        'Total Energy':                (19,  'kWh', total_energy),
+        'Total Energy Resets':         (20,  ''),
         'Today\'s Energy':             (21,  'kWh', div10),
 
         'Battery Voltage':             (24,  'V', div100),
@@ -364,7 +365,7 @@ class X3V34(InverterPost):
         'Battery Remaining Capacity':  (28,  '%'),
 
         'Exported Power':              (65,  'W', to_signed),
-        'Total Feed-in Energy':        (67,  'kWh', energy),
+        'Total Feed-in Energy':        (67,  'kWh', feedin_energy),
         'Total Feed-in Energy Resets': (68,  ''),
         'Total Consumption':           (69,  'kWh', consumption),
         'Total Consumption Resets':    (70,  ''),
