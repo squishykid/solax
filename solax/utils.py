@@ -22,6 +22,24 @@ def feedin_energy(value, mapped_sensor_data, *_args, **_kwargs):
                              key='Total Feed-in Energy Resets', adjust=div100)
 
 
+def charge_energy(value, mapped_sensor_data, *_args, **_kwargs):
+    return resetting_counter(value, mapped_sensor_data,
+                             key='Total Battery Charge Energy Resets',
+                             adjust=div10)
+
+
+def discharge_energy(value, mapped_sensor_data, *_args, **_kwargs):
+    return resetting_counter(value, mapped_sensor_data,
+                             key='Total Battery Discharge Energy Resets',
+                             adjust=div10)
+
+
+def pv_energy(value, mapped_sensor_data, *_args, **_kwargs):
+    return resetting_counter(value, mapped_sensor_data,
+                             key='Total PV Energy Resets',
+                             adjust=div10)
+
+
 def consumption(value, mapped_sensor_data, *_args, **_kwargs):
     return resetting_counter(value, mapped_sensor_data,
                              key='Total Consumption Resets', adjust=div100)

@@ -6,8 +6,8 @@ import voluptuous as vol
 from voluptuous import Invalid, MultipleInvalid
 from voluptuous.humanize import humanize_error
 from solax.utils import (
-    div10, div100, feedin_energy, total_energy,
-    consumption, twoway_div10, twoway_div100, to_signed
+    div10, div100, feedin_energy, total_energy, charge_energy, pv_energy,
+    discharge_energy, consumption, twoway_div10, twoway_div100, to_signed
 )
 
 
@@ -331,46 +331,58 @@ class X3V34(InverterPost):
     }, extra=vol.REMOVE_EXTRA)
 
     __sensor_map = {
-        'Network Voltage Phase 1':     (0,   'V', div10),
-        'Network Voltage Phase 2':     (1,   'V', div10),
-        'Network Voltage Phase 3':     (2,   'V', div10),
+        'Network Voltage Phase 1':               (0,   'V', div10),
+        'Network Voltage Phase 2':               (1,   'V', div10),
+        'Network Voltage Phase 3':               (2,   'V', div10),
 
-        'Output Current Phase 1':      (3,   'A', twoway_div10),
-        'Output Current Phase 2':      (4,   'A', twoway_div10),
-        'Output Current Phase 3':      (5,   'A', twoway_div10),
+        'Output Current Phase 1':                (3,   'A', twoway_div10),
+        'Output Current Phase 2':                (4,   'A', twoway_div10),
+        'Output Current Phase 3':                (5,   'A', twoway_div10),
 
-        'Power Now Phase 1':           (6,   'W', to_signed),
-        'Power Now Phase 2':           (7,   'W', to_signed),
-        'Power Now Phase 3':           (8,   'W', to_signed),
+        'Power Now Phase 1':                     (6,   'W', to_signed),
+        'Power Now Phase 2':                     (7,   'W', to_signed),
+        'Power Now Phase 3':                     (8,   'W', to_signed),
 
-        'PV1 Voltage':                 (9,   'V', div10),
-        'PV2 Voltage':                 (10,  'V', div10),
-        'PV1 Current':                 (11,  'A', div10),
-        'PV2 Current':                 (12,  'A', div10),
-        'PV1 Power':                   (13,  'W'),
-        'PV2 Power':                   (14,  'W'),
+        'PV1 Voltage':                           (9,   'V', div10),
+        'PV2 Voltage':                           (10,  'V', div10),
+        'PV1 Current':                           (11,  'A', div10),
+        'PV2 Current':                           (12,  'A', div10),
+        'PV1 Power':                             (13,  'W'),
+        'PV2 Power':                             (14,  'W'),
 
-        'Grid Frequency Phase 1':      (15,  'Hz', div100),
-        'Grid Frequency Phase 2':      (16,  'Hz', div100),
-        'Grid Frequency Phase 3':      (17,  'Hz', div100),
+        'Total PV Energy':                       (89,  'kWh', pv_energy),
+        'Total PV Energy Resets':                (90,  ''),
+        'Today\'s PV Energy':                    (112,  'kWh', div10),
 
-        'Total Energy':                (19,  'kWh', total_energy),
-        'Total Energy Resets':         (20,  ''),
-        'Today\'s Energy':             (21,  'kWh', div10),
+        'Grid Frequency Phase 1':                (15,  'Hz', div100),
+        'Grid Frequency Phase 2':                (16,  'Hz', div100),
+        'Grid Frequency Phase 3':                (17,  'Hz', div100),
 
-        'Battery Voltage':             (24,  'V', div100),
-        'Battery Current':             (25,  'A', twoway_div100),
-        'Battery Power':               (26,  'W', to_signed),
-        'Battery Temperature':         (27,  'C'),
-        'Battery Remaining Capacity':  (28,  '%'),
+        'Total Energy':                          (19,  'kWh', total_energy),
+        'Total Energy Resets':                   (20,  ''),
+        'Today\'s Energy':                       (21,  'kWh', div10),
 
-        'Exported Power':              (65,  'W', to_signed),
-        'Total Feed-in Energy':        (67,  'kWh', feedin_energy),
-        'Total Feed-in Energy Resets': (68,  ''),
-        'Total Consumption':           (69,  'kWh', consumption),
-        'Total Consumption Resets':    (70,  ''),
+        'Battery Voltage':                       (24,  'V', div100),
+        'Battery Current':                       (25,  'A', twoway_div100),
+        'Battery Power':                         (26,  'W', to_signed),
+        'Battery Temperature':                   (27,  'C'),
+        'Battery Remaining Capacity':            (28,  '%'),
 
-        'AC Power':                    (181, 'W', to_signed),
+        'Total Battery Discharge Energy':        (30,  'kWh', discharge_energy),
+        'Total Battery Discharge Energy Resets': (31,  ''),
+        'Today\'s Battery Discharge Energy':     (113,  'kWh', div10),
+        'Battery Remaining Energy':              (32,  'kWh', div10),
+        'Total Battery Charge Energy':           (87,  'kWh', charge_energy),
+        'Total Battery Charge Energy Resets':    (88,  ''),
+        'Today\'s Battery Charge Energy':        (114,  'kWh', div10),
+
+        'Exported Power':                        (65,  'W', to_signed),
+        'Total Feed-in Energy':                  (67,  'kWh', feedin_energy),
+        'Total Feed-in Energy Resets':           (68,  ''),
+        'Total Consumption':                     (69,  'kWh', consumption),
+        'Total Consumption Resets':              (70,  ''),
+
+        'AC Power':                              (181, 'W', to_signed),
     }
 
     @classmethod

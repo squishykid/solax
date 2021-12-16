@@ -368,6 +368,10 @@ X3V34_HYBRID_VALUES = {
     'PV1 Power': 958,
     'PV2 Power': 0,
 
+    'Total PV Energy': 1731.9,
+    'Total PV Energy Resets': 0,
+    'Today\'s PV Energy': 16.4,
+
     'Grid Frequency Phase 1': 50.03,
     'Grid Frequency Phase 2': 50.03,
     'Grid Frequency Phase 3': 50.03,
@@ -381,6 +385,14 @@ X3V34_HYBRID_VALUES = {
     'Battery Power': 229,
     'Battery Temperature': 22,
     'Battery Remaining Capacity': 99,
+
+    'Total Battery Discharge Energy': 706.2,
+    'Total Battery Discharge Energy Resets': 0,
+    'Today\'s Battery Discharge Energy': 4.3,
+    'Battery Remaining Energy': 12.5,
+    'Total Battery Charge Energy': 814.2,
+    'Total Battery Charge Energy Resets': 0,
+    'Today\'s Battery Charge Energy': 9.1,
 
     'Exported Power': -55,
     'Total Feed-in Energy': 173.72,
@@ -411,6 +423,10 @@ X3V34_HYBRID_VALUES_NEGATIVE_POWER = {
     'PV1 Power': 0,
     'PV2 Power': 0,
 
+    'Total PV Energy': 9615.1,
+    'Total PV Energy Resets': 1,
+    'Today\'s PV Energy': 9.8,
+
     'Grid Frequency Phase 1': 49.98,
     'Grid Frequency Phase 2': 49.98,
     'Grid Frequency Phase 3': 49.98,
@@ -424,6 +440,14 @@ X3V34_HYBRID_VALUES_NEGATIVE_POWER = {
     'Battery Power': 5117,
     'Battery Temperature': 24,
     'Battery Remaining Capacity': 20,
+
+    'Total Battery Discharge Energy': 2469.6,
+    'Total Battery Discharge Energy Resets': 0,
+    'Today\'s Battery Discharge Energy': 4,
+    'Battery Remaining Energy': 2.6,
+    'Total Battery Charge Energy': 2887.6,
+    'Total Battery Charge Energy Resets': 0,
+    'Today\'s Battery Charge Energy': 6,
 
     'Exported Power': -5743,
     'Total Feed-in Energy': 3593.49,
@@ -454,6 +478,10 @@ X3V34_HYBRID_VALUES_EPS_MODE = {
     'PV1 Power': 2678,
     'PV2 Power': 0,
 
+    'Total PV Energy': 8378.7,
+    'Total PV Energy Resets': 1,
+    'Today\'s PV Energy': 26,
+
     'Grid Frequency Phase 1': 0,
     'Grid Frequency Phase 2': 0,
     'Grid Frequency Phase 3': 0,
@@ -467,6 +495,14 @@ X3V34_HYBRID_VALUES_EPS_MODE = {
     'Battery Power': -241,
     'Battery Temperature': 27,
     'Battery Remaining Capacity': 98,
+
+    'Total Battery Discharge Energy': 2124,
+    'Total Battery Discharge Energy Resets': 0,
+    'Today\'s Battery Discharge Energy': 6.1,
+    'Battery Remaining Energy': 12.4,
+    'Total Battery Charge Energy': 2501.1,
+    'Total Battery Charge Energy Resets': 0,
+    'Today\'s Battery Charge Energy': 11.9,
 
     'Exported Power': 0,
     'Total Feed-in Energy': 3174.79,
