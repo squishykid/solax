@@ -7,7 +7,7 @@ from voluptuous import Invalid, MultipleInvalid
 from voluptuous.humanize import humanize_error
 from solax.utils import (
     div10, div100, energy,
-    consumption, twoway_current, to_signed
+    consumption, twoway_div10, twoway_div100, to_signed
 )
 
 
@@ -335,13 +335,13 @@ class X3V34(InverterPost):
         'Network Voltage Phase 2':     (1,   'V', div10),
         'Network Voltage Phase 3':     (2,   'V', div10),
 
-        'Output Current Phase 1':      (3,   'A', div10),
-        'Output Current Phase 2':      (4,   'A', div10),
-        'Output Current Phase 3':      (5,   'A', div10),
+        'Output Current Phase 1':      (3,   'A', twoway_div10),
+        'Output Current Phase 2':      (4,   'A', twoway_div10),
+        'Output Current Phase 3':      (5,   'A', twoway_div10),
 
-        'Power Now Phase 1':           (6,   'W'),
-        'Power Now Phase 2':           (7,   'W'),
-        'Power Now Phase 3':           (8,   'W'),
+        'Power Now Phase 1':           (6,   'W', to_signed),
+        'Power Now Phase 2':           (7,   'W', to_signed),
+        'Power Now Phase 3':           (8,   'W', to_signed),
 
         'PV1 Voltage':                 (9,   'V', div10),
         'PV2 Voltage':                 (10,  'V', div10),
@@ -358,7 +358,7 @@ class X3V34(InverterPost):
         'Today\'s Energy':             (21,  'kWh', div10),
 
         'Battery Voltage':             (24,  'V', div100),
-        'Battery Current':             (25,  'A', twoway_current),
+        'Battery Current':             (25,  'A', twoway_div100),
         'Battery Power':               (26,  'W', to_signed),
         'Battery Temperature':         (27,  'C'),
         'Battery Remaining Capacity':  (28,  '%'),
@@ -369,7 +369,7 @@ class X3V34(InverterPost):
         'Total Consumption':           (69,  'kWh', consumption),
         'Total Consumption Resets':    (70,  ''),
 
-        'AC Power':                    (181, 'W'),
+        'AC Power':                    (181, 'W', to_signed),
     }
 
     @classmethod
