@@ -65,6 +65,24 @@ X1_MINI_RESPONSE_V34 = {
                     1, 1.19, 0.00, 1.32, 0.00, 0.00, 1]
 }
 
+X1_SMART_RESPONSE = {
+    "sn": "XXXXXXX",
+    "ver": "2.033.20",
+    "type": 8,
+    "Data": [2396, 126, 2956, 4329, 2338, 41, 57, 1777, 1336, 6021,
+             2, 1215, 0, 137, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 43, 0, 80, 0, 0, 0, 0, 0, 0,
+             10, 65535, 87, 0, 8184, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0],
+    "Information": [8.0, 8, "XXXXXXX", 1, 1.07, 1.0, 1.05, 0.0]
+}
+
 X3_MIC_RESPONSE = {
     "type": "X3-MIC",
     "SN": "XXXXXXX",
@@ -425,6 +443,25 @@ X1_MINI_VALUES_V34 = {
     'Power Now': 0,
 }
 
+X1_SMART_VALUES = {
+    'Network Voltage': 239.6,
+    'Output Current': 12.6,
+    'AC Power': 2956,
+    'PV1 Voltage': 432.9,
+    'PV2 Voltage': 233.8,
+    'PV1 Current': 4.1,
+    'PV2 Current': 5.7,
+    'PV1 Power': 1777,
+    'PV2 Power': 1336,
+    'Grid Frequency': 60.21,
+    'Total Energy': 121.5,
+    'Today\'s Energy': 13.7,
+    'Inverter Temperature': 43,
+    'Exported Power': 10,
+    'Total Feed-in Energy': 0.87,
+    'Total Consumption': 81.84,
+}
+
 
 @pytest.fixture()
 def simple_http_fixture(httpserver):
@@ -473,6 +510,14 @@ INVERTERS_UNDER_TEST = [
         response=X1_MINI_RESPONSE_V34,
         inverter=inverter.X1MiniV34,
         values=X1_MINI_VALUES_V34,
+    ),
+    InverterUnderTest(
+        uri="/",
+        method='POST',
+        query_string='optType=ReadRealTimeData',
+        response=X1_SMART_RESPONSE,
+        inverter=inverter.X1Smart,
+        values=X1_SMART_VALUES,
     ),
     InverterUnderTest(
         uri="/",
