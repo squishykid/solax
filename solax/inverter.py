@@ -500,9 +500,13 @@ class X1(InverterPost):
             _ = humanize_error(json_response, ex)
             # print(_)
             raise
+        if 'SN' in response:
+            serial_number = response['SN']
+        else:
+            serial_number = response['sn']
         return InverterResponse(
             data=cls.map_response(response['Data']),
-            serial_number=response['sn'],
+            serial_number=serial_number,
             version=response['ver'],
             type=response['type']
         )
