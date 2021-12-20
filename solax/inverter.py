@@ -204,7 +204,6 @@ class InverterPost(Inverter):
     # pylint: disable=W0223
     @classmethod
     async def make_request(cls, host, port=80, pwd=''):
-        headers = {'X-Forwarded-For' : '5.8.8.8'}
         if not pwd:
             base = 'http://{}:{}/?optType=ReadRealTimeData'
             url = base.format(host, port)
@@ -212,7 +211,7 @@ class InverterPost(Inverter):
             base = 'http://{}:{}/?optType=ReadRealTimeData&pwd={}&'
             url = base.format(host, port, pwd)
         async with aiohttp.ClientSession() as session:
-            async with session.post(url, headers=headers) as req:
+            async with session.post(url) as req:
                 resp = await req.read()
         raw_json = resp.decode("utf-8")
         json_response = json.loads(raw_json)
@@ -479,6 +478,34 @@ class X1(InverterPost):
         'EPS Power':                  (55, 'W'),
         'EPS Frequency':              (56, 'Hz'),
     }
+
+    @classmethod
+    async def make_request(cls, host, port=80, pwd=''):
+        headers = {'X-Forwarded-For': '5.8.8.8'}
+        if not pwd:
+            base = 'http://{}:{}/?optType=ReadRealTimeData'
+            url = base.format(host, port)
+        else:
+            base = 'http://{}:{}/?optType=ReadRealTimeData&pwd={}&'
+            url = base.format(host, port, pwd)
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, headers=headers) as req:
+                resp = await req.read()
+        raw_json = resp.decode("utf-8")
+        json_response = json.loads(raw_json)
+        response = {}
+        try:
+            response = cls.schema()(json_response)
+        except (Invalid, MultipleInvalid) as ex:
+            _ = humanize_error(json_response, ex)
+            # print(_)
+            raise
+        return InverterResponse(
+            data=cls.map_response(response['Data']),
+            serial_number=response['sn'],
+            version=response['ver'],
+            type=response['type']
+        )
 
     @classmethod
     def sensor_map(cls):
