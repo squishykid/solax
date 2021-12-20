@@ -369,7 +369,8 @@ class X3V34(InverterPost):
         'Battery Temperature':                   (27,  'C'),
         'Battery Remaining Capacity':            (28,  '%'),
 
-        'Total Battery Discharge Energy':        (30,  'kWh', discharge_energy),
+        'Total Battery Discharge Energy':        (30,  'kWh',
+                                                  discharge_energy),
         'Total Battery Discharge Energy Resets': (31,  ''),
         'Today\'s Battery Discharge Energy':     (113,  'kWh', div10),
         'Battery Remaining Energy':              (32,  'kWh', div10),
@@ -386,7 +387,8 @@ class X3V34(InverterPost):
         'AC Power':                              (181, 'W', to_signed),
 
         'EPS Frequency':                         (63, 'Hz', div100),
-        'EPS Total Energy':                      (110, 'kWh', eps_total_energy),
+        'EPS Total Energy':                      (110, 'kWh',
+                                                  eps_total_energy),
         'EPS Total Energy Resets':               (111, 'Hz'),
     }
 

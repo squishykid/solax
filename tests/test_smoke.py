@@ -15,7 +15,8 @@ async def test_smoke(inverters_fixture):
     msg = 'data size should match expected values'
     assert len(values) == len(parsed.data), msg
     for sensor, value in values.items():
-        assert parsed.data[sensor] == value, f"{sensor}: expected {value} but got {parsed.data[sensor]}"
+        assert parsed.data[sensor] == value, \
+          f"{sensor}: expected {value} but got {parsed.data[sensor]}"
 
 
 @pytest.mark.asyncio

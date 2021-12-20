@@ -6,7 +6,8 @@ def div100(val, *_args, **_kwargs):
     return val / 100
 
 
-def resetting_counter(value, mapped_sensor_data, key, adjust, *_args, **_kwargs):
+def resetting_counter(value, mapped_sensor_data, key, adjust,
+                      *_args, **_kwargs):
     value += mapped_sensor_data[key] * 65535
     value = adjust(value)
     return value
