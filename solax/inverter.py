@@ -7,7 +7,8 @@ from voluptuous import Invalid, MultipleInvalid
 from voluptuous.humanize import humanize_error
 from solax.utils import (
     div10, div100, feedin_energy, total_energy, charge_energy, pv_energy,
-    discharge_energy, consumption, twoway_div10, twoway_div100, to_signed
+    discharge_energy, consumption, twoway_div10, twoway_div100, to_signed,
+    eps_total_energy
 )
 
 
@@ -385,6 +386,8 @@ class X3V34(InverterPost):
         'AC Power':                              (181, 'W', to_signed),
 
         'EPS Frequency':                         (63, 'Hz', div100),
+        'EPS Total Energy':                      (110, 'kWh', eps_total_energy),
+        'EPS Total Energy Resets':               (111, 'Hz'),
     }
 
     @classmethod

@@ -403,6 +403,8 @@ X3V34_HYBRID_VALUES = {
     'AC Power': 686,
 
     'EPS Frequency': 0,
+    'EPS Total Energy': 0.6,
+    'EPS Total Energy Resets': 0,
 }
 
 X3V34_HYBRID_VALUES_NEGATIVE_POWER = {
@@ -460,6 +462,8 @@ X3V34_HYBRID_VALUES_NEGATIVE_POWER = {
     'AC Power': -5233,
 
     'EPS Frequency': 0,
+    'EPS Total Energy': 2.1,
+    'EPS Total Energy Resets': 0,
 }
 
 X3V34_HYBRID_VALUES_EPS_MODE = {
@@ -517,6 +521,8 @@ X3V34_HYBRID_VALUES_EPS_MODE = {
     'AC Power': 0,
 
     'EPS Frequency': 50,
+    'EPS Total Energy': 1.7,
+    'EPS Total Energy Resets': 0,
 }
 
 X1_VALUES = {

@@ -17,6 +17,11 @@ def total_energy(value, mapped_sensor_data, *_args, **_kwargs):
                              key='Total Energy Resets', adjust=div10)
 
 
+def eps_total_energy(value, mapped_sensor_data, *_args, **_kwargs):
+    return resetting_counter(value, mapped_sensor_data,
+                             key='EPS Total Energy Resets', adjust=div10)
+
+
 def feedin_energy(value, mapped_sensor_data, *_args, **_kwargs):
     return resetting_counter(value, mapped_sensor_data,
                              key='Total Feed-in Energy Resets', adjust=div100)
