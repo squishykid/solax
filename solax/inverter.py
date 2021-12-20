@@ -383,6 +383,8 @@ class X3V34(InverterPost):
         'Total Consumption Resets':              (70,  ''),
 
         'AC Power':                              (181, 'W', to_signed),
+
+        'EPS Frequency':                         (63, 'Hz', div100),
     }
 
     @classmethod
