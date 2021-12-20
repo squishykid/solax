@@ -239,6 +239,27 @@ X3_HYBRID_G3_2X_MPPT_RESPONSE_V34_NEGATIVE_POWER = {
     "Information": [8.000, 5, "XXXXXXXX", 1, 4.60, 0.00, 4.42, 1.05, 0.00, 1]
 }
 
+X3_HYBRID_G3_2X_MPPT_RESPONSE_V34_EPS_MODE = {
+    "type": 5,
+    "sn": "XXXXXXXXXX",
+    "ver": "2.034.06",
+    "Data": [0, 0, 0, 0, 0, 0, 0, 0, 0, 4864, 4466, 55, 0, 2678, 0, 0, 0, 0, 7,
+             8339, 1, 178, 0, 0, 22860, 65436, 65294, 27, 98, 0, 21240, 0, 124,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 0, 52, 7541, 226,
+             2453, 205, 2223, 2276, 2426, 10, 107, 8, 172, 2441, 147, 5000, 0,
+             0, 0, 55339, 4, 18922, 1, 0, 52, 256, 2352, 1568, 0, 350, 275,
+             262, 41, 41, 225, 1, 1, 0, 0, 25011, 0, 18252, 1, 17, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 768, 0, 54, 0, 2, 17, 0, 260, 61, 119,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 256, 7971, 6926, 5385, 1107, 512,
+             8224, 8224, 0, 0, 4369, 0, 273, 2288, 65523, 65239, 4099, 4083,
+             13728, 87, 21302, 19778, 18003, 12355, 16697, 12354, 14132, 21302,
+             13110, 12338, 12337, 14386, 12354, 12852, 21302, 13110, 12338,
+             12337, 14386, 12354, 12340, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 1, 257, 257, 1281, 1025, 0, 22860, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0],
+    "Information": [8.000, 5, "XXXXXXXX", 1, 4.60, 0.00, 4.42, 1.05, 0.00, 1]
+}
+
 X3_VALUES = {
     'PV1 Current': 0,
     'PV2 Current': 1,
@@ -347,11 +368,16 @@ X3V34_HYBRID_VALUES = {
     'PV1 Power': 958,
     'PV2 Power': 0,
 
+    'Total PV Energy': 1731.9,
+    'Total PV Energy Resets': 0,
+    'Today\'s PV Energy': 16.4,
+
     'Grid Frequency Phase 1': 50.03,
     'Grid Frequency Phase 2': 50.03,
     'Grid Frequency Phase 3': 50.03,
 
     'Total Energy': 1483.3,
+    'Total Energy Resets': 0,
     'Today\'s Energy': 10.3,
 
     'Battery Voltage': 229.3,
@@ -360,6 +386,14 @@ X3V34_HYBRID_VALUES = {
     'Battery Temperature': 22,
     'Battery Remaining Capacity': 99,
 
+    'Total Battery Discharge Energy': 706.2,
+    'Total Battery Discharge Energy Resets': 0,
+    'Today\'s Battery Discharge Energy': 4.3,
+    'Battery Remaining Energy': 12.5,
+    'Total Battery Charge Energy': 814.2,
+    'Total Battery Charge Energy Resets': 0,
+    'Today\'s Battery Charge Energy': 9.1,
+
     'Exported Power': -55,
     'Total Feed-in Energy': 173.72,
     'Total Feed-in Energy Resets': 0,
@@ -367,6 +401,10 @@ X3V34_HYBRID_VALUES = {
     'Total Consumption Resets': 0,
 
     'AC Power': 686,
+
+    'EPS Frequency': 0,
+    'EPS Total Energy': 0.6,
+    'EPS Total Energy Resets': 0,
 }
 
 X3V34_HYBRID_VALUES_NEGATIVE_POWER = {
@@ -389,11 +427,16 @@ X3V34_HYBRID_VALUES_NEGATIVE_POWER = {
     'PV1 Power': 0,
     'PV2 Power': 0,
 
+    'Total PV Energy': 9615.1,
+    'Total PV Energy Resets': 1,
+    'Today\'s PV Energy': 9.8,
+
     'Grid Frequency Phase 1': 49.98,
     'Grid Frequency Phase 2': 49.98,
     'Grid Frequency Phase 3': 49.98,
 
-    'Total Energy': 1925.1,
+    'Total Energy': 8478.6,
+    'Total Energy Resets': 1,
     'Today\'s Energy': 8.4,
 
     'Battery Voltage': 204.6,
@@ -402,6 +445,14 @@ X3V34_HYBRID_VALUES_NEGATIVE_POWER = {
     'Battery Temperature': 24,
     'Battery Remaining Capacity': 20,
 
+    'Total Battery Discharge Energy': 2469.6,
+    'Total Battery Discharge Energy Resets': 0,
+    'Today\'s Battery Discharge Energy': 4,
+    'Battery Remaining Energy': 2.6,
+    'Total Battery Charge Energy': 2887.6,
+    'Total Battery Charge Energy Resets': 0,
+    'Today\'s Battery Charge Energy': 6,
+
     'Exported Power': -5743,
     'Total Feed-in Energy': 3593.49,
     'Total Feed-in Energy Resets': 5,
@@ -409,6 +460,69 @@ X3V34_HYBRID_VALUES_NEGATIVE_POWER = {
     'Total Consumption Resets': 1,
 
     'AC Power': -5233,
+
+    'EPS Frequency': 0,
+    'EPS Total Energy': 2.1,
+    'EPS Total Energy Resets': 0,
+}
+
+X3V34_HYBRID_VALUES_EPS_MODE = {
+    'Network Voltage Phase 1': 0,
+    'Network Voltage Phase 2': 0,
+    'Network Voltage Phase 3': 0,
+
+    'Output Current Phase 1': 0,
+    'Output Current Phase 2': 0,
+    'Output Current Phase 3': 0,
+
+    'Power Now Phase 1': 0,
+    'Power Now Phase 2': 0,
+    'Power Now Phase 3': 0,
+
+    'PV1 Voltage': 486.4,
+    'PV2 Voltage': 446.6,
+    'PV1 Current': 5.5,
+    'PV2 Current': 0,
+    'PV1 Power': 2678,
+    'PV2 Power': 0,
+
+    'Total PV Energy': 8378.7,
+    'Total PV Energy Resets': 1,
+    'Today\'s PV Energy': 26,
+
+    'Grid Frequency Phase 1': 0,
+    'Grid Frequency Phase 2': 0,
+    'Grid Frequency Phase 3': 0,
+
+    'Total Energy': 7387.4,
+    'Total Energy Resets': 1,
+    'Today\'s Energy': 17.8,
+
+    'Battery Voltage': 228.6,
+    'Battery Current': -0.99,
+    'Battery Power': -241,
+    'Battery Temperature': 27,
+    'Battery Remaining Capacity': 98,
+
+    'Total Battery Discharge Energy': 2124,
+    'Total Battery Discharge Energy Resets': 0,
+    'Today\'s Battery Discharge Energy': 6.1,
+    'Battery Remaining Energy': 12.4,
+    'Total Battery Charge Energy': 2501.1,
+    'Total Battery Charge Energy Resets': 0,
+    'Today\'s Battery Charge Energy': 11.9,
+
+    'Exported Power': 0,
+    'Total Feed-in Energy': 3174.79,
+    'Total Feed-in Energy Resets': 4,
+    'Total Consumption': 844.57,
+    'Total Consumption Resets': 1,
+
+    'AC Power': 0,
+
+    'EPS Frequency': 50,
+    'EPS Total Energy': 1.7,
+    'EPS Total Energy Resets': 0,
 }
 
 X1_VALUES = {
@@ -592,6 +706,14 @@ INVERTERS_UNDER_TEST = [
         response=X3_HYBRID_G3_2X_MPPT_RESPONSE_V34_NEGATIVE_POWER,
         inverter=inverter.X3V34,
         values=X3V34_HYBRID_VALUES_NEGATIVE_POWER,
+    ),
+    InverterUnderTest(
+        uri="/",
+        method='POST',
+        query_string='optType=ReadRealTimeData',
+        response=X3_HYBRID_G3_2X_MPPT_RESPONSE_V34_EPS_MODE,
+        inverter=inverter.X3V34,
+        values=X3V34_HYBRID_VALUES_EPS_MODE,
     )
 ]
 
