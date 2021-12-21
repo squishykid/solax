@@ -2,6 +2,8 @@ from collections import namedtuple
 import pytest
 from solax import inverter
 
+X_FORWARDED_HEADER = {'X-Forwarded-For': '5.8.8.8'}
+
 XHYBRID_DE01_RESPONSE = {
     'method': 'uploadsn',
     'version': 'Solax_SI_CH_2nd_20160912_DE02',
@@ -208,10 +210,10 @@ X3_HYBRID_G3_2X_MPPT_RESPONSE = {
     "Information": [8.000, 5, "X3-Hybiyd-G3", "XXXXXXXX", 1, 4.47, 0.00, 4.34,
                     1.05],
     "battery": {
-      "brand": "83",
-      "masterVer": "1.11",
-      "slaveNum": "4",
-      "slaveVer": [1.13, 1.13, 1.13, 1.13]
+        "brand": "83",
+        "masterVer": "1.11",
+        "slaveNum": "4",
+        "slaveVer": [1.13, 1.13, 1.13, 1.13]
     }
 }
 
@@ -475,7 +477,7 @@ def simple_http_fixture(httpserver):
 
 InverterUnderTest = namedtuple(
     'InverterUnderTest',
-    'uri, method, query_string, response, inverter, values'
+    'uri, method, query_string, response, inverter, values, headers'
 )
 
 INVERTERS_UNDER_TEST = [
@@ -486,6 +488,7 @@ INVERTERS_UNDER_TEST = [
         response=XHYBRID_DE01_RESPONSE,
         inverter=inverter.XHybrid,
         values=XHYBRID_VALUES,
+        headers=None,
     ),
     InverterUnderTest(
         uri='/api/realTimeData.htm',
@@ -494,6 +497,7 @@ INVERTERS_UNDER_TEST = [
         response=XHYBRID_DE02_RESPONSE,
         inverter=inverter.XHybrid,
         values=XHYBRID_VALUES,
+        headers=None,
     ),
     InverterUnderTest(
         uri="/",
@@ -502,6 +506,7 @@ INVERTERS_UNDER_TEST = [
         response=X1_BOOST_AIR_MINI_RESPONSE,
         inverter=inverter.X1Mini,
         values=X1_MINI_VALUES,
+        headers=None,
     ),
     InverterUnderTest(
         uri="/",
@@ -510,6 +515,7 @@ INVERTERS_UNDER_TEST = [
         response=X1_MINI_RESPONSE_V34,
         inverter=inverter.X1MiniV34,
         values=X1_MINI_VALUES_V34,
+        headers=None,
     ),
     InverterUnderTest(
         uri="/",
@@ -518,6 +524,7 @@ INVERTERS_UNDER_TEST = [
         response=X1_SMART_RESPONSE,
         inverter=inverter.X1Smart,
         values=X1_SMART_VALUES,
+        headers=X_FORWARDED_HEADER,
     ),
     InverterUnderTest(
         uri="/",
@@ -526,6 +533,7 @@ INVERTERS_UNDER_TEST = [
         response=X3_MIC_RESPONSE,
         inverter=inverter.X3,
         values=X3_VALUES,
+        headers=None,
     ),
     InverterUnderTest(
         uri="/",
@@ -534,6 +542,7 @@ INVERTERS_UNDER_TEST = [
         response=X3_HYBRID_G3_RESPONSE,
         inverter=inverter.X3,
         values=X3_VALUES,
+        headers=None,
     ),
     InverterUnderTest(
         uri="/",
@@ -542,6 +551,7 @@ INVERTERS_UNDER_TEST = [
         response=X1_HYBRID_G3_RESPONSE,
         inverter=inverter.X1,
         values=X1_VALUES,
+        headers=None,
     ),
     InverterUnderTest(
         uri="/",
@@ -550,6 +560,7 @@ INVERTERS_UNDER_TEST = [
         response=X1_HYBRID_G3_2X_MPPT_RESPONSE,
         inverter=inverter.X1,
         values=X1_VALUES,
+        headers=None,
     ),
     InverterUnderTest(
         uri="/",
@@ -558,6 +569,7 @@ INVERTERS_UNDER_TEST = [
         response=X3_HYBRID_G3_2X_MPPT_RESPONSE,
         inverter=inverter.X3,
         values=X3_HYBRID_VALUES,
+        headers=None,
     ),
     InverterUnderTest(
         uri="/",
@@ -566,6 +578,7 @@ INVERTERS_UNDER_TEST = [
         response=X3_HYBRID_G3_2X_MPPT_RESPONSE_V34,
         inverter=inverter.X3V34,
         values=X3V34_HYBRID_VALUES,
+        headers=None,
     )
 ]
 
@@ -575,7 +588,8 @@ def inverters_fixture(httpserver, request):
     httpserver.expect_request(
         uri=request.param.uri,
         method=request.param.method,
-        query_string=request.param.query_string
+        query_string=request.param.query_string,
+        headers=request.param.headers
     ).respond_with_json(request.param.response)
     yield (
         (httpserver.host, httpserver.port),

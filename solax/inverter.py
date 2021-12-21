@@ -48,7 +48,7 @@ class Inverter:
         return data
 
     @classmethod
-    async def make_request(cls, host, port, pwd=''):
+    async def make_request(cls, host, port, pwd='', headers=None):
         """
         Return instance of 'InverterResponse'
         Raise exception if unable to get data
@@ -170,7 +170,7 @@ class XHybrid(Inverter):
     }
 
     @classmethod
-    async def make_request(cls, host, port=80, pwd=''):
+    async def make_request(cls, host, port=80, pwd='', headers=None):
         base = 'http://{}:{}/api/realTimeData.htm'
         url = base.format(host, port)
         async with aiohttp.ClientSession() as session:
@@ -199,9 +199,9 @@ class XHybrid(Inverter):
 class InverterPost(Inverter):
     # This is an intermediate abstract class,
     #  so we can disable the pylint warning
-    # pylint: disable=W0223
+    # pylint: disable=W0223,R0914
     @classmethod
-    async def make_request(cls, host, port=80, pwd=''):
+    async def make_request(cls, host, port=80, pwd='', headers=None):
         if not pwd:
             base = 'http://{}:{}/?optType=ReadRealTimeData'
             url = base.format(host, port)
@@ -209,7 +209,7 @@ class InverterPost(Inverter):
             base = 'http://{}:{}/?optType=ReadRealTimeData&pwd={}&'
             url = base.format(host, port, pwd)
         async with aiohttp.ClientSession() as session:
-            async with session.post(url) as req:
+            async with session.post(url, headers=headers) as req:
                 resp = await req.read()
         raw_json = resp.decode("utf-8")
         json_response = json.loads(raw_json)
@@ -218,15 +218,10 @@ class InverterPost(Inverter):
             response = cls.schema()(json_response)
         except (Invalid, MultipleInvalid) as ex:
             _ = humanize_error(json_response, ex)
-            # print(_)
             raise
-        if 'SN' in response:
-            serial_number = response['SN']
-        else:
-            serial_number = response['sn']
         return InverterResponse(
             data=cls.map_response(response['Data']),
-            serial_number=serial_number,
+            serial_number=response.get('SN', response.get('sn')),
             version=response['ver'],
             type=response['type']
         )
@@ -331,43 +326,43 @@ class X3V34(InverterPost):
     }, extra=vol.REMOVE_EXTRA)
 
     __sensor_map = {
-        'Network Voltage Phase 1':     (0,   'V', div10),
-        'Network Voltage Phase 2':     (1,   'V', div10),
-        'Network Voltage Phase 3':     (2,   'V', div10),
+        'Network Voltage Phase 1':     (0, 'V', div10),
+        'Network Voltage Phase 2':     (1, 'V', div10),
+        'Network Voltage Phase 3':     (2, 'V', div10),
 
-        'Output Current Phase 1':      (3,   'A', div10),
-        'Output Current Phase 2':      (4,   'A', div10),
-        'Output Current Phase 3':      (5,   'A', div10),
+        'Output Current Phase 1':      (3, 'A', div10),
+        'Output Current Phase 2':      (4, 'A', div10),
+        'Output Current Phase 3':      (5, 'A', div10),
 
-        'Power Now Phase 1':           (6,   'W'),
-        'Power Now Phase 2':           (7,   'W'),
-        'Power Now Phase 3':           (8,   'W'),
+        'Power Now Phase 1':           (6, 'W'),
+        'Power Now Phase 2':           (7, 'W'),
+        'Power Now Phase 3':           (8, 'W'),
 
-        'PV1 Voltage':                 (9,   'V', div10),
-        'PV2 Voltage':                 (10,  'V', div10),
-        'PV1 Current':                 (11,  'A', div10),
-        'PV2 Current':                 (12,  'A', div10),
-        'PV1 Power':                   (13,  'W'),
-        'PV2 Power':                   (14,  'W'),
+        'PV1 Voltage':                 (9, 'V', div10),
+        'PV2 Voltage':                 (10, 'V', div10),
+        'PV1 Current':                 (11, 'A', div10),
+        'PV2 Current':                 (12, 'A', div10),
+        'PV1 Power':                   (13, 'W'),
+        'PV2 Power':                   (14, 'W'),
 
-        'Grid Frequency Phase 1':      (15,  'Hz', div100),
-        'Grid Frequency Phase 2':      (16,  'Hz', div100),
-        'Grid Frequency Phase 3':      (17,  'Hz', div100),
+        'Grid Frequency Phase 1':      (15, 'Hz', div100),
+        'Grid Frequency Phase 2':      (16, 'Hz', div100),
+        'Grid Frequency Phase 3':      (17, 'Hz', div100),
 
-        'Total Energy':                (19,  'kWh', div10),
-        'Today\'s Energy':             (21,  'kWh', div10),
+        'Total Energy':                (19, 'kWh', div10),
+        'Today\'s Energy':             (21, 'kWh', div10),
 
-        'Battery Voltage':             (24,  'V', div100),
-        'Battery Current':             (25,  'A', twoway_current),
-        'Battery Power':               (26,  'W', to_signed),
-        'Battery Temperature':         (27,  'C'),
-        'Battery Remaining Capacity':  (28,  '%'),
+        'Battery Voltage':             (24, 'V', div100),
+        'Battery Current':             (25, 'A', twoway_current),
+        'Battery Power':               (26, 'W', to_signed),
+        'Battery Temperature':         (27, 'C'),
+        'Battery Remaining Capacity':  (28, '%'),
 
-        'Exported Power':              (65,  'W', to_signed),
-        'Total Feed-in Energy':        (67,  'kWh', energy),
-        'Total Feed-in Energy Resets': (68,  ''),
-        'Total Consumption':           (69,  'kWh', consumption),
-        'Total Consumption Resets':    (70,  ''),
+        'Exported Power':              (65, 'W', to_signed),
+        'Total Feed-in Energy':        (67, 'kWh', energy),
+        'Total Feed-in Energy Resets': (68, ''),
+        'Total Consumption':           (69, 'kWh', consumption),
+        'Total Consumption Resets':    (70, ''),
 
         'AC Power':                    (181, 'W'),
     }
@@ -629,32 +624,9 @@ class X1Smart(InverterPost):
     }
 
     @classmethod
-    async def make_request(cls, host, port=80, pwd=''):
+    async def make_request(cls, host, port=80, pwd='', headers=None):
         headers = {'X-Forwarded-For': '5.8.8.8'}
-        if not pwd:
-            base = 'http://{}:{}/?optType=ReadRealTimeData'
-            url = base.format(host, port)
-        else:
-            base = 'http://{}:{}/?optType=ReadRealTimeData&pwd={}&'
-            url = base.format(host, port, pwd)
-        async with aiohttp.ClientSession() as session:
-            async with session.post(url, headers=headers) as req:
-                resp = await req.read()
-        raw_json = resp.decode("utf-8")
-        json_response = json.loads(raw_json)
-        response = {}
-        try:
-            response = cls.schema()(json_response)
-        except (Invalid, MultipleInvalid) as ex:
-            _ = humanize_error(json_response, ex)
-            # print(_)
-            raise
-        return InverterResponse(
-            data=cls.map_response(response['Data']),
-            serial_number=response['sn'],
-            version=response['ver'],
-            type=response['type']
-        )
+        return await super().make_request(host, port, pwd, headers=headers)
 
     @classmethod
     def sensor_map(cls):
