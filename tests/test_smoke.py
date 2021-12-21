@@ -15,7 +15,8 @@ async def test_smoke(inverters_fixture):
     msg = 'data size should match expected values'
     assert len(values) == len(parsed.data), msg
     for sensor, value in values.items():
-        assert parsed.data[sensor] == value
+        assert parsed.data[sensor] == value, \
+          f"{sensor}: expected {value} but got {parsed.data[sensor]}"
 
 
 @pytest.mark.asyncio
@@ -40,6 +41,8 @@ def test_inverter_sensors_match():
     )
     for i, expected_values in test_values:
         sensor_map = i.sensor_map()
-        assert len(sensor_map) == len(expected_values)
+        msg = f"""{sorted(sensor_map.keys())} vs
+{sorted(expected_values.keys())}"""
+        assert len(sensor_map) == len(expected_values), msg
         for name, _ in sensor_map.items():
             assert name in expected_values
