@@ -27,15 +27,16 @@ InverterResponse = namedtuple('InverterResponse',
 class Inverter:
     """Base wrapper around Inverter HTTP API"""
 
-    def __init__(self, host, port, pwd=''):
+    def __init__(self, host, port, pwd='', xffheader=False):
         self.host = host
         self.port = port
         self.pwd = pwd
+        self.xffheader = xffheader
 
     async def get_data(self):
         try:
             data = await self.make_request(
-                self.host, self.port, self.pwd
+                self.host, self.port, self.pwd, self.xffheader
             )
         except aiohttp.ClientError as ex:
             msg = "Could not connect to inverter endpoint"
@@ -49,7 +50,7 @@ class Inverter:
         return data
 
     @classmethod
-    async def make_request(cls, host, port, pwd=''):
+    async def make_request(cls, host, port, pwd='', xffheader=False):
         """
         Return instance of 'InverterResponse'
         Raise exception if unable to get data
@@ -88,10 +89,10 @@ class Inverter:
         return result
 
 
-async def discover(host, port, pwd='') -> Inverter:
+async def discover(host, port, pwd='', xffheader=False) -> Inverter:
     failures = []
     for inverter in REGISTRY:
-        i = inverter(host, port, pwd)
+        i = inverter(host, port, pwd, xffheader)
         try:
             await i.get_data()
             return i
@@ -171,13 +172,17 @@ class XHybrid(Inverter):
     }
 
     @classmethod
-    async def make_request(cls, host, port=80, pwd=''):
+    async def make_request(cls, host, port=80, pwd='', xffheader=False):
         base = 'http://{}:{}/api/realTimeData.htm'
         url = base.format(host, port)
         headers = {'X-Forwarded-For' : '5.8.8.8'}
         async with aiohttp.ClientSession() as session:
-            async with session.get(url, headers=headers) as req:
-                garbage = await req.read()
+            if xffheader:
+                async with session.get(url, headers=headers) as req:
+                    garbage = await req.read()
+            else:
+                async with session.get(url) as req:
+                    garbage = await req.read()
         formatted = garbage.decode("utf-8")
         formatted = formatted.replace(",,", ",0.0,").replace(",,", ",0.0,")
         json_response = json.loads(formatted)
@@ -203,16 +208,21 @@ class InverterPost(Inverter):
     #  so we can disable the pylint warning
     # pylint: disable=W0223
     @classmethod
-    async def make_request(cls, host, port=80, pwd=''):
+    async def make_request(cls, host, port=80, pwd='', xffheader=False):
         if not pwd:
             base = 'http://{}:{}/?optType=ReadRealTimeData'
             url = base.format(host, port)
         else:
             base = 'http://{}:{}/?optType=ReadRealTimeData&pwd={}&'
             url = base.format(host, port, pwd)
+        headers = {'X-Forwarded-For' : '5.8.8.8'}
         async with aiohttp.ClientSession() as session:
-            async with session.post(url) as req:
-                resp = await req.read()
+            if xffheader:
+                async with session.post(url, headers=headers) as req:
+                    resp = await req.read()
+            else:
+                async with session.post(url) as req:
+                    resp = await req.read()
         raw_json = resp.decode("utf-8")
         json_response = json.loads(raw_json)
         response = {}
@@ -480,7 +490,7 @@ class X1(InverterPost):
     }
 
     @classmethod
-    async def make_request(cls, host, port=80, pwd=''):
+    async def make_request(cls, host, port=80, pwd='', xffheader=False):
         headers = {'X-Forwarded-For': '5.8.8.8'}
         if not pwd:
             base = 'http://{}:{}/?optType=ReadRealTimeData'
@@ -489,8 +499,12 @@ class X1(InverterPost):
             base = 'http://{}:{}/?optType=ReadRealTimeData&pwd={}&'
             url = base.format(host, port, pwd)
         async with aiohttp.ClientSession() as session:
-            async with session.post(url, headers=headers) as req:
-                resp = await req.read()
+            if xffheader:
+                async with session.post(url, headers=headers) as req:
+                    resp = await req.read()
+            else:
+                async with session.post(url) as req:
+                    resp = await req.read()
         raw_json = resp.decode("utf-8")
         json_response = json.loads(raw_json)
         response = {}
