@@ -2,6 +2,8 @@ from collections import namedtuple
 import pytest
 from solax import inverter
 
+X_FORWARDED_HEADER = {'X-Forwarded-For': '5.8.8.8'}
+
 XHYBRID_DE01_RESPONSE = {
     'method': 'uploadsn',
     'version': 'Solax_SI_CH_2nd_20160912_DE02',
@@ -63,6 +65,24 @@ X1_MINI_RESPONSE_V34 = {
              0, 0, 0, 0, 0],
     "Information": [0.700, 4, "XXXXXXXXXXXXXX",
                     1, 1.19, 0.00, 1.32, 0.00, 0.00, 1]
+}
+
+X1_SMART_RESPONSE = {
+    "sn": "XXXXXXX",
+    "ver": "2.033.20",
+    "type": 8,
+    "Data": [2396, 126, 2956, 4329, 2338, 41, 57, 1777, 1336, 6021,
+             2, 1215, 0, 137, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 43, 0, 80, 0, 0, 0, 0, 0, 0,
+             10, 65535, 87, 0, 8184, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0],
+    "Information": [8.0, 8, "XXXXXXX", 1, 1.07, 1.0, 1.05, 0.0]
 }
 
 X3_MIC_RESPONSE = {
@@ -190,10 +210,10 @@ X3_HYBRID_G3_2X_MPPT_RESPONSE = {
     "Information": [8.000, 5, "X3-Hybiyd-G3", "XXXXXXXX", 1, 4.47, 0.00, 4.34,
                     1.05],
     "battery": {
-      "brand": "83",
-      "masterVer": "1.11",
-      "slaveNum": "4",
-      "slaveVer": [1.13, 1.13, 1.13, 1.13]
+        "brand": "83",
+        "masterVer": "1.11",
+        "slaveNum": "4",
+        "slaveVer": [1.13, 1.13, 1.13, 1.13]
     }
 }
 
@@ -602,6 +622,25 @@ X1_MINI_VALUES_V34 = {
     'Power Now': 0,
 }
 
+X1_SMART_VALUES = {
+    'Network Voltage': 239.6,
+    'Output Current': 12.6,
+    'AC Power': 2956,
+    'PV1 Voltage': 432.9,
+    'PV2 Voltage': 233.8,
+    'PV1 Current': 4.1,
+    'PV2 Current': 5.7,
+    'PV1 Power': 1777,
+    'PV2 Power': 1336,
+    'Grid Frequency': 60.21,
+    'Total Energy': 121.5,
+    'Today\'s Energy': 13.7,
+    'Inverter Temperature': 43,
+    'Exported Power': 10,
+    'Total Feed-in Energy': 0.87,
+    'Total Consumption': 81.84,
+}
+
 
 @pytest.fixture()
 def simple_http_fixture(httpserver):
@@ -615,7 +654,7 @@ def simple_http_fixture(httpserver):
 
 InverterUnderTest = namedtuple(
     'InverterUnderTest',
-    'uri, method, query_string, response, inverter, values'
+    'uri, method, query_string, response, inverter, values, headers'
 )
 
 INVERTERS_UNDER_TEST = [
@@ -626,6 +665,7 @@ INVERTERS_UNDER_TEST = [
         response=XHYBRID_DE01_RESPONSE,
         inverter=inverter.XHybrid,
         values=XHYBRID_VALUES,
+        headers=None,
     ),
     InverterUnderTest(
         uri='/api/realTimeData.htm',
@@ -634,6 +674,7 @@ INVERTERS_UNDER_TEST = [
         response=XHYBRID_DE02_RESPONSE,
         inverter=inverter.XHybrid,
         values=XHYBRID_VALUES,
+        headers=None,
     ),
     InverterUnderTest(
         uri="/",
@@ -642,6 +683,7 @@ INVERTERS_UNDER_TEST = [
         response=X1_BOOST_AIR_MINI_RESPONSE,
         inverter=inverter.X1Mini,
         values=X1_MINI_VALUES,
+        headers=None,
     ),
     InverterUnderTest(
         uri="/",
@@ -650,6 +692,16 @@ INVERTERS_UNDER_TEST = [
         response=X1_MINI_RESPONSE_V34,
         inverter=inverter.X1MiniV34,
         values=X1_MINI_VALUES_V34,
+        headers=None,
+    ),
+    InverterUnderTest(
+        uri="/",
+        method='POST',
+        query_string='optType=ReadRealTimeData',
+        response=X1_SMART_RESPONSE,
+        inverter=inverter.X1Smart,
+        values=X1_SMART_VALUES,
+        headers=X_FORWARDED_HEADER,
     ),
     InverterUnderTest(
         uri="/",
@@ -658,6 +710,7 @@ INVERTERS_UNDER_TEST = [
         response=X3_MIC_RESPONSE,
         inverter=inverter.X3,
         values=X3_VALUES,
+        headers=None,
     ),
     InverterUnderTest(
         uri="/",
@@ -666,6 +719,7 @@ INVERTERS_UNDER_TEST = [
         response=X3_HYBRID_G3_RESPONSE,
         inverter=inverter.X3,
         values=X3_VALUES,
+        headers=None,
     ),
     InverterUnderTest(
         uri="/",
@@ -674,6 +728,7 @@ INVERTERS_UNDER_TEST = [
         response=X1_HYBRID_G3_RESPONSE,
         inverter=inverter.X1,
         values=X1_VALUES,
+        headers=None,
     ),
     InverterUnderTest(
         uri="/",
@@ -682,6 +737,7 @@ INVERTERS_UNDER_TEST = [
         response=X1_HYBRID_G3_2X_MPPT_RESPONSE,
         inverter=inverter.X1,
         values=X1_VALUES,
+        headers=None,
     ),
     InverterUnderTest(
         uri="/",
@@ -690,6 +746,7 @@ INVERTERS_UNDER_TEST = [
         response=X3_HYBRID_G3_2X_MPPT_RESPONSE,
         inverter=inverter.X3,
         values=X3_HYBRID_VALUES,
+        headers=None,
     ),
     InverterUnderTest(
         uri="/",
@@ -698,6 +755,7 @@ INVERTERS_UNDER_TEST = [
         response=X3_HYBRID_G3_2X_MPPT_RESPONSE_V34,
         inverter=inverter.X3V34,
         values=X3V34_HYBRID_VALUES,
+        headers=None,
     ),
     InverterUnderTest(
         uri="/",
@@ -706,6 +764,7 @@ INVERTERS_UNDER_TEST = [
         response=X3_HYBRID_G3_2X_MPPT_RESPONSE_V34_NEGATIVE_POWER,
         inverter=inverter.X3V34,
         values=X3V34_HYBRID_VALUES_NEGATIVE_POWER,
+        headers=None,
     ),
     InverterUnderTest(
         uri="/",
@@ -714,6 +773,7 @@ INVERTERS_UNDER_TEST = [
         response=X3_HYBRID_G3_2X_MPPT_RESPONSE_V34_EPS_MODE,
         inverter=inverter.X3V34,
         values=X3V34_HYBRID_VALUES_EPS_MODE,
+        headers=None,
     )
 ]
 
@@ -723,7 +783,8 @@ def inverters_fixture(httpserver, request):
     httpserver.expect_request(
         uri=request.param.uri,
         method=request.param.method,
-        query_string=request.param.query_string
+        query_string=request.param.query_string,
+        headers=request.param.headers
     ).respond_with_json(request.param.response)
     yield (
         (httpserver.host, httpserver.port),
