@@ -98,6 +98,13 @@ async def discover(host, port, pwd='', xffheader=False) -> Inverter:
             return i
         except InverterError as ex:
             failures.append(ex)
+        xffheader=True
+        i = inverter(host, port, pwd, xffheader)
+        try:
+            await i.get_data()
+            return i
+        except InverterError as ex:
+            failures.append(ex)
     msg = (
         "Unable to connect to the inverter at "
         f"host={host} port={port}, or your inverter is not supported yet.\n"
