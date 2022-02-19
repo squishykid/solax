@@ -842,7 +842,7 @@ INVERTERS_UNDER_TEST = [
     InverterUnderTest(
         uri="/",
         method='POST',
-        query_string='optType=ReadRealTimeData',
+        query_string='',
         response=QVOLTHYBG33P_RESPONSE_V34,
         inverter=inverter.QVOLTHYBG33P,
         values=QVOLTHYBG33P_VALUES,

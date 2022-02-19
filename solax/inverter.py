@@ -441,24 +441,24 @@ class QVOLTHYBG33P(InverterPost):
         'Network Voltage Phase 2':               (1, 'V', div10),
         'Network Voltage Phase 3':               (2, 'V', div10),
 
-        'Output Current Phase 1':                 (3, 'A', twoway_div10),
-        'Output Current Phase 2': (4, 'A', twoway_div10),
-        'Output Current Phase 3': (5, 'A', twoway_div10),
+        'Output Current Phase 1':                (3, 'A', twoway_div10),
+        'Output Current Phase 2':                (4, 'A', twoway_div10),
+        'Output Current Phase 3':                (5, 'A', twoway_div10),
 
-        'Power Now Phase 1': (6, 'W', to_signed),
-        'Power Now Phase 2': (7, 'W', to_signed),
-        'Power Now Phase 3': (8, 'W', to_signed),
+        'Power Now Phase 1':                     (6, 'W', to_signed),
+        'Power Now Phase 2':                     (7, 'W', to_signed),
+        'Power Now Phase 3':                     (8, 'W', to_signed),
 
-        'AC Power':      (9, 'W', to_signed),
+        'AC Power':                              (9, 'W', to_signed),
 
-        'PV1 Voltage': (10, 'V', div10),
-        'PV2 Voltage': (11, 'V', div10),
+        'PV1 Voltage':                           (10, 'V', div10),
+        'PV2 Voltage':                           (11, 'V', div10),
 
-        'PV1 Current': (12, 'A', div10),
-        'PV2 Current': (13, 'A', div10),
+        'PV1 Current':                           (12, 'A', div10),
+        'PV2 Current':                           (13, 'A', div10),
 
-        'PV1 Power': (14, 'W'),
-        'PV2 Power': (15, 'W'),
+        'PV1 Power':                             (14, 'W'),
+        'PV2 Power':                             (15, 'W'),
 
         'Grid Frequency Phase 1':                (16, 'Hz', div100),
         'Grid Frequency Phase 2':                (17, 'Hz', div100),
@@ -559,6 +559,31 @@ class QVOLTHYBG33P(InverterPost):
     @classmethod
     def schema(cls):
         return cls.__schema
+
+    @classmethod
+    async def make_request(cls, host, port=80, pwd='', headers=None):
+
+        base = 'http://{}:{}/'
+        url = base.format(host, port)
+        data = f'optType=ReadRealTimeData&pwd={pwd}'
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, headers=headers, data=data) as req:
+                resp = await req.read()
+
+        raw_json = resp.decode("utf-8")
+        json_response = json.loads(raw_json)
+        response = {}
+        try:
+            response = cls.schema()(json_response)
+        except (Invalid, MultipleInvalid) as ex:
+            _ = humanize_error(json_response, ex)
+            raise
+        return InverterResponse(
+            data=cls.map_response(response['Data']),
+            serial_number=response.get('SN', response.get('sn')),
+            version=response['ver'],
+            type=response['type']
+        )
 
 
 class X1(InverterPost):
