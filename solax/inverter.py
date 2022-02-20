@@ -506,9 +506,9 @@ class QVOLTHYBG33P(InverterPost):
         'Total Feed-in Energy Resets':           (87, ''),
         'Total Consumption':                     (88, 'kWh', consumption),
         'Total Consumption Resets':              (89, ''),
-        'Today\'s Feed-in Energy':               (90, 'kwh', div100),
+        'Today\'s Feed-in Energy':               (90, 'kWh', div100),
         # 91: always 0
-        'Today\'s Consumption':                  (92, 'kwh', div100),
+        'Today\'s Consumption':                  (92, 'kWh', div100),
         # 93-101: always 0
         # 102: always 1
         'Battery Remaining Capacity':            (103, '%'),
