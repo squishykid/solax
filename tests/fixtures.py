@@ -280,6 +280,28 @@ X3_HYBRID_G3_2X_MPPT_RESPONSE_V34_EPS_MODE = {
     "Information": [8.000, 5, "XXXXXXXX", 1, 4.60, 0.00, 4.42, 1.05, 0.00, 1]
 }
 
+QVOLTHYBG33P_RESPONSE_V34 = {
+    "sn": "SWX***",
+    "ver": "2.034.06",
+    "type": 14,
+    "Data": [
+        2214, 2238, 2251, 11, 10, 12, 162, 136, 146, 444, 5662, 5682, 18, 17,
+        1050, 977, 5002, 5001, 5002, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        1, 65529, 65535, 0, 0, 0, 32340, 500, 1616, 3236, 50, 1618, 1, 50, 451,
+        256, 3841, 4875, 5634, 100, 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 2190, 0, 36, 1, 0, 1, 738, 0, 904, 0, 0, 81, 2316, 0, 118, 0, 0, 0,
+        10794, 0, 14544, 0, 166, 0, 466, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 95, 1,
+        35, 88, 256, 3504, 2400, 115, 300, 352, 325, 34, 34, 8, 1620, 773,
+        12850, 12850, 12850, 0, 0, 0, 3389, 3384, 33876, 2, 20564, 12339,
+        18497, 12599, 18743, 12356, 14386, 20564, 12339, 18498, 12600, 18740,
+        12356, 12855, 20564, 12339, 18498, 12600, 18740, 12612, 14642, 20564,
+        12339, 18498, 12600, 18740, 12356, 13877, 0, 0, 0, 0, 0, 0, 0, 3843,
+        2306, 1282, 257, 0, 32340, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    ],
+    "Information": [12.0, 14, "H34***", 1, 1.15, 0.0, 1.14, 1.07, 0.0, 1]
+}
+
 X3_VALUES = {
     'PV1 Current': 0,
     'PV2 Current': 1,
@@ -316,8 +338,6 @@ X3_VALUES = {
     'Power Now Phase 1': 43,
     'Power Now Phase 2': 44,
     'Power Now Phase 3': 45,
-
-
 
     'EPS Voltage': 53,
     'EPS Current': 54,
@@ -641,6 +661,50 @@ X1_SMART_VALUES = {
     'Total Consumption': 81.84,
 }
 
+QVOLTHYBG33P_VALUES = {
+    'Network Voltage Phase 1': 221.4,
+    'Network Voltage Phase 2': 223.8,
+    'Network Voltage Phase 3': 225.1,
+    'Output Current Phase 1': 1.1,
+    'Output Current Phase 2': 1.0,
+    'Output Current Phase 3': 1.2,
+    'Power Now Phase 1': 162.0,
+    'Power Now Phase 2': 136.0,
+    'Power Now Phase 3': 146.0,
+    'AC Power': 444.0,
+    'PV1 Voltage': 566.2, 'PV2 Voltage': 568.2,
+    'PV1 Current': 1.8, 'PV2 Current': 1.7,
+    'PV1 Power': 1050.0,
+    'PV2 Power': 977.0, 'Grid Frequency Phase 1': 50.02,
+    'Grid Frequency Phase 2': 50.01,
+    'Grid Frequency Phase 3': 50.02,
+    'Inverter Operation mode': 'Normal',
+    'Exported Power': -6.0, 'Battery Voltage': 323.4,
+    'Battery Current': 5.0,
+    'Battery Power': 1616.0, 'Power Now': 451.0,
+    'Total Energy': 219.0,
+    'Total Energy Resets': 0.0,
+    'Total Battery Discharge Energy': 73.8,
+    'Total Battery Discharge Energy Resets': 0.0,
+    'Total Battery Charge Energy': 90.4,
+    'Total Battery Charge Energy Resets': 0.0,
+    "Today's Battery Discharge Energy": 0.0,
+    "Today's Battery Charge Energy": 8.1,
+    'Total PV Energy': 231.6,
+    'Total PV Energy Resets': 0.0,
+    "Today's Energy": 11.8,
+    'Total Feed-in Energy': 107.94,
+    'Total Feed-in Energy Resets': 0.0,
+    'Total Consumption': 145.44,
+    'Total Consumption Resets': 0.0,
+    "Today's Feed-in Energy": 1.66,
+    "Today's Consumption": 4.66,
+    'Battery Remaining Capacity': 95.0,
+    'Battery Temperature': 35.0,
+    'Battery Remaining Energy': 8.8,
+    'Battery Operation mode': 'Self Use Mode'
+}
+
 
 @pytest.fixture()
 def simple_http_fixture(httpserver):
@@ -774,7 +838,16 @@ INVERTERS_UNDER_TEST = [
         inverter=inverter.X3V34,
         values=X3V34_HYBRID_VALUES_EPS_MODE,
         headers=None,
-    )
+    ),
+    InverterUnderTest(
+        uri="/",
+        method='POST',
+        query_string='',
+        response=QVOLTHYBG33P_RESPONSE_V34,
+        inverter=inverter.QVOLTHYBG33P,
+        values=QVOLTHYBG33P_VALUES,
+        headers=None,
+    ),
 ]
 
 
