@@ -563,9 +563,9 @@ class QVOLTHYBG33P(InverterPost):
     @classmethod
     async def make_request(cls, host, port=80, pwd='', headers=None):
 
-        base = 'http://{}:{}/'
-        url = base.format(host, port)
+        url = f'http://{host}:{port}/'
         data = f'optType=ReadRealTimeData&pwd={pwd}'
+
         async with aiohttp.ClientSession() as session:
             async with session.post(url, headers=headers, data=data) as req:
                 resp = await req.read()
