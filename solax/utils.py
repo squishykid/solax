@@ -1,25 +1,3 @@
-INVERTER_OPERATION_MODES = {
-    0: "Waiting",
-    1: "Checking",
-    2: "Normal",
-    3: "Off",
-    4: "Permanent Fault",
-    5: "Updating",
-    6: "EPS Check",
-    7: "EPS Mode",
-    8: "Self Test",
-    9: "Idle",
-    10: "Standby"
-}
-
-BATTERY_OPERATION_MODES = {
-    0: "Self Use Mode",
-    1: "Force Time Use",
-    2: "Back Up Mode",
-    3: "Feed-in Priority",
-}
-
-
 def div10(val, *_args, **_kwargs):
     return val / 10
 
@@ -85,11 +63,3 @@ def twoway_div10(val, *_args, **_kwargs):
 
 def twoway_div100(val, *_args, **_kwargs):
     return to_signed(val, None) / 100
-
-
-def inverter_modes(val, *_args, **_kwargs):
-    return INVERTER_OPERATION_MODES.get(val, f"unmapped value '{val}'")
-
-
-def battery_modes(val, *_args, **_kwargs):
-    return BATTERY_OPERATION_MODES.get(val, f"unmapped value '{val}'")

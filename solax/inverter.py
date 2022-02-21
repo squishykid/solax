@@ -8,7 +8,7 @@ from voluptuous.humanize import humanize_error
 from solax.utils import (
     div10, div100, feedin_energy, total_energy, charge_energy, pv_energy,
     discharge_energy, consumption, twoway_div10, twoway_div100, to_signed,
-    eps_total_energy, inverter_modes, battery_modes
+    eps_total_energy
 )
 
 
@@ -418,6 +418,35 @@ class QVOLTHYBG33P(InverterPost):
     QCells
     Q.VOLT HYB-G3-3P
     """
+    class Processors:
+        """
+        Postprocessors used only in the QVOLTHYBG33P inverter sensor_map.
+        """
+        @staticmethod
+        def inverter_modes(value, *_args, **_kwargs):
+            return {
+                0: "Waiting",
+                1: "Checking",
+                2: "Normal",
+                3: "Off",
+                4: "Permanent Fault",
+                5: "Updating",
+                6: "EPS Check",
+                7: "EPS Mode",
+                8: "Self Test",
+                9: "Idle",
+                10: "Standby"
+            }.get(value, f"unmapped value '{value}'")
+
+        @staticmethod
+        def battery_modes(value, *_args, **_kwargs):
+            return {
+                0: "Self Use Mode",
+                1: "Force Time Use",
+                2: "Back Up Mode",
+                3: "Feed-in Priority",
+            }.get(value, f"unmapped value '{value}'")
+
     __schema = vol.Schema({
         vol.Required('type'): vol.All(int, 14),
         vol.Required('sn'): str,
@@ -464,7 +493,8 @@ class QVOLTHYBG33P(InverterPost):
         'Grid Frequency Phase 2':                (17, 'Hz', div100),
         'Grid Frequency Phase 3':                (18, 'Hz', div100),
 
-        'Inverter Operation mode':               (19, '', inverter_modes),
+        'Inverter Operation mode':               (19, '',
+                                                  Processors.inverter_modes),
         # 20 - 32: always 0
         # 33: always 1
         # instead of to_signed this is actually 34 - 35,
@@ -529,7 +559,8 @@ class QVOLTHYBG33P(InverterPost):
         # with offset around 15
         # 127,128 resetting counter /1000, around battery charge + discharge
         # 164,165,166 some curves
-        'Battery Operation mode':                (168, '', battery_modes),
+        'Battery Operation mode':                (168, '',
+                                                  Processors.battery_modes),
         # 169: div100 same as [39]
         # 170-199: always 0
 
