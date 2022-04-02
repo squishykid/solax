@@ -1,3 +1,15 @@
+from voluptuous import Invalid
+
+
+def startswith(something):
+    def inner(actual):
+        if isinstance(actual, str):
+            if actual.startswith(something):
+                return actual
+        raise Invalid(f"{str(actual)} does not start with {something}")
+    return inner
+
+
 def div10(val, *_args, **_kwargs):
     return val / 10
 

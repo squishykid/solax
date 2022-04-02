@@ -1,6 +1,7 @@
 import pytest
 import solax
-from solax import inverter
+from solax.inverter import InverterError
+from solax.discovery import REGISTRY
 
 from tests import fixtures
 
@@ -22,14 +23,14 @@ async def test_smoke(inverters_fixture):
 @pytest.mark.asyncio
 async def test_throws_when_unable_to_parse(inverters_garbage_fixture):
     conn, inverter_class = inverters_garbage_fixture
-    with pytest.raises(inverter.InverterError):
+    with pytest.raises(InverterError):
         i = inverter_class(*conn)
         await i.get_data()
 
 
 def test_registry_matches_inverters_under_test():
     test_inverters = {i.inverter for i in fixtures.INVERTERS_UNDER_TEST}
-    registry_inverters = set(inverter.REGISTRY)
+    registry_inverters = set(REGISTRY)
     assert test_inverters == registry_inverters, 'tests do not match registry'
 
 

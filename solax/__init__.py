@@ -5,7 +5,7 @@ import logging
 
 import async_timeout
 
-from solax import inverter
+from solax.discovery import discover
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -34,7 +34,7 @@ async def rt_request(inv, retry, t_wait=0):
 
 
 async def real_time_api(ip_address, port=80, pwd=''):
-    i = await inverter.discover(ip_address, port, pwd)
+    i = await discover(ip_address, port, pwd)
     return RealTimeAPI(i)
 
 
