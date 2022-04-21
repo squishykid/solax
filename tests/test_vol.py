@@ -1,6 +1,6 @@
 import pytest
 from voluptuous import Invalid
-from solax.inverter import startswith
+from solax.utils import startswith
 
 
 def test_does_start_with():
