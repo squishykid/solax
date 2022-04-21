@@ -15,7 +15,7 @@ setuptools.setup(
     url="https://github.com/squishykid/solax",
     packages=setuptools.find_packages(exclude=['tests', 'tests.*']),
     install_requires=[
-        'aiohttp>=3.5.4',
+        'aiohttp>=3.5.4, <4',
         'voluptuous>=0.11.5'
     ],
     setup_requires=[
@@ -26,4 +26,5 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
+    python_requires='>=3.8',
 )
