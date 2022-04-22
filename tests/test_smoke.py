@@ -1,8 +1,9 @@
+from typing import Dict, Tuple, Any, List
 import pytest
 import solax
-from solax.inverter import InverterError
+from solax.inverter import Inverter, InverterError
 from solax.discovery import REGISTRY
-
+from solax.units import Measurement
 from tests import fixtures
 
 
@@ -35,15 +36,20 @@ def test_registry_matches_inverters_under_test():
 
 
 def test_inverter_sensors_match():
-    test_values = (
+    test_values: List[Tuple[Inverter, Dict[str, Any]]] = (
         (i.inverter, i.values)
         for i
         in fixtures.INVERTERS_UNDER_TEST
     )
-    for i, expected_values in test_values:
+
+    for (i, expected_values) in test_values:
         sensor_map = i.sensor_map()
         msg = f"""{sorted(sensor_map.keys())} vs
 {sorted(expected_values.keys())}"""
         assert len(sensor_map) == len(expected_values), msg
-        for name, _ in sensor_map.items():
+        for name, (_, unit, *_) in sensor_map.items():
             assert name in expected_values
+
+            msg = f"provided unit '{unit}'({type(unit)}) "\
+                f"is not a proper Unit {i}"
+            assert isinstance(unit, Measurement), msg

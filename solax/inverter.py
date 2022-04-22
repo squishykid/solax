@@ -1,10 +1,12 @@
 from collections import namedtuple
 import json
-from typing import Any, Callable, Optional, Tuple
+from typing import Dict, Any, Callable, NamedTuple, Optional, Tuple, Union
 import aiohttp
 import voluptuous as vol
 from voluptuous import Invalid, MultipleInvalid
 from voluptuous.humanize import humanize_error
+
+from solax.units import Measurement, Units
 
 
 class InverterError(Exception):
@@ -15,11 +17,17 @@ InverterResponse = namedtuple('InverterResponse',
                               'data, serial_number, version, type')
 
 
+class DataMapping(NamedTuple):
+    index: int
+    unit: Optional[Union[Measurement, Units]]
+    processing: Optional[Callable[[Any, Any, Any], Any]]
+
+
 class Inverter:
     """Base wrapper around Inverter HTTP API"""
 
     # pylint: disable=C0301
-    _sensor_map = {}  # type: dict[str,Tuple[int,Optional[str],Optional[Callable[[Any,Any,Any],Any]]]] # noqa: E501
+    _sensor_map = {}  # type: dict[str,Union[DataMapping,int]] # noqa: E501
     # pylint: enable=C0301
     _schema = vol.Schema({})  # type: vol.Schema
 
@@ -29,7 +37,7 @@ class Inverter:
         self.pwd = pwd
         self.manufacturer = "Solax"
 
-    async def get_data(self):
+    async def get_data(self) -> InverterResponse:
         try:
             data = await self.make_request(
                 self.host, self.port, self.pwd
@@ -46,7 +54,8 @@ class Inverter:
         return data
 
     @classmethod
-    async def make_request(cls, host, port, pwd='', headers=None):
+    async def make_request(cls, host, port, pwd='', headers=None) \
+            -> InverterResponse:
         """
         Return instance of 'InverterResponse'
         Raise exception if unable to get data
@@ -54,22 +63,34 @@ class Inverter:
         raise NotImplementedError()
 
     @classmethod
-    def sensor_map(cls):
+    def sensor_map(cls) -> Dict[str, Tuple[int, Measurement]]:
         """
         Return sensor map
         """
         sensors = {}
-        for name, (idx, unit, *_) in cls._sensor_map.items():
+        for name, mapping in cls._sensor_map.items():
+            idx = mapping
+            unit = Units.UNKNOWN
+
+            if isinstance(mapping, Tuple):
+                (idx, unit, *_) = mapping
+
+            if isinstance(unit, Units):
+                unit = Measurement(unit)
+
             sensors[name] = (idx, unit)
         return sensors
 
     @classmethod
-    def postprocess_map(cls):
+    def postprocess_map(cls) -> Dict[str, Callable[[Any, Any, Any], Any]]:
         """
         Return map of functions to be applied to each sensor value
         """
         sensors = {}
-        for name, (_, _, *processor) in cls._sensor_map.items():
+        for name, mapping in cls._sensor_map.items():
+            if not isinstance(mapping, Tuple):
+                continue
+            (_, _, *processor) = mapping
             if processor:
                 sensors[name] = processor[0]
         return sensors
@@ -82,7 +103,7 @@ class Inverter:
         return cls._schema
 
     @classmethod
-    def map_response(cls, resp_data):
+    def map_response(cls, resp_data) -> Dict[str, Any]:
         result = {}
         for sensor_name, (idx, _) in cls.sensor_map().items():
             val = resp_data[idx]
@@ -111,12 +132,12 @@ class InverterPost(Inverter):
         return cls.handle_response(resp)
 
     @classmethod
-    def handle_response(cls, resp):
+    def handle_response(cls, resp: bytearray):
         """
         Decode response and map array result using mapping definition.
 
         Args:
-            resp (_type_): The response
+            resp (bytearray): The response
 
         Returns:
             InverterResponse: The decoded and mapped interver response.

@@ -1,5 +1,6 @@
 import voluptuous as vol
 from solax.inverter import InverterPost
+from solax.units import Units, Total
 from solax.utils import startswith
 
 
@@ -30,37 +31,37 @@ class X1(InverterPost):
     }, extra=vol.REMOVE_EXTRA)
 
     _sensor_map = {
-        'PV1 Current':                (0, 'A'),
-        'PV2 Current':                (1, 'A'),
-        'PV1 Voltage':                (2, 'V'),
-        'PV2 Voltage':                (3, 'V'),
+        'PV1 Current':                (0, Units.A),
+        'PV2 Current':                (1, Units.A),
+        'PV1 Voltage':                (2, Units.V),
+        'PV2 Voltage':                (3, Units.V),
 
-        'Output Current':             (4, 'A'),
-        'Network Voltage':            (5, 'V'),
-        'AC Power':                   (6, 'W'),
+        'Output Current':             (4, Units.A),
+        'Network Voltage':            (5, Units.V),
+        'AC Power':                   (6, Units.W),
 
-        'Inverter Temperature':       (7, 'C'),
-        'Today\'s Energy':            (8, 'kWh'),
-        'Total Energy':               (9, 'kWh'),
-        'Exported Power':             (10, 'W'),
-        'PV1 Power':                  (11, 'W'),
-        'PV2 Power':                  (12, 'W'),
+        'Inverter Temperature':       (7, Units.C),
+        'Today\'s Energy':            (8, Units.KWH),
+        'Total Energy':               (9, Total(Units.KWH)),
+        'Exported Power':             (10, Units.W),
+        'PV1 Power':                  (11, Units.W),
+        'PV2 Power':                  (12, Units.W),
 
-        'Battery Voltage':            (13, 'V'),
-        'Battery Current':            (14, 'A'),
-        'Battery Power':              (15, 'W'),
-        'Battery Temperature':        (16, 'C'),
-        'Battery Remaining Capacity': (21, '%'),
+        'Battery Voltage':            (13, Units.V),
+        'Battery Current':            (14, Units.A),
+        'Battery Power':              (15, Units.W),
+        'Battery Temperature':        (16, Units.C),
+        'Battery Remaining Capacity': (21, Units.PERCENT),
 
-        'Total Feed-in Energy':       (41, 'kWh'),
-        'Total Consumption':          (42, 'kWh'),
+        'Total Feed-in Energy':       (41, Total(Units.KWH)),
+        'Total Consumption':          (42, Total(Units.KWH)),
 
-        'Power Now':                  (43, 'W'),
-        'Grid Frequency':             (50, 'Hz'),
+        'Power Now':                  (43, Units.W),
+        'Grid Frequency':             (50, Units.HZ),
 
-        'EPS Voltage':                (53, 'V'),
-        'EPS Current':                (54, 'A'),
-        'EPS Power':                  (55, 'W'),
-        'EPS Frequency':              (56, 'Hz'),
+        'EPS Voltage':                (53, Units.V),
+        'EPS Current':                (54, Units.A),
+        'EPS Power':                  (55, Units.W),
+        'EPS Frequency':              (56, Units.HZ),
     }
     # pylint: enable=duplicate-code
