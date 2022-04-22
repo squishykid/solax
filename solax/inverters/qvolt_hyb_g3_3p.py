@@ -40,6 +40,10 @@ class QVOLTHYBG33P(InverterPost):
                 3: "Feed-in Priority",
             }.get(value, f"unmapped value '{value}'")
 
+    def __init__(self, host, port, pwd=''):
+        super().__init__(host, port, pwd)
+        self.manufacturer = "Qcells"
+
     _schema = vol.Schema({
         vol.Required('type'): vol.All(int, 14),
         vol.Required('sn'): str,

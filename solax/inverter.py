@@ -27,6 +27,7 @@ class Inverter:
         self.host = host
         self.port = port
         self.pwd = pwd
+        self.manufacturer = "Solax"
 
     async def get_data(self):
         try:
