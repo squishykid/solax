@@ -6,5 +6,6 @@
 .eggs/**
 /build/**
 .venv/**
+venv/**
 .coverage
 .*.swp
