@@ -70,7 +70,7 @@ class Inverter:
         sensors = {}
         for name, mapping in cls._sensor_map.items():
             idx = mapping
-            unit = Units.UNKNOWN
+            unit = Units.NONE
 
             if isinstance(mapping, Tuple):
                 (idx, unit, *_) = mapping

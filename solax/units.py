@@ -13,7 +13,7 @@ class Units(Enum):
     C = "°C"
     HZ = "Hz"
     PERCENT = "%"
-    UNKNOWN = ""
+    NONE = ""
 
 
 class Measurement(NamedTuple):
