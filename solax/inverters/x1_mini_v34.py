@@ -5,6 +5,12 @@ from solax.utils import div10, div100
 
 
 class X1MiniV34(InverterPost):
+    """
+    X1-Boost-Air-Mini with Wifi Pocket v2.034.06
+    SolarX disabled lan access with this custom firmware you can access te Wifi Pocket from your internal lan:
+    https://blog.chrisoft.io/2021/02/14/firmwares-modificados-para-solax-pocket-wifi-v2/
+    """
+    
     # pylint: disable=duplicate-code
     _schema = vol.Schema({
         vol.Required('type', 'type'): vol.All(int, 4),
@@ -43,5 +49,6 @@ class X1MiniV34(InverterPost):
         'Total Feed-in Energy':       (41, 'kWh', div10),
         'Total Consumption':          (42, 'kWh', div10),
         'Power Now':                  (43, 'W', div10),
+        'Inverter Temperature':       (55, 'C'),
     }
     # pylint: enable=duplicate-code
