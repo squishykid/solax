@@ -7,7 +7,7 @@ from solax.utils import div10, div100
 class X1MiniV34(InverterPost):
     """
     X1-Boost-Air-Mini with Wifi Pocket v2.034.06
-    SolarX disabled lan access with this custom 
+    SolarX disabled lan access with this custom
     firmware you can access te Wifi Pocket from your internal lan:
     https://blog.chrisoft.io/2021/02/14/
     firmwares-modificados-para-solax-pocket-wifi-v2/
