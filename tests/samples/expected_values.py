@@ -309,6 +309,7 @@ X1_MINI_VALUES_V34 = {
     "Total Feed-in Energy": 251.8,
     "Total Consumption": 0,
     "Power Now": 0,
+    "Inverter Temperature": 41,
 }
 
 X1_SMART_VALUES = {
