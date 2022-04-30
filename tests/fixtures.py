@@ -6,6 +6,7 @@ from tests.samples.expected_values import (
     X1_SMART_VALUES, X1_VALUES, X3_HYBRID_VALUES, X3_VALUES,
     X3V34_HYBRID_VALUES, X3V34_HYBRID_VALUES_EPS_MODE,
     X3V34_HYBRID_VALUES_NEGATIVE_POWER, XHYBRID_VALUES,
+    X1_BOOST_VALUES,
 )
 from tests.samples.responses import (
     QVOLTHYBG33P_RESPONSE_V34, X1_BOOST_AIR_MINI_RESPONSE,
@@ -16,6 +17,7 @@ from tests.samples.responses import (
     X3_HYBRID_G3_2X_MPPT_RESPONSE_V34_NEGATIVE_POWER,
     X3_HYBRID_G3_RESPONSE, X3_MIC_RESPONSE,
     XHYBRID_DE01_RESPONSE, XHYBRID_DE02_RESPONSE,
+    X1_BOOST_RESPONSE,
 )
 
 X_FORWARDED_HEADER = {"X-Forwarded-For": "5.8.8.8"}
@@ -80,6 +82,15 @@ INVERTERS_UNDER_TEST = [
         response=X1_SMART_RESPONSE,
         inverter=inverter.X1Smart,
         values=X1_SMART_VALUES,
+        headers=X_FORWARDED_HEADER,
+    ),
+    InverterUnderTest(
+        uri="/",
+        method='POST',
+        query_string='optType=ReadRealTimeData',
+        response=X1_BOOST_RESPONSE,
+        inverter=inverter.X1Boost,
+        values=X1_BOOST_VALUES,
         headers=X_FORWARDED_HEADER,
     ),
     InverterUnderTest(

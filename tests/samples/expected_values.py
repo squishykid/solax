@@ -331,6 +331,25 @@ X1_SMART_VALUES = {
     "Total Consumption": 81.84,
 }
 
+X1_BOOST_VALUES = {
+    "Network Voltage": 239.6,
+    "Output Current": 12.6,
+    "AC Power": 2956,
+    "PV1 Voltage": 432.9,
+    "PV2 Voltage": 233.8,
+    "PV1 Current": 4.1,
+    "PV2 Current": 5.7,
+    "PV1 Power": 1777,
+    "PV2 Power": 1336,
+    "Grid Frequency": 60.21,
+    "Total Energy": 121.5,
+    "Today's Energy": 13.7,
+    "Inverter Temperature": 43,
+    "Exported Power": 10,
+    "Total Feed-in Energy": 0.87,
+    "Total Consumption": 81.84,
+}
+
 QVOLTHYBG33P_VALUES = {
     "Network Voltage Phase 1": 221.4,
     "Network Voltage Phase 2": 223.8,
