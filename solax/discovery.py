@@ -1,11 +1,11 @@
 
 from solax.inverter import Inverter, InverterError
 from solax.inverters import XHybrid, X3, X3V34, X1, X1Mini, X1MiniV34,\
-     X1Smart, QVOLTHYBG33P
+     X1Smart, QVOLTHYBG33P, X1Boost
 
 # registry of inverters
 REGISTRY = [XHybrid, X3, X3V34, X1, X1Mini, X1MiniV34, X1Smart,
-            QVOLTHYBG33P]
+            QVOLTHYBG33P, X1Boost]
 
 
 class DiscoveryError(Exception):
