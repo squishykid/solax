@@ -110,7 +110,18 @@ class Inverter:
     def map_response(cls, resp_data) -> Dict[str, Any]:
         result = {}
         for sensor_name, (idx, _) in cls.sensor_map().items():
-            val = resp_data[idx]
+            if isinstance(idx, (tuple, list)):
+                # Some values are expressed over 2 (or potentially
+                # more 16 bit registers). Here we combine them, if the
+                # index given is a list or tuple, in order of least to
+                # most significant.
+                val = 0
+                stride = 1
+                for i in idx:
+                    val += resp_data[i] * stride
+                    stride *= 2**16
+            else:
+                val = resp_data[idx]
             result[sensor_name] = val
         for sensor_name, processor in cls.postprocess_map().items():
             result[sensor_name] = processor(result[sensor_name], result)
