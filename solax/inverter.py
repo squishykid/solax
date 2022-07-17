@@ -178,3 +178,23 @@ class InverterPost(Inverter):
             version=response["ver"],
             type=response["type"],
         )
+
+
+class InverterPostData(InverterPost):
+    # This is an intermediate abstract class,
+    #  so we can disable the pylint warning
+    # pylint: disable=W0223,R0914
+    @classmethod
+    async def make_request(cls, host, port=80, pwd="", headers=None):
+        base = "http://{}:{}/"
+        url = base.format(host, port)
+        data = "optType=ReadRealTimeData"
+        if pwd:
+            data = data + "&pwd=" + pwd
+        async with aiohttp.ClientSession() as session:
+            async with session.post(
+                url, headers=headers, data=data.encode("utf-8")
+            ) as req:
+                resp = await req.read()
+
+        return cls.handle_response(resp)
