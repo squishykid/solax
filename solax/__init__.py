@@ -23,7 +23,7 @@ async def rt_request(inv: Inverter, retry, t_wait=0) -> InverterResponse:
     new_wait = (t_wait * 2) + 5
     retry = retry - 1
     try:
-        with async_timeout.timeout(REQUEST_TIMEOUT):
+        async with async_timeout.timeout(REQUEST_TIMEOUT):
             return await inv.get_data()
     except asyncio.TimeoutError:
         if retry > 0:

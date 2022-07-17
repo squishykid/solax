@@ -14,7 +14,7 @@ setuptools.setup(
     license="MIT",
     url="https://github.com/squishykid/solax",
     packages=setuptools.find_packages(exclude=["tests", "tests.*"]),
-    install_requires=["aiohttp>=3.5.4, <4", "voluptuous>=0.11.5"],
+    install_requires=["aiohttp>=3.5.4, <4", "async_timeout", "voluptuous>=0.11.5"],
     setup_requires=[
         "setuptools_scm",
     ],
