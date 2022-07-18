@@ -371,3 +371,26 @@ QVOLTHYBG33P_VALUES = {
     "Battery Remaining Energy": 8.8,
     "Battery Operation mode": "Self Use Mode",
 }
+
+X1_HYBRID_G4_VALUES = {
+    "AC voltage R": 247.0,
+    "AC current": 1.1,
+    "AC power": 237.0,
+    "Grid frequency": 49.86,
+    "PV1 voltage": 254.4,
+    "PV2 voltage": 259.1,
+    "PV1 current": 1.1,
+    "PV2 current": 1.2,
+    "PV1 power": 299.0,
+    "PV2 power": 329.0,
+    "On-grid total yield": 398.6,
+    "On-grid daily yield": 2.2,
+    "Battery voltage": 239.30,
+    "Battery current": 2.20,
+    "Battery power": 541.0,
+    "Battery temperature": 26.0,
+    "Battery SoC": 82.0,
+    "Grid power": 1.0,
+    "Total feed-in energy": 286.7,
+    "Total consumption": 6.2,
+}
