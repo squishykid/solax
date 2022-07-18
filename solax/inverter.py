@@ -148,6 +148,7 @@ class InverterPost(Inverter):
             url = base.format(host, port, pwd)
         async with aiohttp.ClientSession() as session:
             async with session.post(url, headers=headers) as req:
+                req.raise_for_status()
                 resp = await req.read()
 
         return cls.handle_response(resp)
@@ -195,6 +196,7 @@ class InverterPostData(InverterPost):
             async with session.post(
                 url, headers=headers, data=data.encode("utf-8")
             ) as req:
+                req.raise_for_status()
                 resp = await req.read()
 
         return cls.handle_response(resp)
