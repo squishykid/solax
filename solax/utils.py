@@ -19,9 +19,12 @@ def div100(val, *_args, **_kwargs):
     return val / 100
 
 
+INT16_MAX = 0x7FFF
+
+
 def to_signed(val, *_args, **_kwargs):
-    if val > 32767:
-        val -= 65535
+    if val > INT16_MAX:
+        val -= 2**16
     return val
 
 
