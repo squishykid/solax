@@ -2,7 +2,7 @@ import pytest
 import solax
 from solax.inverter import InverterError
 from solax.discovery import REGISTRY
-
+from solax.units import Measurement
 from tests import fixtures
 
 
@@ -44,3 +44,13 @@ def test_inverter_sensors_match():
         assert len(sensor_map) == len(expected_values), msg
         for name, _ in sensor_map.items():
             assert name in expected_values
+
+
+def test_inverter_sensors_define_valid_units(inverters_under_test):
+    sensor_map = inverters_under_test.sensor_map()
+    for name, (_, unit, *_) in sensor_map.items():
+        msg = (
+            f"provided unit '{unit}'({type(unit)}) "
+            f"is not a proper Unit on sensor '{name}' of Inverter '{inverters_under_test}'"
+        )
+        assert isinstance(unit, Measurement), msg

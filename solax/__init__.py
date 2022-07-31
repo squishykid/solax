@@ -6,6 +6,7 @@ import logging
 import async_timeout
 
 from solax.discovery import discover
+from solax.inverter import Inverter, InverterResponse
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -13,7 +14,7 @@ _LOGGER = logging.getLogger(__name__)
 REQUEST_TIMEOUT = 5
 
 
-async def rt_request(inv, retry, t_wait=0):
+async def rt_request(inv: Inverter, retry, t_wait=0) -> InverterResponse:
     """Make call to inverter endpoint."""
     if t_wait > 0:
         msg = "Timeout connecting to Solax inverter, waiting %d to retry."
@@ -41,10 +42,10 @@ class RealTimeAPI:
 
     # pylint: disable=too-few-public-methods
 
-    def __init__(self, inv):
+    def __init__(self, inv: Inverter):
         """Initialize the API client."""
         self.inverter = inv
 
-    async def get_data(self):
+    async def get_data(self) -> InverterResponse:
         """Query the real time API"""
         return await rt_request(self.inverter, 3)

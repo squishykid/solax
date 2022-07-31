@@ -1,5 +1,6 @@
 import voluptuous as vol
 from solax.inverter import InverterPost
+from solax.units import Total, Units
 from solax.utils import div10, div100, to_signed
 
 
@@ -31,22 +32,22 @@ class X1Smart(InverterPost):
     @classmethod
     def response_decoder(cls):
         return {
-            "Network Voltage": (0, "V", div10),
-            "Output Current": (1, "A", div10),
-            "AC Power": (2, "W"),
-            "PV1 Voltage": (3, "V", div10),
-            "PV2 Voltage": (4, "V", div10),
-            "PV1 Current": (5, "A", div10),
-            "PV2 Current": (6, "A", div10),
-            "PV1 Power": (7, "W"),
-            "PV2 Power": (8, "W"),
-            "Grid Frequency": (9, "Hz", div100),
-            "Total Energy": (11, "kWh", div10),
-            "Today's Energy": (13, "kWh", div10),
-            "Inverter Temperature": (39, "C"),
-            "Exported Power": (48, "W", to_signed),
-            "Total Feed-in Energy": (50, "kWh", div100),
-            "Total Consumption": (52, "kWh", div100),
+            "Network Voltage": (0, Units.V, div10),
+            "Output Current": (1, Units.A, div10),
+            "AC Power": (2, Units.W),
+            "PV1 Voltage": (3, Units.V, div10),
+            "PV2 Voltage": (4, Units.V, div10),
+            "PV1 Current": (5, Units.A, div10),
+            "PV2 Current": (6, Units.A, div10),
+            "PV1 Power": (7, Units.W),
+            "PV2 Power": (8, Units.W),
+            "Grid Frequency": (9, Units.HZ, div100),
+            "Total Energy": (11, Total(Units.KWH), div10),
+            "Today's Energy": (13, Units.KWH, div10),
+            "Inverter Temperature": (39, Units.C),
+            "Exported Power": (48, Units.W, to_signed),
+            "Total Feed-in Energy": (50, Total(Units.KWH), div100),
+            "Total Consumption": (52, Total(Units.KWH), div100),
         }
 
     @classmethod
