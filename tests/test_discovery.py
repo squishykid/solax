@@ -7,6 +7,7 @@ from solax.discovery import DiscoveryError
 @pytest.mark.asyncio
 async def test_discovery(inverters_fixture):
     conn, inverter_class, _ = inverters_fixture
+    print("bingo", conn, inverter_class)
     rt_api = await solax.real_time_api(*conn)
     assert rt_api.inverter.__class__ == inverter_class
 

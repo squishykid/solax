@@ -1,6 +1,6 @@
 from collections import namedtuple
 import json
-from typing import Dict, Any, Callable, NamedTuple, Optional, Tuple, Union
+from typing import Dict, Any, Callable, Tuple, Union
 import aiohttp
 import voluptuous as vol
 from voluptuous import Invalid, MultipleInvalid
@@ -20,8 +20,9 @@ class Inverter:
     """Base wrapper around Inverter HTTP API"""
 
     ResponseDecoderType = Union[
+        Dict[str, int],
         Dict[str, Tuple[int, SensorUnit]],
-        Dict[str, Tuple[int, SensorUnit, Callable[[Any, Any, Any], Any]]],
+        Dict[str, Tuple[int, SensorUnit, Callable[[Any, Any], Any]]],
     ]
 
     @classmethod
@@ -69,19 +70,33 @@ class Inverter:
         Return sensor map
         """
         sensors = {}
-        for name, (idx, unit, *_) in cls.response_decoder().items():
+        for name, mapping in cls.response_decoder().items():
+            unit = Measurement(Units.NONE)
+
+            if isinstance(mapping, tuple):
+                (idx, unit_or_measurement, *_) = mapping
+            else:
+                idx = mapping
+
+            if isinstance(unit_or_measurement, Units):
+                unit = Measurement(unit_or_measurement)
+            else:
+                unit = unit_or_measurement
             sensors[name] = (idx, unit)
         return sensors
 
     @classmethod
-    def postprocess_map(cls) -> Dict[str, Callable[[Any, Any, Any], Any]]:
+    def postprocess_map(cls) -> Dict[str, Callable[[Any, Any], Any]]:
         """
         Return map of functions to be applied to each sensor value
         """
         sensors = {}
-        for name, (_, _, *processor) in cls.response_decoder().items():
-            if processor:
-                sensors[name] = processor[0]
+        for name, mapping in cls.response_decoder().items():
+            if isinstance(mapping, tuple):
+                processor = None
+                (_, _, *processor) = mapping
+                if processor:
+                    sensors[name] = processor[0]
         return sensors
 
     @classmethod
