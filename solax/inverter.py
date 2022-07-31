@@ -1,6 +1,6 @@
 from collections import namedtuple
 import json
-from typing import Any, Callable, Tuple, Union
+from typing import Any, Callable, Tuple, Union, Dict
 import aiohttp
 import voluptuous as vol
 from voluptuous import Invalid, MultipleInvalid
@@ -18,8 +18,8 @@ class Inverter:
     """Base wrapper around Inverter HTTP API"""
 
     ResponseDecoderType = Union[
-        dict[str, Tuple[int, str]],
-        dict[str, Tuple[int, str, Callable[[Any, Any, Any], Any]]],
+        Dict[str, Tuple[int, str]],
+        Dict[str, Tuple[int, str, Callable[[Any, Any, Any], Any]]],
     ]
 
     @classmethod
