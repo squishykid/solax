@@ -30,24 +30,26 @@ class X1Boost(InverterPost):
         extra=vol.REMOVE_EXTRA,
     )
 
-    _sensor_map = {
-        "AC Voltage": (0, "V", div10),
-        "AC Output Current": (1, "A", div10),
-        "AC Output Power": (2, "W"),
-        "PV1 Voltage": (3, "V", div10),
-        "PV2 Voltage": (4, "V", div10),
-        "PV1 Current": (5, "A", div10),
-        "PV2 Current": (6, "A", div10),
-        "PV1 Power": (7, "W"),
-        "PV2 Power": (8, "W"),
-        "AC Frequency": (9, "Hz", div100),
-        "Total Generated Energy": (11, "kWh", div10),
-        "Today's Generated Energy": (13, "kWh", div10),
-        "Inverter Temperature": (39, "C"),
-        "Exported Power": (48, "W", to_signed),
-        "Total Export Energy": (50, "kWh", div100),
-        "Total Import Energy": (52, "kWh", div100),
-    }
+    @classmethod
+    def response_decoder(cls):
+        return {
+            "AC Voltage": (0, "V", div10),
+            "AC Output Current": (1, "A", div10),
+            "AC Output Power": (2, "W"),
+            "PV1 Voltage": (3, "V", div10),
+            "PV2 Voltage": (4, "V", div10),
+            "PV1 Current": (5, "A", div10),
+            "PV2 Current": (6, "A", div10),
+            "PV1 Power": (7, "W"),
+            "PV2 Power": (8, "W"),
+            "AC Frequency": (9, "Hz", div100),
+            "Total Generated Energy": (11, "kWh", div10),
+            "Today's Generated Energy": (13, "kWh", div10),
+            "Inverter Temperature": (39, "C"),
+            "Exported Power": (48, "W", to_signed),
+            "Total Export Energy": (50, "kWh", div100),
+            "Total Import Energy": (52, "kWh", div100),
+        }
 
     @classmethod
     async def make_request(cls, host, port=80, pwd="", headers=None):
