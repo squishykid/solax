@@ -27,36 +27,34 @@ class XHybrid(Inverter):
         extra=vol.REMOVE_EXTRA,
     )
 
-    # key: name of sensor
-    # value.0: index
-    # value.1: unit (String) or None
-    # from https://github.com/GitHobi/solax/wiki/direct-data-retrieval
-    _sensor_map = {
-        "PV1 Current": (0, "A"),
-        "PV2 Current": (1, "A"),
-        "PV1 Voltage": (2, "V"),
-        "PV2 Voltage": (3, "V"),
-        "Output Current": (4, "A"),
-        "Network Voltage": (5, "V"),
-        "Power Now": (6, "W"),
-        "Inverter Temperature": (7, "C"),
-        "Today's Energy": (8, "kWh"),
-        "Total Energy": (9, "kWh"),
-        "Exported Power": (10, "W"),
-        "PV1 Power": (11, "W"),
-        "PV2 Power": (12, "W"),
-        "Battery Voltage": (13, "V"),
-        "Battery Current": (14, "A"),
-        "Battery Power": (15, "W"),
-        "Battery Temperature": (16, "C"),
-        "Battery Remaining Capacity": (17, "%"),
-        "Month's Energy": (19, "kWh"),
-        "Grid Frequency": (50, "Hz"),
-        "EPS Voltage": (53, "V"),
-        "EPS Current": (54, "A"),
-        "EPS Power": (55, "W"),
-        "EPS Frequency": (56, "Hz"),
-    }
+    @classmethod
+    def response_decoder(cls):
+        return {
+            "PV1 Current": (0, "A"),
+            "PV2 Current": (1, "A"),
+            "PV1 Voltage": (2, "V"),
+            "PV2 Voltage": (3, "V"),
+            "Output Current": (4, "A"),
+            "Network Voltage": (5, "V"),
+            "Power Now": (6, "W"),
+            "Inverter Temperature": (7, "C"),
+            "Today's Energy": (8, "kWh"),
+            "Total Energy": (9, "kWh"),
+            "Exported Power": (10, "W"),
+            "PV1 Power": (11, "W"),
+            "PV2 Power": (12, "W"),
+            "Battery Voltage": (13, "V"),
+            "Battery Current": (14, "A"),
+            "Battery Power": (15, "W"),
+            "Battery Temperature": (16, "C"),
+            "Battery Remaining Capacity": (17, "%"),
+            "Month's Energy": (19, "kWh"),
+            "Grid Frequency": (50, "Hz"),
+            "EPS Voltage": (53, "V"),
+            "EPS Current": (54, "A"),
+            "EPS Power": (55, "W"),
+            "EPS Frequency": (56, "Hz"),
+        }
 
     @classmethod
     async def make_request(cls, host, port=80, pwd="", headers=None):

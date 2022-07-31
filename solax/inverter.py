@@ -1,6 +1,6 @@
 from collections import namedtuple
 import json
-from typing import Any, Callable, Optional, Tuple
+from typing import Any, Callable, Tuple, Union, Dict
 import aiohttp
 import voluptuous as vol
 from voluptuous import Invalid, MultipleInvalid
@@ -17,10 +17,19 @@ InverterResponse = namedtuple("InverterResponse", "data, serial_number, version,
 class Inverter:
     """Base wrapper around Inverter HTTP API"""
 
-    # pylint: disable=C0301
-    _sensor_map = (
-        {}
-    )  # type: dict[str,Tuple[int,Optional[str],Optional[Callable[[Any,Any,Any],Any]]]]
+    ResponseDecoderType = Union[
+        Dict[str, Tuple[int, str]],
+        Dict[str, Tuple[int, str, Callable[[Any, Any, Any], Any]]],
+    ]
+
+    @classmethod
+    def response_decoder(cls) -> ResponseDecoderType:
+        """
+        Inverter implementations should override
+        this to return a decoding map
+        """
+        raise NotImplementedError()
+
     # pylint: enable=C0301
     _schema = vol.Schema({})  # type: vol.Schema
 
@@ -58,7 +67,7 @@ class Inverter:
         Return sensor map
         """
         sensors = {}
-        for name, (idx, unit, *_) in cls._sensor_map.items():
+        for name, (idx, unit, *_) in cls.response_decoder().items():
             sensors[name] = (idx, unit)
         return sensors
 
@@ -68,7 +77,7 @@ class Inverter:
         Return map of functions to be applied to each sensor value
         """
         sensors = {}
-        for name, (_, _, *processor) in cls._sensor_map.items():
+        for name, (_, _, *processor) in cls.response_decoder().items():
             if processor:
                 sensors[name] = processor[0]
         return sensors

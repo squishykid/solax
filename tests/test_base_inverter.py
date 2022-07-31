@@ -19,3 +19,8 @@ async def test_unimplemented_make_request_with_pwd():
 def test_all_registered_inverters_inherit_from_base():
     for i in REGISTRY:
         assert issubclass(i, inverter.Inverter)
+
+
+def test_unimplemented_response_decoder():
+    with pytest.raises(NotImplementedError):
+        inverter.Inverter.response_decoder()
