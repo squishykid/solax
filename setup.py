@@ -13,18 +13,15 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     license="MIT",
     url="https://github.com/squishykid/solax",
-    packages=setuptools.find_packages(exclude=['tests', 'tests.*']),
-    install_requires=[
-        'aiohttp>=3.5.4, <4',
-        'voluptuous>=0.11.5'
-    ],
+    packages=setuptools.find_packages(exclude=["tests", "tests.*"]),
+    install_requires=["aiohttp>=3.5.4, <4", "voluptuous>=0.11.5"],
     setup_requires=[
-        'setuptools_scm',
+        "setuptools_scm",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.8',
+    python_requires=">=3.8",
 )

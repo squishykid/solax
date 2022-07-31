@@ -6,32 +6,36 @@ import voluptuous as vol
 from voluptuous import Invalid, MultipleInvalid
 from voluptuous.humanize import humanize_error
 
-from solax.units import Measurement, Units
+from solax.units import Measurement, SensorUnit, Units
 
 
 class InverterError(Exception):
     """Indicates error communicating with inverter"""
 
 
-InverterResponse = namedtuple('InverterResponse',
-                              'data, serial_number, version, type')
-
-
-class DataMapping(NamedTuple):
-    index: int
-    unit: Optional[Union[Measurement, Units]]
-    processing: Optional[Callable[[Any, Any, Any], Any]]
+InverterResponse = namedtuple("InverterResponse", "data, serial_number, version, type")
 
 
 class Inverter:
     """Base wrapper around Inverter HTTP API"""
 
-    # pylint: disable=C0301
-    _sensor_map = {}  # type: dict[str,Union[DataMapping,int]] # noqa: E501
+    ResponseDecoderType = Union[
+        Dict[str, Tuple[int, SensorUnit]],
+        Dict[str, Tuple[int, SensorUnit, Callable[[Any, Any, Any], Any]]],
+    ]
+
+    @classmethod
+    def response_decoder(cls) -> ResponseDecoderType:
+        """
+        Inverter implementations should override
+        this to return a decoding map
+        """
+        raise NotImplementedError()
+
     # pylint: enable=C0301
     _schema = vol.Schema({})  # type: vol.Schema
 
-    def __init__(self, host, port, pwd=''):
+    def __init__(self, host, port, pwd=""):
         self.host = host
         self.port = port
         self.pwd = pwd
@@ -39,9 +43,7 @@ class Inverter:
 
     async def get_data(self) -> InverterResponse:
         try:
-            data = await self.make_request(
-                self.host, self.port, self.pwd
-            )
+            data = await self.make_request(self.host, self.port, self.pwd)
         except aiohttp.ClientError as ex:
             msg = "Could not connect to inverter endpoint"
             raise InverterError(msg, str(self.__class__.__name__)) from ex
@@ -54,8 +56,7 @@ class Inverter:
         return data
 
     @classmethod
-    async def make_request(cls, host, port, pwd='', headers=None) \
-            -> InverterResponse:
+    async def make_request(cls, host, port, pwd="", headers=None) -> InverterResponse:
         """
         Return instance of 'InverterResponse'
         Raise exception if unable to get data
@@ -68,16 +69,7 @@ class Inverter:
         Return sensor map
         """
         sensors = {}
-        for name, mapping in cls._sensor_map.items():
-            idx = mapping
-            unit = Units.NONE
-
-            if isinstance(mapping, Tuple):
-                (idx, unit, *_) = mapping
-
-            if isinstance(unit, Units):
-                unit = Measurement(unit)
-
+        for name, (idx, unit, *_) in cls.response_decoder().items():
             sensors[name] = (idx, unit)
         return sensors
 
@@ -87,10 +79,7 @@ class Inverter:
         Return map of functions to be applied to each sensor value
         """
         sensors = {}
-        for name, mapping in cls._sensor_map.items():
-            if not isinstance(mapping, Tuple):
-                continue
-            (_, _, *processor) = mapping
+        for name, (_, _, *processor) in cls.response_decoder().items():
             if processor:
                 sensors[name] = processor[0]
         return sensors
@@ -118,12 +107,12 @@ class InverterPost(Inverter):
     #  so we can disable the pylint warning
     # pylint: disable=W0223,R0914
     @classmethod
-    async def make_request(cls, host, port=80, pwd='', headers=None):
+    async def make_request(cls, host, port=80, pwd="", headers=None):
         if not pwd:
-            base = 'http://{}:{}/?optType=ReadRealTimeData'
+            base = "http://{}:{}/?optType=ReadRealTimeData"
             url = base.format(host, port)
         else:
-            base = 'http://{}:{}/?optType=ReadRealTimeData&pwd={}&'
+            base = "http://{}:{}/?optType=ReadRealTimeData&pwd={}&"
             url = base.format(host, port, pwd)
         async with aiohttp.ClientSession() as session:
             async with session.post(url, headers=headers) as req:
@@ -152,8 +141,8 @@ class InverterPost(Inverter):
             _ = humanize_error(json_response, ex)
             raise
         return InverterResponse(
-            data=cls.map_response(response['Data']),
-            serial_number=response.get('SN', response.get('sn')),
-            version=response['ver'],
-            type=response['type']
+            data=cls.map_response(response["Data"]),
+            serial_number=response.get("SN", response.get("sn")),
+            version=response["ver"],
+            type=response["type"],
         )

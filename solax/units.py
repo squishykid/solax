@@ -1,6 +1,6 @@
 """ Units and different measrement types"""
 from enum import Enum
-from typing import NamedTuple
+from typing import NamedTuple, Union
 
 
 class Units(Enum):
@@ -25,4 +25,8 @@ class Measurement(NamedTuple):
 
 class Total(Measurement):
     """A Measuremeant where the values are continuously increasing."""
+
     is_monotonic: bool = True
+
+
+SensorUnit = Union[Measurement, Total]
