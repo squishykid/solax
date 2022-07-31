@@ -189,6 +189,11 @@ INVERTERS_UNDER_TEST = [
 
 
 @pytest.fixture(params=INVERTERS_UNDER_TEST)
+def inverters_under_test(request):
+    yield request.param.inverter
+
+
+@pytest.fixture(params=INVERTERS_UNDER_TEST)
 def inverters_fixture(httpserver, request):
     httpserver.expect_request(
         uri=request.param.uri,
