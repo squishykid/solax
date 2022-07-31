@@ -9,7 +9,7 @@ async def test_waits_when_asked(monkeypatch):
     sleep_f = asyncio.Future()
     sleep_f.set_result(None)
     mock_sleep = Mock(return_value=sleep_f)
-    monkeypatch.setattr(asyncio, 'sleep', mock_sleep)
+    monkeypatch.setattr(asyncio, "sleep", mock_sleep)
 
     inv = Mock()
     get_data_f = asyncio.Future()
@@ -28,7 +28,7 @@ async def test_tries_again_on_timeout(monkeypatch):
     sleep_f = asyncio.Future()
     sleep_f.set_result(None)
     mock_sleep = Mock(return_value=sleep_f)
-    monkeypatch.setattr(asyncio, 'sleep', mock_sleep)
+    monkeypatch.setattr(asyncio, "sleep", mock_sleep)
 
     inv = Mock()
     get_data_f = asyncio.Future()

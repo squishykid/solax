@@ -11,19 +11,20 @@ class InverterError(Exception):
     """Indicates error communicating with inverter"""
 
 
-InverterResponse = namedtuple('InverterResponse',
-                              'data, serial_number, version, type')
+InverterResponse = namedtuple("InverterResponse", "data, serial_number, version, type")
 
 
 class Inverter:
     """Base wrapper around Inverter HTTP API"""
 
     # pylint: disable=C0301
-    _sensor_map = {}  # type: dict[str,Tuple[int,Optional[str],Optional[Callable[[Any,Any,Any],Any]]]] # noqa: E501
+    _sensor_map = (
+        {}
+    )  # type: dict[str,Tuple[int,Optional[str],Optional[Callable[[Any,Any,Any],Any]]]]
     # pylint: enable=C0301
     _schema = vol.Schema({})  # type: vol.Schema
 
-    def __init__(self, host, port, pwd=''):
+    def __init__(self, host, port, pwd=""):
         self.host = host
         self.port = port
         self.pwd = pwd
@@ -31,9 +32,7 @@ class Inverter:
 
     async def get_data(self):
         try:
-            data = await self.make_request(
-                self.host, self.port, self.pwd
-            )
+            data = await self.make_request(self.host, self.port, self.pwd)
         except aiohttp.ClientError as ex:
             msg = "Could not connect to inverter endpoint"
             raise InverterError(msg, str(self.__class__.__name__)) from ex
@@ -46,7 +45,7 @@ class Inverter:
         return data
 
     @classmethod
-    async def make_request(cls, host, port, pwd='', headers=None):
+    async def make_request(cls, host, port, pwd="", headers=None):
         """
         Return instance of 'InverterResponse'
         Raise exception if unable to get data
@@ -97,12 +96,12 @@ class InverterPost(Inverter):
     #  so we can disable the pylint warning
     # pylint: disable=W0223,R0914
     @classmethod
-    async def make_request(cls, host, port=80, pwd='', headers=None):
+    async def make_request(cls, host, port=80, pwd="", headers=None):
         if not pwd:
-            base = 'http://{}:{}/?optType=ReadRealTimeData'
+            base = "http://{}:{}/?optType=ReadRealTimeData"
             url = base.format(host, port)
         else:
-            base = 'http://{}:{}/?optType=ReadRealTimeData&pwd={}&'
+            base = "http://{}:{}/?optType=ReadRealTimeData&pwd={}&"
             url = base.format(host, port, pwd)
         async with aiohttp.ClientSession() as session:
             async with session.post(url, headers=headers) as req:
@@ -131,8 +130,8 @@ class InverterPost(Inverter):
             _ = humanize_error(json_response, ex)
             raise
         return InverterResponse(
-            data=cls.map_response(response['Data']),
-            serial_number=response.get('SN', response.get('sn')),
-            version=response['ver'],
-            type=response['type']
+            data=cls.map_response(response["Data"]),
+            serial_number=response.get("SN", response.get("sn")),
+            version=response["ver"],
+            type=response["type"],
         )

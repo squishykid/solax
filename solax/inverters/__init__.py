@@ -8,5 +8,14 @@ from .x3_v34 import X3V34
 from .x3 import X3
 from .x1_boost import X1Boost
 
-__all__ = ["QVOLTHYBG33P", "XHybrid", "X1", "X1Mini", "X1MiniV34", "X1Smart",
-           "X3V34", "X3", "X1Boost"]
+__all__ = [
+    "QVOLTHYBG33P",
+    "XHybrid",
+    "X1",
+    "X1Mini",
+    "X1MiniV34",
+    "X1Smart",
+    "X3V34",
+    "X3",
+    "X1Boost",
+]
