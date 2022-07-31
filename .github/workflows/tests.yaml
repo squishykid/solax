@@ -23,7 +23,7 @@ jobs:
         pip install --upgrade flake8 pylint pytest pytest-cov pytest-asyncio pytest-httpserver black
     - name: Check code style with black
       run: |
-        black --check solax tests
+        black --check .
     - name: Lint with flake8
       run: |
         flake8 --ignore=E501 solax tests
