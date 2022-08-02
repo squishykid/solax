@@ -21,9 +21,11 @@ InverterResponse = namedtuple("InverterResponse", "data, serial_number, version,
 class Inverter:
     """Base wrapper around Inverter HTTP API"""
 
-    ResponseDecoderType = Union[
-        Dict[str, Tuple[int, SensorUnit]],
-        Dict[str, Tuple[int, SensorUnit, Callable[[Any, Any], Any]]],
+    ResponseDecoderType = Dict[
+        str,
+        Union[
+            Tuple[int, SensorUnit], Tuple[int, SensorUnit, Callable[[Any, Any], Any]]
+        ],
     ]
 
     @classmethod
