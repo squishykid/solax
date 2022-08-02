@@ -22,7 +22,6 @@ class Inverter:
     """Base wrapper around Inverter HTTP API"""
 
     ResponseDecoderType = Union[
-        Dict[str, int],
         Dict[str, Tuple[int, SensorUnit]],
         Dict[str, Tuple[int, SensorUnit, Callable[[Any, Any], Any]]],
     ]
@@ -79,10 +78,7 @@ class Inverter:
         for name, mapping in cls.response_decoder().items():
             unit = Measurement(Units.NONE)
 
-            if isinstance(mapping, tuple):
-                (idx, unit_or_measurement, *_) = mapping
-            else:
-                idx = mapping
+            (idx, unit_or_measurement, *_) = mapping
 
             if isinstance(unit_or_measurement, Units):
                 unit = Measurement(unit_or_measurement)
@@ -98,11 +94,10 @@ class Inverter:
         """
         sensors = {}
         for name, mapping in cls.response_decoder().items():
-            if isinstance(mapping, tuple):
-                processor = None
-                (_, _, *processor) = mapping
-                if processor:
-                    sensors[name] = processor[0]
+            processor = None
+            (_, _, *processor) = mapping
+            if processor:
+                sensors[name] = processor[0]
         return sensors
 
     @classmethod
