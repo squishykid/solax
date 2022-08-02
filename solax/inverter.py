@@ -21,10 +21,12 @@ InverterResponse = namedtuple("InverterResponse", "data, serial_number, version,
 class Inverter:
     """Base wrapper around Inverter HTTP API"""
 
+    SensorIndexSpecType = Union[int, Tuple[int, ...]]
     ResponseDecoderType = Dict[
         str,
         Union[
-            Tuple[int, SensorUnit], Tuple[int, SensorUnit, Callable[[Any, Any], Any]]
+            Tuple[SensorIndexSpecType, SensorUnit],
+            Tuple[SensorIndexSpecType, SensorUnit, Callable[[Any, Any], Any]],
         ],
     ]
 
@@ -72,7 +74,7 @@ class Inverter:
         raise NotImplementedError()
 
     @classmethod
-    def sensor_map(cls) -> Dict[str, Tuple[int, Measurement]]:
+    def sensor_map(cls) -> Dict[str, Tuple[SensorIndexSpecType, Measurement]]:
         """
         Return sensor map
         """
