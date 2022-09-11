@@ -24,7 +24,7 @@ class QVOLTHYBG33P(InverterPost):
         """
 
         @staticmethod
-        def inverter_modes(value, *_args, **_kwargs):
+        def inverter_modes(value):
             return {
                 0: "Waiting",
                 1: "Checking",
@@ -40,7 +40,7 @@ class QVOLTHYBG33P(InverterPost):
             }.get(value, f"unmapped value '{value}'")
 
         @staticmethod
-        def battery_modes(value, *_args, **_kwargs):
+        def battery_modes(value):
             return {
                 0: "Self Use Mode",
                 1: "Force Time Use",

@@ -13,7 +13,7 @@ class Packer(Protocol):  # pragma: no cover
         ...
 
 
-PackerBuilderResult = Tuple[Tuple[float, ...], Packer]
+PackerBuilderResult = Tuple[Tuple[int, ...], Packer]
 
 
 class PackerBuilder(Protocol):  # pragma: no cover
@@ -55,26 +55,26 @@ def startswith(something):
     return inner
 
 
-def div10(val, *_args, **_kwargs):
+def div10(val):
     return val / 10
 
 
-def div100(val, *_args, **_kwargs):
+def div100(val):
     return val / 100
 
 
 INT16_MAX = 0x7FFF
 
 
-def to_signed(val, *_args, **_kwargs):
+def to_signed(val):
     if val > INT16_MAX:
         val -= 2**16
     return val
 
 
-def twoway_div10(val, *_args, **_kwargs):
-    return to_signed(val, None) / 10
+def twoway_div10(val):
+    return to_signed(val) / 10
 
 
-def twoway_div100(val, *_args, **_kwargs):
-    return to_signed(val, None) / 100
+def twoway_div100(val):
+    return to_signed(val) / 100

@@ -16,18 +16,18 @@ class InverterError(Exception):
 
 InverterResponse = namedtuple("InverterResponse", "data, serial_number, version, type")
 
+SensorIndexSpec = Union[int, PackerBuilderResult]
+ResponseDecoder = Dict[
+    str,
+    Union[
+        Tuple[SensorIndexSpec, SensorUnit],
+        Tuple[SensorIndexSpec, SensorUnit, Callable[[Any], Any]],
+    ],
+]
+
 
 class Inverter:
     """Base wrapper around Inverter HTTP API"""
-
-    SensorIndexSpec = Union[int, PackerBuilderResult]
-    ResponseDecoder = Dict[
-        str,
-        Union[
-            Tuple[SensorIndexSpec, SensorUnit],
-            Tuple[SensorIndexSpec, SensorUnit, Callable[[Any], Any]],
-        ],
-    ]
 
     @classmethod
     def response_decoder(cls) -> ResponseDecoder:
@@ -69,11 +69,12 @@ class Inverter:
         raise NotImplementedError()
 
     @classmethod
-    def sensor_map(cls) -> Dict[str, Tuple[SensorIndexSpec, Measurement]]:
+    def sensor_map(cls) -> Dict[str, Tuple[int, Measurement]]:
         """
         Return sensor map
+        Warning, HA depends on this
         """
-        sensors = {}
+        sensors: Dict[str, Tuple[int, Measurement]] = {}
         for name, mapping in cls.response_decoder().items():
             unit = Measurement(Units.NONE)
 
@@ -83,15 +84,26 @@ class Inverter:
                 unit = Measurement(unit_or_measurement)
             else:
                 unit = unit_or_measurement
+            if isinstance(idx, tuple):
+                sensor_indexes = idx[0]
+                first_sensor_index = sensor_indexes[0]
+                idx = first_sensor_index
             sensors[name] = (idx, unit)
         return sensors
 
     @classmethod
-    def postprocess_map(cls) -> Dict[str, Callable[[Any], Any]]:
+    def _decode_map(cls) -> Dict[str, SensorIndexSpec]:
+        sensors: Dict[str, SensorIndexSpec] = {}
+        for name, mapping in cls.response_decoder().items():
+            sensors[name] = mapping[0]
+        return sensors
+
+    @classmethod
+    def _postprocess_map(cls) -> Dict[str, Callable[[Any], Any]]:
         """
         Return map of functions to be applied to each sensor value
         """
-        sensors = {}
+        sensors: Dict[str, Callable[[Any], Any]] = {}
         for name, mapping in cls.response_decoder().items():
             processor = None
             (_, _, *processor) = mapping
@@ -109,16 +121,16 @@ class Inverter:
     @classmethod
     def map_response(cls, resp_data) -> Dict[str, Any]:
         result = {}
-        for sensor_name, (idx, _) in cls.sensor_map().items():
-            if isinstance(idx, (tuple, list)):
-                indexes = idx[0]
-                packer = idx[1]
+        for sensor_name, decode_info in cls._decode_map().items():
+            if isinstance(decode_info, (tuple, list)):
+                indexes = decode_info[0]
+                packer = decode_info[1]
                 values = tuple(resp_data[i] for i in indexes)
                 val = packer(*values)
             else:
-                val = resp_data[idx]
+                val = resp_data[decode_info]
             result[sensor_name] = val
-        for sensor_name, processor in cls.postprocess_map().items():
+        for sensor_name, processor in cls._postprocess_map().items():
             result[sensor_name] = processor(result[sensor_name])
         return result
 
