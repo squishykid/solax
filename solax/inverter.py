@@ -1,4 +1,3 @@
-import asyncio
 from collections import namedtuple
 import json
 from typing import Dict, Any, Callable, Tuple, Union
@@ -8,7 +7,7 @@ from voluptuous import Invalid, MultipleInvalid
 from voluptuous.humanize import humanize_error
 
 from solax.units import Measurement, SensorUnit, Units
-from solax.utils import PackerBuilderResult, timeout
+from solax.utils import PackerBuilderResult
 
 
 class InverterError(Exception):
@@ -49,8 +48,7 @@ class Inverter:
 
     async def get_data(self) -> InverterResponse:
         try:
-            async with timeout():
-                data = await self.make_request(self.host, self.port, self.pwd)
+            data = await self.make_request(self.host, self.port, self.pwd)
         except aiohttp.ClientError as ex:
             msg = "Could not connect to inverter endpoint"
             raise InverterError(msg, str(self.__class__.__name__)) from ex
@@ -59,9 +57,6 @@ class Inverter:
             raise InverterError(msg, str(self.__class__.__name__)) from ex
         except vol.Invalid as ex:
             msg = "Received malformed JSON from inverter"
-            raise InverterError(msg, str(self.__class__.__name__)) from ex
-        except asyncio.TimeoutError as ex:
-            msg = "Connection to endpoint timed out"
             raise InverterError(msg, str(self.__class__.__name__)) from ex
         return data
 

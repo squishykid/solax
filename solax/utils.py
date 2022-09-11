@@ -1,5 +1,4 @@
 from typing import Protocol, Tuple
-import async_timeout
 from voluptuous import Invalid
 
 
@@ -79,10 +78,3 @@ def twoway_div10(val, *_args, **_kwargs):
 
 def twoway_div100(val, *_args, **_kwargs):
     return to_signed(val, None) / 100
-
-
-REQUEST_TIMEOUT = 5
-
-
-def timeout():
-    return async_timeout.timeout(REQUEST_TIMEOUT)

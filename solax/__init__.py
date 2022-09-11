@@ -3,11 +3,15 @@ import asyncio
 
 import logging
 
+import async_timeout
+
 from solax.discovery import discover
 from solax.inverter import Inverter, InverterResponse
-from solax.utils import timeout
 
 _LOGGER = logging.getLogger(__name__)
+
+
+REQUEST_TIMEOUT = 5
 
 
 async def rt_request(inv: Inverter, retry, t_wait=0) -> InverterResponse:
@@ -19,7 +23,7 @@ async def rt_request(inv: Inverter, retry, t_wait=0) -> InverterResponse:
     new_wait = (t_wait * 2) + 5
     retry = retry - 1
     try:
-        async with timeout():
+        with async_timeout.timeout(REQUEST_TIMEOUT):
             return await inv.get_data()
     except asyncio.TimeoutError:
         if retry > 0:
