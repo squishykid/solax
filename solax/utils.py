@@ -1,5 +1,47 @@
+from typing import Any, Callable, Protocol, Tuple
 import async_timeout
 from voluptuous import Invalid
+
+
+class Packer(Protocol):  # pragma: no cover
+    """
+    Pack multiple raw values from the inverter
+     data into one raw value
+    """
+
+    def __call__(self, *vals: float) -> float:
+        ...
+
+
+PackerBuilderResult = Tuple[Tuple[float, ...], Packer]
+
+
+class PackerBuilder(Protocol):  # pragma: no cover
+    """
+    Build a packer by identifying the indexes of the
+    raw values to be fed to the packer
+    """
+
+    def __call__(self, *indexes: int) -> PackerBuilderResult:
+        ...
+
+
+def __u16_packer(*values: float) -> float:
+    val = 0.0
+    stride = 1
+    for v in values:
+        val += v * stride
+        stride *= 2**16
+    return val
+
+
+def pack_u16(*indexes: int) -> PackerBuilderResult:
+    """
+    Some values are expressed over 2 (or potentially
+    more 16 bit [aka "short"] registers). Here we combine
+    them, in order of least to most significant.
+    """
+    return (indexes, __u16_packer)
 
 
 def startswith(something):

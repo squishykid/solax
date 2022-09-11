@@ -1,14 +1,14 @@
 import asyncio
 from collections import namedtuple
 import json
-from typing import Dict, Any, Callable, Tuple, Union
+from typing import Dict, Any, Callable, Protocol, Tuple, Union
 import aiohttp
 import voluptuous as vol
 from voluptuous import Invalid, MultipleInvalid
 from voluptuous.humanize import humanize_error
 
 from solax.units import Measurement, SensorUnit, Units
-from solax.utils import timeout
+from solax.utils import Packer, PackerBuilderResult, timeout
 
 
 class InverterError(Exception):
@@ -21,17 +21,17 @@ InverterResponse = namedtuple("InverterResponse", "data, serial_number, version,
 class Inverter:
     """Base wrapper around Inverter HTTP API"""
 
-    SensorIndexSpecType = Union[int, Tuple[int, ...]]
-    ResponseDecoderType = Dict[
+    SensorIndexSpec = Union[int, PackerBuilderResult]
+    ResponseDecoder = Dict[
         str,
         Union[
-            Tuple[SensorIndexSpecType, SensorUnit],
-            Tuple[SensorIndexSpecType, SensorUnit, Callable[[Any, Any], Any]],
+            Tuple[SensorIndexSpec, SensorUnit],
+            Tuple[SensorIndexSpec, SensorUnit, Callable[[Any], Any]],
         ],
     ]
 
     @classmethod
-    def response_decoder(cls) -> ResponseDecoderType:
+    def response_decoder(cls) -> ResponseDecoder:
         """
         Inverter implementations should override
         this to return a decoding map
@@ -74,7 +74,7 @@ class Inverter:
         raise NotImplementedError()
 
     @classmethod
-    def sensor_map(cls) -> Dict[str, Tuple[SensorIndexSpecType, Measurement]]:
+    def sensor_map(cls) -> Dict[str, Tuple[SensorIndexSpec, Measurement]]:
         """
         Return sensor map
         """
@@ -92,7 +92,7 @@ class Inverter:
         return sensors
 
     @classmethod
-    def postprocess_map(cls) -> Dict[str, Callable[[Any, Any], Any]]:
+    def postprocess_map(cls) -> Dict[str, Callable[[Any], Any]]:
         """
         Return map of functions to be applied to each sensor value
         """
@@ -116,20 +116,15 @@ class Inverter:
         result = {}
         for sensor_name, (idx, _) in cls.sensor_map().items():
             if isinstance(idx, (tuple, list)):
-                # Some values are expressed over 2 (or potentially
-                # more 16 bit registers). Here we combine them, if the
-                # index given is a list or tuple, in order of least to
-                # most significant.
-                val = 0
-                stride = 1
-                for i in idx:
-                    val += resp_data[i] * stride
-                    stride *= 2**16
+                indexes = idx[0]
+                packer = idx[1]
+                values = tuple([resp_data[i] for i in indexes])
+                val = packer(*values)
             else:
                 val = resp_data[idx]
             result[sensor_name] = val
         for sensor_name, processor in cls.postprocess_map().items():
-            result[sensor_name] = processor(result[sensor_name], result)
+            result[sensor_name] = processor(result[sensor_name])
         return result
 
 

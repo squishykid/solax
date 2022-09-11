@@ -5,6 +5,7 @@ from solax.units import Total, Units
 from solax.utils import (
     div10,
     div100,
+    pack_u16,
     twoway_div10,
     to_signed,
     twoway_div100,
@@ -115,18 +116,26 @@ class QVOLTHYBG33P(InverterPost):
             # 53: always 0
             # 54: follows PV Output, idles around 35, peaks at 54,
             # 55-67: always 0
-            "Total Energy": ((68, 69), Total(Units.KWH), div10),
+            "Total Energy": (pack_u16(68, 69), Total(Units.KWH), div10),
             # 70: div10, today's energy including battery usage
             # 71-73: 0
-            "Total Battery Discharge Energy": ((74, 75), Total(Units.KWH), div10),
-            "Total Battery Charge Energy": ((76, 77), Total(Units.KWH), div10),
+            "Total Battery Discharge Energy": (
+                pack_u16(74, 75),
+                Total(Units.KWH),
+                div10,
+            ),
+            "Total Battery Charge Energy": (
+                pack_u16(76, 77),
+                Total(Units.KWH),
+                div10,
+            ),
             "Today's Battery Discharge Energy": (78, Units.KWH, div10),
             "Today's Battery Charge Energy": (79, Units.KWH, div10),
-            "Total PV Energy": ((80, 81), Total(Units.KWH), div10),
+            "Total PV Energy": (pack_u16(80, 81), Total(Units.KWH), div10),
             "Today's Energy": (82, Units.KWH, div10),
             # 83-85: always 0
-            "Total Feed-in Energy": ((86, 87), Total(Units.KWH), div100),
-            "Total Consumption": ((88, 89), Total(Units.KWH), div100),
+            "Total Feed-in Energy": (pack_u16(86, 87), Total(Units.KWH), div100),
+            "Total Consumption": (pack_u16(88, 89), Total(Units.KWH), div100),
             "Today's Feed-in Energy": (90, Units.KWH, div100),
             # 91: always 0
             "Today's Consumption": (92, Units.KWH, div100),
