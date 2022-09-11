@@ -1,9 +1,10 @@
-from typing import Any, Callable, Protocol, Tuple
+from typing import Protocol, Tuple
 import async_timeout
 from voluptuous import Invalid
 
 
 class Packer(Protocol):  # pragma: no cover
+    # pylint: disable=R0903
     """
     Pack multiple raw values from the inverter
      data into one raw value
@@ -17,6 +18,7 @@ PackerBuilderResult = Tuple[Tuple[float, ...], Packer]
 
 
 class PackerBuilder(Protocol):  # pragma: no cover
+    # pylint: disable=R0903
     """
     Build a packer by identifying the indexes of the
     raw values to be fed to the packer
@@ -27,12 +29,12 @@ class PackerBuilder(Protocol):  # pragma: no cover
 
 
 def __u16_packer(*values: float) -> float:
-    val = 0.0
+    accumulator = 0.0
     stride = 1
-    for v in values:
-        val += v * stride
+    for value in values:
+        accumulator += value * stride
         stride *= 2**16
-    return val
+    return accumulator
 
 
 def pack_u16(*indexes: int) -> PackerBuilderResult:

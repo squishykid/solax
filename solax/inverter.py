@@ -1,14 +1,14 @@
 import asyncio
 from collections import namedtuple
 import json
-from typing import Dict, Any, Callable, Protocol, Tuple, Union
+from typing import Dict, Any, Callable, Tuple, Union
 import aiohttp
 import voluptuous as vol
 from voluptuous import Invalid, MultipleInvalid
 from voluptuous.humanize import humanize_error
 
 from solax.units import Measurement, SensorUnit, Units
-from solax.utils import Packer, PackerBuilderResult, timeout
+from solax.utils import PackerBuilderResult, timeout
 
 
 class InverterError(Exception):
@@ -118,7 +118,7 @@ class Inverter:
             if isinstance(idx, (tuple, list)):
                 indexes = idx[0]
                 packer = idx[1]
-                values = tuple([resp_data[i] for i in indexes])
+                values = tuple(resp_data[i] for i in indexes)
                 val = packer(*values)
             else:
                 val = resp_data[idx]
