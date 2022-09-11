@@ -14,12 +14,14 @@ from tests.samples.expected_values import (
     X3V34_HYBRID_VALUES_NEGATIVE_POWER,
     XHYBRID_VALUES,
     X1_BOOST_VALUES,
+    X1_HYBRID_G4_VALUES,
 )
 from tests.samples.responses import (
     QVOLTHYBG33P_RESPONSE_V34,
     X1_BOOST_AIR_MINI_RESPONSE,
     X1_HYBRID_G3_2X_MPPT_RESPONSE,
     X1_HYBRID_G3_RESPONSE,
+    X1_HYBRID_G4_RESPONSE,
     X1_MINI_RESPONSE_V34,
     X1_SMART_RESPONSE,
     X3_HYBRID_G3_2X_MPPT_RESPONSE,
@@ -46,7 +48,7 @@ def simple_http_fixture(httpserver):
 
 InverterUnderTest = namedtuple(
     "InverterUnderTest",
-    "uri, method, query_string, response, inverter, values, headers",
+    "uri, method, query_string, response, inverter, values, headers, data",
 )
 
 INVERTERS_UNDER_TEST = [
@@ -58,6 +60,7 @@ INVERTERS_UNDER_TEST = [
         inverter=inverter.XHybrid,
         values=XHYBRID_VALUES,
         headers=None,
+        data=None,
     ),
     InverterUnderTest(
         uri="/api/realTimeData.htm",
@@ -67,6 +70,17 @@ INVERTERS_UNDER_TEST = [
         inverter=inverter.XHybrid,
         values=XHYBRID_VALUES,
         headers=None,
+        data=None,
+    ),
+    InverterUnderTest(
+        uri="/",
+        method="POST",
+        query_string=None,
+        response=X1_HYBRID_G4_RESPONSE,
+        inverter=inverter.X1HybridGen4,
+        values=X1_HYBRID_G4_VALUES,
+        headers=None,
+        data="optType=ReadRealTimeData",
     ),
     InverterUnderTest(
         uri="/",
@@ -76,6 +90,7 @@ INVERTERS_UNDER_TEST = [
         inverter=inverter.X1Mini,
         values=X1_MINI_VALUES,
         headers=None,
+        data=None,
     ),
     InverterUnderTest(
         uri="/",
@@ -85,6 +100,7 @@ INVERTERS_UNDER_TEST = [
         inverter=inverter.X1MiniV34,
         values=X1_MINI_VALUES_V34,
         headers=None,
+        data=None,
     ),
     InverterUnderTest(
         uri="/",
@@ -94,6 +110,7 @@ INVERTERS_UNDER_TEST = [
         inverter=inverter.X1Smart,
         values=X1_SMART_VALUES,
         headers=X_FORWARDED_HEADER,
+        data=None,
     ),
     InverterUnderTest(
         uri="/",
@@ -103,6 +120,7 @@ INVERTERS_UNDER_TEST = [
         inverter=inverter.X1Boost,
         values=X1_BOOST_VALUES,
         headers=X_FORWARDED_HEADER,
+        data=None,
     ),
     InverterUnderTest(
         uri="/",
@@ -112,6 +130,7 @@ INVERTERS_UNDER_TEST = [
         inverter=inverter.X3,
         values=X3_VALUES,
         headers=None,
+        data=None,
     ),
     InverterUnderTest(
         uri="/",
@@ -121,6 +140,7 @@ INVERTERS_UNDER_TEST = [
         inverter=inverter.X3,
         values=X3_VALUES,
         headers=None,
+        data=None,
     ),
     InverterUnderTest(
         uri="/",
@@ -130,6 +150,7 @@ INVERTERS_UNDER_TEST = [
         inverter=inverter.X1,
         values=X1_VALUES,
         headers=None,
+        data=None,
     ),
     InverterUnderTest(
         uri="/",
@@ -139,6 +160,7 @@ INVERTERS_UNDER_TEST = [
         inverter=inverter.X1,
         values=X1_VALUES,
         headers=None,
+        data=None,
     ),
     InverterUnderTest(
         uri="/",
@@ -148,6 +170,7 @@ INVERTERS_UNDER_TEST = [
         inverter=inverter.X3,
         values=X3_HYBRID_VALUES,
         headers=None,
+        data=None,
     ),
     InverterUnderTest(
         uri="/",
@@ -157,6 +180,7 @@ INVERTERS_UNDER_TEST = [
         inverter=inverter.X3V34,
         values=X3V34_HYBRID_VALUES,
         headers=None,
+        data=None,
     ),
     InverterUnderTest(
         uri="/",
@@ -166,6 +190,7 @@ INVERTERS_UNDER_TEST = [
         inverter=inverter.X3V34,
         values=X3V34_HYBRID_VALUES_NEGATIVE_POWER,
         headers=None,
+        data=None,
     ),
     InverterUnderTest(
         uri="/",
@@ -175,6 +200,7 @@ INVERTERS_UNDER_TEST = [
         inverter=inverter.X3V34,
         values=X3V34_HYBRID_VALUES_EPS_MODE,
         headers=None,
+        data=None,
     ),
     InverterUnderTest(
         uri="/",
@@ -184,6 +210,7 @@ INVERTERS_UNDER_TEST = [
         inverter=inverter.QVOLTHYBG33P,
         values=QVOLTHYBG33P_VALUES,
         headers=None,
+        data=None,
     ),
 ]
 
@@ -200,6 +227,7 @@ def inverters_fixture(httpserver, request):
         method=request.param.method,
         query_string=request.param.query_string,
         headers=request.param.headers,
+        data=request.param.data,
     ).respond_with_json(request.param.response)
     yield (
         (httpserver.host, httpserver.port),

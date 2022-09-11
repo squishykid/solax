@@ -7,6 +7,7 @@ from voluptuous import Invalid, MultipleInvalid
 from voluptuous.humanize import humanize_error
 
 from solax.units import Measurement, SensorUnit, Units
+from solax.utils import PackerBuilderResult
 
 
 class InverterError(Exception):
@@ -15,18 +16,21 @@ class InverterError(Exception):
 
 InverterResponse = namedtuple("InverterResponse", "data, serial_number, version, type")
 
+SensorIndexSpec = Union[int, PackerBuilderResult]
+ResponseDecoder = Dict[
+    str,
+    Union[
+        Tuple[SensorIndexSpec, SensorUnit],
+        Tuple[SensorIndexSpec, SensorUnit, Callable[[Any], Any]],
+    ],
+]
+
 
 class Inverter:
     """Base wrapper around Inverter HTTP API"""
 
-    ResponseDecoderType = Union[
-        Dict[str, int],
-        Dict[str, Tuple[int, SensorUnit]],
-        Dict[str, Tuple[int, SensorUnit, Callable[[Any, Any], Any]]],
-    ]
-
     @classmethod
-    def response_decoder(cls) -> ResponseDecoderType:
+    def response_decoder(cls) -> ResponseDecoder:
         """
         Inverter implementations should override
         this to return a decoding map
@@ -68,35 +72,43 @@ class Inverter:
     def sensor_map(cls) -> Dict[str, Tuple[int, Measurement]]:
         """
         Return sensor map
+        Warning, HA depends on this
         """
-        sensors = {}
+        sensors: Dict[str, Tuple[int, Measurement]] = {}
         for name, mapping in cls.response_decoder().items():
             unit = Measurement(Units.NONE)
 
-            if isinstance(mapping, tuple):
-                (idx, unit_or_measurement, *_) = mapping
-            else:
-                idx = mapping
+            (idx, unit_or_measurement, *_) = mapping
 
             if isinstance(unit_or_measurement, Units):
                 unit = Measurement(unit_or_measurement)
             else:
                 unit = unit_or_measurement
+            if isinstance(idx, tuple):
+                sensor_indexes = idx[0]
+                first_sensor_index = sensor_indexes[0]
+                idx = first_sensor_index
             sensors[name] = (idx, unit)
         return sensors
 
     @classmethod
-    def postprocess_map(cls) -> Dict[str, Callable[[Any, Any], Any]]:
+    def _decode_map(cls) -> Dict[str, SensorIndexSpec]:
+        sensors: Dict[str, SensorIndexSpec] = {}
+        for name, mapping in cls.response_decoder().items():
+            sensors[name] = mapping[0]
+        return sensors
+
+    @classmethod
+    def _postprocess_map(cls) -> Dict[str, Callable[[Any], Any]]:
         """
         Return map of functions to be applied to each sensor value
         """
-        sensors = {}
+        sensors: Dict[str, Callable[[Any], Any]] = {}
         for name, mapping in cls.response_decoder().items():
-            if isinstance(mapping, tuple):
-                processor = None
-                (_, _, *processor) = mapping
-                if processor:
-                    sensors[name] = processor[0]
+            processor = None
+            (_, _, *processor) = mapping
+            if processor:
+                sensors[name] = processor[0]
         return sensors
 
     @classmethod
@@ -109,11 +121,17 @@ class Inverter:
     @classmethod
     def map_response(cls, resp_data) -> Dict[str, Any]:
         result = {}
-        for sensor_name, (idx, _) in cls.sensor_map().items():
-            val = resp_data[idx]
+        for sensor_name, decode_info in cls._decode_map().items():
+            if isinstance(decode_info, (tuple, list)):
+                indexes = decode_info[0]
+                packer = decode_info[1]
+                values = tuple(resp_data[i] for i in indexes)
+                val = packer(*values)
+            else:
+                val = resp_data[decode_info]
             result[sensor_name] = val
-        for sensor_name, processor in cls.postprocess_map().items():
-            result[sensor_name] = processor(result[sensor_name], result)
+        for sensor_name, processor in cls._postprocess_map().items():
+            result[sensor_name] = processor(result[sensor_name])
         return result
 
 
@@ -131,6 +149,7 @@ class InverterPost(Inverter):
             url = base.format(host, port, pwd)
         async with aiohttp.ClientSession() as session:
             async with session.post(url, headers=headers) as req:
+                req.raise_for_status()
                 resp = await req.read()
 
         return cls.handle_response(resp)
@@ -161,3 +180,24 @@ class InverterPost(Inverter):
             version=response["ver"],
             type=response["type"],
         )
+
+
+class InverterPostData(InverterPost):
+    # This is an intermediate abstract class,
+    #  so we can disable the pylint warning
+    # pylint: disable=W0223,R0914
+    @classmethod
+    async def make_request(cls, host, port=80, pwd="", headers=None):
+        base = "http://{}:{}/"
+        url = base.format(host, port)
+        data = "optType=ReadRealTimeData"
+        if pwd:
+            data = data + "&pwd=" + pwd
+        async with aiohttp.ClientSession() as session:
+            async with session.post(
+                url, headers=headers, data=data.encode("utf-8")
+            ) as req:
+                req.raise_for_status()
+                resp = await req.read()
+
+        return cls.handle_response(resp)

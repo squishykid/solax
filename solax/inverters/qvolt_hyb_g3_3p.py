@@ -5,15 +5,10 @@ from solax.units import Total, Units
 from solax.utils import (
     div10,
     div100,
+    pack_u16,
     twoway_div10,
     to_signed,
-    pv_energy,
     twoway_div100,
-    total_energy,
-    discharge_energy,
-    charge_energy,
-    feedin_energy,
-    consumption,
 )
 
 
@@ -29,7 +24,7 @@ class QVOLTHYBG33P(InverterPost):
         """
 
         @staticmethod
-        def inverter_modes(value, *_args, **_kwargs):
+        def inverter_modes(value):
             return {
                 0: "Waiting",
                 1: "Checking",
@@ -45,7 +40,7 @@ class QVOLTHYBG33P(InverterPost):
             }.get(value, f"unmapped value '{value}'")
 
         @staticmethod
-        def battery_modes(value, *_args, **_kwargs):
+        def battery_modes(value):
             return {
                 0: "Self Use Mode",
                 1: "Force Time Use",
@@ -121,24 +116,26 @@ class QVOLTHYBG33P(InverterPost):
             # 53: always 0
             # 54: follows PV Output, idles around 35, peaks at 54,
             # 55-67: always 0
-            "Total Energy": (68, Total(Units.KWH), total_energy),
-            "Total Energy Resets": (69),
+            "Total Energy": (pack_u16(68, 69), Total(Units.KWH), div10),
             # 70: div10, today's energy including battery usage
             # 71-73: 0
-            "Total Battery Discharge Energy": (74, Total(Units.KWH), discharge_energy),
-            "Total Battery Discharge Energy Resets": (75),
-            "Total Battery Charge Energy": (76, Total(Units.KWH), charge_energy),
-            "Total Battery Charge Energy Resets": (77),
+            "Total Battery Discharge Energy": (
+                pack_u16(74, 75),
+                Total(Units.KWH),
+                div10,
+            ),
+            "Total Battery Charge Energy": (
+                pack_u16(76, 77),
+                Total(Units.KWH),
+                div10,
+            ),
             "Today's Battery Discharge Energy": (78, Units.KWH, div10),
             "Today's Battery Charge Energy": (79, Units.KWH, div10),
-            "Total PV Energy": (80, Total(Units.KWH), pv_energy),
-            "Total PV Energy Resets": (81),
+            "Total PV Energy": (pack_u16(80, 81), Total(Units.KWH), div10),
             "Today's Energy": (82, Units.KWH, div10),
             # 83-85: always 0
-            "Total Feed-in Energy": (86, Total(Units.KWH), feedin_energy),
-            "Total Feed-in Energy Resets": (87),
-            "Total Consumption": (88, Total(Units.KWH), consumption),
-            "Total Consumption Resets": (89),
+            "Total Feed-in Energy": (pack_u16(86, 87), Total(Units.KWH), div100),
+            "Total Consumption": (pack_u16(88, 89), Total(Units.KWH), div100),
             "Today's Feed-in Energy": (90, Units.KWH, div100),
             # 91: always 0
             "Today's Consumption": (92, Units.KWH, div100),
