@@ -1,5 +1,5 @@
 import voluptuous as vol
-from solax.inverter import InverterPost
+from solax.inverter import Inverter
 from solax.units import Total, Units
 from solax.utils import (
     div10,
@@ -11,7 +11,7 @@ from solax.utils import (
 )
 
 
-class X3V34(InverterPost):
+class X3V34(Inverter):
     """X3 v2.034.06"""
 
     # pylint: disable=duplicate-code

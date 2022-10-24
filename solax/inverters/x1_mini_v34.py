@@ -1,11 +1,11 @@
 import voluptuous as vol
 
-from solax.inverter import InverterPost
+from solax.inverter import Inverter
 from solax.units import Units, Total
 from solax.utils import div10, div100
 
 
-class X1MiniV34(InverterPost):
+class X1MiniV34(Inverter):
     """
     X1-Boost-Air-Mini with Wifi Pocket v2.034.06
     SolarX disabled lan access with this custom

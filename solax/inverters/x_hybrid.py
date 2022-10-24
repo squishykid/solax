@@ -1,7 +1,6 @@
-import json
-import aiohttp
 import voluptuous as vol
-from solax.inverter import Inverter, InverterResponse
+
+from solax.inverter import Inverter, InverterHttpClient, Method, ResponseParser
 from solax.units import Total, Units
 
 
@@ -27,6 +26,19 @@ class XHybrid(Inverter):
         },
         extra=vol.REMOVE_EXTRA,
     )
+
+    @classmethod
+    def _build(cls, host, port, pwd="", params_in_query=True):
+        base = "http://{}:{}/api/realTimeData.htm"
+        url = base.format(host, port)
+        http_client = InverterHttpClient.build_w_url(url, Method.GET)
+        response_parser = ResponseParser(cls._schema, cls.response_decoder())
+        return cls(http_client, response_parser)
+
+    @classmethod
+    def build_all_variants(cls, host, port, pwd=""):
+        versions = [cls._build(host, port)]
+        return versions
 
     # key: name of sensor
     # value.0: index
@@ -60,21 +72,3 @@ class XHybrid(Inverter):
             "EPS Power": (55, Units.W),
             "EPS Frequency": (56, Units.HZ),
         }
-
-    @classmethod
-    async def make_request(cls, host, port=80, pwd="", headers=None):
-        base = "http://{}:{}/api/realTimeData.htm"
-        url = base.format(host, port)
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as req:
-                garbage = await req.read()
-        formatted = garbage.decode("utf-8")
-        formatted = formatted.replace(",,", ",0.0,").replace(",,", ",0.0,")
-        json_response = json.loads(formatted)
-        response = cls.schema()(json_response)
-        return InverterResponse(
-            data=cls.map_response(response["Data"]),
-            serial_number=response["SN"],
-            version=response["version"],
-            type=response["type"],
-        )

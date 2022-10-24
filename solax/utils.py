@@ -78,3 +78,7 @@ def twoway_div10(val):
 
 def twoway_div100(val):
     return to_signed(val) / 100
+
+
+def to_url(host, port):
+    return f"http://{host}:{port}/"
