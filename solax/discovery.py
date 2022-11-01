@@ -8,12 +8,13 @@ from solax.inverters import (
     X1MiniV34,
     X1Smart,
     QVOLTHYBG33P,
+    QVOLTHYBG31P,
     X1Boost,
     X1HybridGen4,
 )
 
 # registry of inverters
-REGISTRY = [
+REGISTRY = [    
     XHybrid,
     X3,
     X3V34,
@@ -21,7 +22,8 @@ REGISTRY = [
     X1Mini,
     X1MiniV34,
     X1Smart,
-    QVOLTHYBG33P,
+    QVOLTHYBG33P,   
+    QVOLTHYBG31P, 
     X1Boost,
     X1HybridGen4,
 ]
@@ -34,6 +36,7 @@ class DiscoveryError(Exception):
 async def discover(host, port, pwd="") -> Inverter:
     failures = []
     for inverter in REGISTRY:
+        print("Trying as " + str(inverter))
         i = inverter(host, port, pwd)
         try:
             await i.get_data()
