@@ -36,7 +36,6 @@ class DiscoveryError(Exception):
 async def discover(host, port, pwd="") -> Inverter:
     failures = []
     for inverter in REGISTRY:
-        print("Trying as " + str(inverter))
         i = inverter(host, port, pwd)
         try:
             await i.get_data()
