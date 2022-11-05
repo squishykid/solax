@@ -110,7 +110,7 @@ class QVOLTHYBG31P(InverterPost):
             # 50-51: always 1. possibly an inverter setting
             # 52: idk, max 4, min 0
             # 53: always 0
-            # 54-55: 32 bit pack? always positive in the 20k range
+            "Total self-used solar": (pack_u16(54, 55), Total(Units.KWH), div10),
             # 56-57: 32 bit pack? mostly negative, went positive briefly
             # 58-59: 32 bit pack? always negative, between -144 and -175
             # 60-69: always 0
