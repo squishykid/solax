@@ -2,6 +2,7 @@ from collections import namedtuple
 import pytest
 import solax.inverters as inverter
 from tests.samples.expected_values import (
+    QVOLTHYBG31P_VALUES,
     QVOLTHYBG33P_VALUES,
     X1_MINI_VALUES,
     X1_MINI_VALUES_V34,
@@ -17,6 +18,7 @@ from tests.samples.expected_values import (
     X1_HYBRID_G4_VALUES,
 )
 from tests.samples.responses import (
+    QVOLTHYBG31P_RESPONSE,
     QVOLTHYBG33P_RESPONSE_V34,
     X1_BOOST_AIR_MINI_RESPONSE,
     X1_HYBRID_G3_2X_MPPT_RESPONSE,
@@ -209,6 +211,16 @@ INVERTERS_UNDER_TEST = [
         response=QVOLTHYBG33P_RESPONSE_V34,
         inverter=inverter.QVOLTHYBG33P,
         values=QVOLTHYBG33P_VALUES,
+        headers=None,
+        data=None,
+    ),
+    InverterUnderTest(
+        uri="/",
+        method="POST",
+        query_string="",
+        response=QVOLTHYBG31P_RESPONSE,
+        inverter=inverter.QVOLTHYBG31P,
+        values=QVOLTHYBG31P_VALUES,
         headers=None,
         data=None,
     ),
