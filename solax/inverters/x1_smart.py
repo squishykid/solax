@@ -1,4 +1,5 @@
 import voluptuous as vol
+
 from solax import utils
 from solax.inverter import Inverter, InverterHttpClient, Method, ResponseParser
 from solax.units import Total, Units

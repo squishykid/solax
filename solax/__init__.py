@@ -1,6 +1,5 @@
 """Support for Solax inverter via local API."""
 import asyncio
-
 import logging
 
 import async_timeout

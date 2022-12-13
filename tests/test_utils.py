@@ -1,4 +1,5 @@
 import struct
+
 import pytest
 
 from solax import utils

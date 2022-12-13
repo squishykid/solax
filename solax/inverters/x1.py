@@ -1,6 +1,7 @@
 import voluptuous as vol
+
 from solax.inverter import Inverter
-from solax.units import Units, Total
+from solax.units import Total, Units
 from solax.utils import startswith
 
 

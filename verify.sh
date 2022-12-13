@@ -10,6 +10,9 @@ pip install --upgrade flake8 pylint pytest pytest-cov pytest-asyncio pytest-http
 echo "Running black..."
 black --check .
 
+echo "Running isort"
+isort --profile black .
+
 echo "Running mypy..."
 mypy --exclude venv .
 

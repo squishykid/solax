@@ -1,7 +1,7 @@
 import json
 import logging
 from collections import namedtuple
-from typing import Dict, Any, Callable, Tuple, Union
+from typing import Any, Callable, Dict, Tuple, Union
 
 import voluptuous as vol
 from voluptuous import Invalid, MultipleInvalid

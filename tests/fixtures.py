@@ -1,8 +1,12 @@
 from collections import namedtuple
+
 import pytest
+
 import solax.inverters as inverter
 from tests.samples.expected_values import (
     QVOLTHYBG33P_VALUES,
+    X1_BOOST_VALUES,
+    X1_HYBRID_G4_VALUES,
     X1_MINI_VALUES,
     X1_MINI_VALUES_V34,
     X1_SMART_VALUES,
@@ -13,12 +17,11 @@ from tests.samples.expected_values import (
     X3V34_HYBRID_VALUES_EPS_MODE,
     X3V34_HYBRID_VALUES_NEGATIVE_POWER,
     XHYBRID_VALUES,
-    X1_BOOST_VALUES,
-    X1_HYBRID_G4_VALUES,
 )
 from tests.samples.responses import (
     QVOLTHYBG33P_RESPONSE_V34,
     X1_BOOST_AIR_MINI_RESPONSE,
+    X1_BOOST_RESPONSE,
     X1_HYBRID_G3_2X_MPPT_RESPONSE,
     X1_HYBRID_G3_RESPONSE,
     X1_HYBRID_G4_RESPONSE,
@@ -32,7 +35,6 @@ from tests.samples.responses import (
     X3_MIC_RESPONSE,
     XHYBRID_DE01_RESPONSE,
     XHYBRID_DE02_RESPONSE,
-    X1_BOOST_RESPONSE,
 )
 
 X_FORWARDED_HEADER = {"X-Forwarded-For": "5.8.8.8"}
