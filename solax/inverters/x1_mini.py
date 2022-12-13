@@ -1,4 +1,5 @@
 import voluptuous as vol
+
 from solax.inverter import InverterPost
 from solax.units import Total, Units
 from solax.utils import startswith

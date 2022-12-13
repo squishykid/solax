@@ -1,7 +1,8 @@
 import pytest
+
 import solax
-from solax.inverter import InverterError
 from solax.discovery import REGISTRY
+from solax.inverter import InverterError
 from solax.units import Measurement
 from tests import fixtures
 

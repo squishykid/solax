@@ -1,6 +1,7 @@
 import voluptuous as vol
+
 from solax.inverter import InverterPostData
-from solax.units import Units, Total
+from solax.units import Total, Units
 from solax.utils import div10, div100, pack_u16, to_signed
 
 
