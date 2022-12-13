@@ -1,6 +1,7 @@
-from collections import namedtuple
 import json
-from typing import Dict, Any, Callable, Tuple, Union
+from collections import namedtuple
+from typing import Any, Callable, Dict, Tuple, Union
+
 import aiohttp
 import voluptuous as vol
 from voluptuous import Invalid, MultipleInvalid

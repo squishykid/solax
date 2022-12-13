@@ -1,5 +1,6 @@
 import pytest
 from voluptuous import Invalid
+
 from solax.utils import startswith
 
 

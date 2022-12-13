@@ -1,6 +1,8 @@
 import json
+
 import aiohttp
 import voluptuous as vol
+
 from solax.inverter import Inverter, InverterResponse
 from solax.units import Total, Units
 
