@@ -1,11 +1,11 @@
 import voluptuous as vol
 
-from solax.inverter import InverterPost
+from solax.inverter import Inverter
 from solax.units import Total, Units
 from solax.utils import startswith
 
 
-class X1(InverterPost):
+class X1(Inverter):
     # pylint: disable=duplicate-code
     _schema = vol.Schema(
         {

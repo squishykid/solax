@@ -34,12 +34,12 @@ class DiscoveryError(Exception):
 async def discover(host, port, pwd="") -> Inverter:
     failures = []
     for inverter in REGISTRY:
-        i = inverter(host, port, pwd)
-        try:
-            await i.get_data()
-            return i
-        except InverterError as ex:
-            failures.append(ex)
+        for i in inverter.build_all_variants(host, port, pwd):
+            try:
+                await i.get_data()
+                return i
+            except InverterError as ex:
+                failures.append(ex)
     msg = (
         "Unable to connect to the inverter at "
         f"host={host} port={port}, or your inverter is not supported yet.\n"

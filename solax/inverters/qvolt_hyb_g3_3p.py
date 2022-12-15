@@ -1,12 +1,12 @@
-import aiohttp
 import voluptuous as vol
 
-from solax.inverter import InverterPost
+from solax import utils
+from solax.inverter import Inverter, InverterHttpClient, Method, ResponseParser
 from solax.units import Total, Units
 from solax.utils import div10, div100, pack_u16, to_signed, twoway_div10, twoway_div100
 
 
-class QVOLTHYBG33P(InverterPost):
+class QVOLTHYBG33P(Inverter):
     """
     QCells
     Q.VOLT HYB-G3-3P
@@ -42,8 +42,10 @@ class QVOLTHYBG33P(InverterPost):
                 3: "Feed-in Priority",
             }.get(value, f"unmapped value '{value}'")
 
-    def __init__(self, host, port, pwd=""):
-        super().__init__(host, port, pwd)
+    def __init__(
+        self, http_client: InverterHttpClient, response_parser: ResponseParser
+    ):
+        super().__init__(http_client, response_parser)
         self.manufacturer = "Qcells"
 
     _schema = vol.Schema(
@@ -159,13 +161,16 @@ class QVOLTHYBG33P(InverterPost):
         }
 
     @classmethod
-    async def make_request(cls, host, port=80, pwd="", headers=None):
+    def _build(cls, host, port, pwd="", params_in_query=True):
+        url = utils.to_url(host, port)
+        http_client = InverterHttpClient(url, Method.POST, pwd).with_default_data()
 
-        url = f"http://{host}:{port}/"
-        data = f"optType=ReadRealTimeData&pwd={pwd}"
+        schema = cls._schema
+        response_decoder = cls.response_decoder()
+        response_parser = ResponseParser(schema, response_decoder)
+        return cls(http_client, response_parser)
 
-        async with aiohttp.ClientSession() as session:
-            async with session.post(url, headers=headers, data=data) as req:
-                resp = await req.read()
-
-        return cls.handle_response(resp)
+    @classmethod
+    def build_all_variants(cls, host, port, pwd=""):
+        versions = [cls._build(host, port, pwd)]
+        return versions

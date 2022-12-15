@@ -1,11 +1,12 @@
 import voluptuous as vol
 
-from solax.inverter import InverterPostData
+from solax import utils
+from solax.inverter import Inverter, InverterHttpClient, Method, ResponseParser
 from solax.units import Total, Units
 from solax.utils import div10, div100, pack_u16, to_signed
 
 
-class X1HybridGen4(InverterPostData):
+class X1HybridGen4(Inverter):
     # pylint: disable=duplicate-code
     _schema = vol.Schema(
         {
@@ -24,6 +25,19 @@ class X1HybridGen4(InverterPostData):
         },
         extra=vol.REMOVE_EXTRA,
     )
+
+    @classmethod
+    def _build(cls, host, port, pwd="", params_in_query=True):
+        url = utils.to_url(host, port)
+        http_client = InverterHttpClient(url, Method.POST, pwd).with_default_data()
+
+        response_parser = ResponseParser(cls._schema, cls.response_decoder())
+        return cls(http_client, response_parser)
+
+    @classmethod
+    def build_all_variants(cls, host, port, pwd=""):
+        versions = [cls._build(host, port, pwd)]
+        return versions
 
     @classmethod
     def response_decoder(cls):
