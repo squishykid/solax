@@ -65,10 +65,13 @@ def div100(val):
 
 
 INT16_MAX = 0x7FFF
+INT32_MAX = 0x7FFFFFFF
 
 
 def to_signed(val):
-    if val > INT16_MAX:
+    if val > INT32_MAX:
+        val -= 2**32
+    elif val > INT16_MAX:
         val -= 2**16
     return val
 

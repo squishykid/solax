@@ -16,6 +16,7 @@ from tests.samples.expected_values import (
     X3V34_HYBRID_VALUES,
     X3V34_HYBRID_VALUES_EPS_MODE,
     X3V34_HYBRID_VALUES_NEGATIVE_POWER,
+    X3_HYBRID_G4_VALUES,
     XHYBRID_VALUES,
 )
 from tests.samples.responses import (
@@ -32,6 +33,7 @@ from tests.samples.responses import (
     X3_HYBRID_G3_2X_MPPT_RESPONSE_V34_EPS_MODE,
     X3_HYBRID_G3_2X_MPPT_RESPONSE_V34_NEGATIVE_POWER,
     X3_HYBRID_G3_RESPONSE,
+    X3_HYBRID_G4_RESPONSE,
     X3_MIC_RESPONSE,
     XHYBRID_DE01_RESPONSE,
     XHYBRID_DE02_RESPONSE,
@@ -203,6 +205,16 @@ INVERTERS_UNDER_TEST = [
         values=X3V34_HYBRID_VALUES_EPS_MODE,
         headers=None,
         data=None,
+    ),
+    InverterUnderTest(
+        uri="/",
+        method="POST",
+        query_string=None,
+        response=X3_HYBRID_G4_RESPONSE,
+        inverter=inverter.X3HybridG4,
+        values=X3_HYBRID_G4_VALUES,
+        headers=None,
+        data="optType=ReadRealTimeData",
     ),
     InverterUnderTest(
         uri="/",

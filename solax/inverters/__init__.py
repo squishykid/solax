@@ -7,6 +7,7 @@ from .x1_mini_v34 import X1MiniV34
 from .x1_smart import X1Smart
 from .x3 import X3
 from .x3_v34 import X3V34
+from .x3_hybrid_g4 import X3HybridG4
 from .x_hybrid import XHybrid
 
 __all__ = [
@@ -17,6 +18,7 @@ __all__ = [
     "X1MiniV34",
     "X1Smart",
     "X3V34",
+    "X3HybridG4",
     "X3",
     "X1Boost",
     "X1HybridGen4",
