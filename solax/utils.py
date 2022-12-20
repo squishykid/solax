@@ -69,10 +69,14 @@ INT32_MAX = 0x7FFFFFFF
 
 
 def to_signed(val):
+    if val > INT16_MAX:
+        val -= 2**16
+    return val
+
+
+def to_signed32(val):
     if val > INT32_MAX:
         val -= 2**32
-    elif val > INT16_MAX:
-        val -= 2**16
     return val
 
 
