@@ -11,12 +11,12 @@ from tests.samples.expected_values import (
     X1_MINI_VALUES_V34,
     X1_SMART_VALUES,
     X1_VALUES,
+    X3_HYBRID_G4_VALUES,
     X3_HYBRID_VALUES,
     X3_VALUES,
     X3V34_HYBRID_VALUES,
     X3V34_HYBRID_VALUES_EPS_MODE,
     X3V34_HYBRID_VALUES_NEGATIVE_POWER,
-    X3_HYBRID_G4_VALUES,
     XHYBRID_VALUES,
 )
 from tests.samples.responses import (
