@@ -18,7 +18,7 @@ REGISTRY = [
     XHybrid,
     X3,
     X3V34,
-	X3HybridG4,
+    X3HybridG4,
     X1,
     X1Mini,
     X1MiniV34,
