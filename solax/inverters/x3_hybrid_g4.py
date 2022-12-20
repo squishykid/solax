@@ -29,9 +29,7 @@ class X3HybridG4(Inverter):
 
     @classmethod
     def build_all_variants(cls, host, port, pwd=""):
-        return [
-            cls._build(host, port, pwd, False)
-        ]
+        return [cls._build(host, port, pwd, False)]
 
     @classmethod
     def _decode_run_mode(cls, run_mode):
