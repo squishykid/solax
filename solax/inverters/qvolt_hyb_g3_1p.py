@@ -92,7 +92,11 @@ class QVOLTHYBG31P(InverterPost):
             "Battery Power": (16, Units.W, to_signed),
             "Battery Temperature": (17, Units.C),
             "Battery Remaining Capacity": (18, Units.PERCENT),
-            "Total battery discharged energy": (pack_u16(19, 20), Total(Units.KWH), div10),
+            "Total battery discharged energy": (
+                pack_u16(19, 20),
+                Total(Units.KWH),
+                div10,
+            ),
             "Total battery charged energy": (pack_u16(21, 22), Total(Units.KWH), div10),
             "Battery Remaining Energy": (23, Units.KWH, div10),
             # 24: always 100. probably 10.0%, minimum charge left before switching to grid

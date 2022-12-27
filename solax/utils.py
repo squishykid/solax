@@ -72,10 +72,12 @@ def to_signed(val):
         val -= 2**16
     return val
 
+
 def to_signed32(val):
     if val > INT32_MAX:
         val -= 2**32
     return val
+
 
 def twoway_div10(val):
     return to_signed(val) / 10
