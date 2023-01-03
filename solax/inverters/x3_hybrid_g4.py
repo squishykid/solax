@@ -69,7 +69,7 @@ class X3HybridG4(Inverter):
             "Grid 2 Frequency": (17, Units.HZ, div100),
             "Grid 3 Frequency": (18, Units.HZ, div100),
             "Run mode": (19, Units.NONE),
-            "Run mode text": (19, Units.NONE, X3HybridG4._decode_run_mode),
+            #"Run mode text": (19, Units.NONE, X3HybridG4._decode_run_mode),
             "EPS 1 Voltage": (23, Units.W, div10),
             "EPS 2 Voltage": (24, Units.W, div10),
             "EPS 3 Voltage": (25, Units.W, div10),
