@@ -1,7 +1,9 @@
 import pytest
 
 import solax
+from solax import utils
 from solax.discovery import REGISTRY
+from solax.http_client import HttpClient, Method
 from solax.inverter import Inverter, InverterError
 from solax.units import Measurement
 from tests import fixtures
@@ -20,8 +22,14 @@ async def build_right_variant(inverter, conn) -> Inverter:
 
 @pytest.mark.asyncio
 async def test_smoke(inverters_fixture):
-    conn, inverter_class, values = inverters_fixture
-    inv = await build_right_variant(inverter_class, conn)
+    conn, inverter_schema, values, response = inverters_fixture
+    host, port = conn
+    # todo: parameterise expected http client
+    http_client = HttpClient(
+        utils.to_url(host, port), method=Method.POST
+    ).with_default_query()
+    inv = Inverter(f"solax/inverters/{inverter_schema}", http_client)
+
     rt_api = solax.RealTimeAPI(inv)
     parsed = await rt_api.get_data()
 
@@ -35,22 +43,29 @@ async def test_smoke(inverters_fixture):
 
 @pytest.mark.asyncio
 async def test_throws_when_unable_to_parse(inverters_garbage_fixture):
-    conn, inverter_class = inverters_garbage_fixture
+    conn, inverter_schema = inverters_garbage_fixture
+    host, port = conn
+    # todo: parameterise expected http client
+    http_client = HttpClient(
+        utils.to_url(host, port), method=Method.POST
+    ).with_default_query()
     with pytest.raises(InverterError):
-        i = await build_right_variant(inverter_class, conn)
+        i = Inverter(f"solax/inverters/{inverter_schema}", http_client)
         await i.get_data()
 
 
 def test_registry_matches_inverters_under_test():
     test_inverters = {i.inverter for i in fixtures.INVERTERS_UNDER_TEST}
-    registry_inverters = set(REGISTRY)
+    registry_set = {r.split("/")[-1] for r in REGISTRY}
+    registry_inverters = set(registry_set)
     assert test_inverters == registry_inverters, "tests do not match registry"
 
 
 def test_inverter_sensors_match():
     test_values = ((i.inverter, i.values) for i in fixtures.INVERTERS_UNDER_TEST)
     for i, expected_values in test_values:
-        sensor_map = i.sensor_map()
+        inverter = Inverter(f"solax/inverters/{i}", None)
+        sensor_map = inverter.sensor_map()
         msg = f"""{sorted(sensor_map.keys())} vs
 {sorted(expected_values.keys())}"""
         assert len(sensor_map) == len(expected_values), msg
@@ -59,7 +74,8 @@ def test_inverter_sensors_match():
 
 
 def test_inverter_sensors_define_valid_units(inverters_under_test):
-    sensor_map = inverters_under_test.sensor_map()
+    inverter = Inverter(f"solax/inverters/{inverters_under_test}", None)
+    sensor_map = inverter.sensor_map()
     for name, (_, unit, *_) in sensor_map.items():
         msg = (
             f"provided unit '{unit}'({type(unit)}) "

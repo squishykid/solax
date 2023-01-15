@@ -1,8 +1,10 @@
+import json
 from collections import namedtuple
 
 import pytest
 
-import solax.inverters as inverter
+from solax import Inverter
+from solax.discovery import REGISTRY
 from tests.samples.expected_values import (
     QVOLTHYBG33P_VALUES,
     X1_BOOST_VALUES,
@@ -52,7 +54,7 @@ def simple_http_fixture(httpserver):
 
 InverterUnderTest = namedtuple(
     "InverterUnderTest",
-    "uri, method, query_string, response, inverter, values, headers, data",
+    "uri, method, query_string, response, inverter_definition, values, headers, data",
 )
 
 INVERTERS_UNDER_TEST = [
@@ -132,6 +134,16 @@ INVERTERS_UNDER_TEST = [
         query_string="optType=ReadRealTimeData",
         response=X3_MIC_RESPONSE,
         inverter=inverter.X3,
+        values=X3_VALUES,
+        headers=None,
+        data=None,
+    ),
+    InverterUnderTest(
+        uri="/",
+        method="POST",
+        query_string="optType=ReadRealTimeData",
+        response=X3_MIC_RESPONSE,
+        inverter="X3.json",
         values=X3_VALUES,
         headers=None,
         data=None,
@@ -247,6 +259,7 @@ def inverters_fixture(httpserver, request):
         (httpserver.host, httpserver.port),
         request.param.inverter,
         request.param.values,
+        request.param.response,
     )
 
 
@@ -258,3 +271,10 @@ def inverters_garbage_fixture(httpserver, request):
         query_string=request.param.query_string,
     ).respond_with_json({"bingo": "bango"})
     yield ((httpserver.host, httpserver.port), request.param.inverter)
+
+
+@pytest.fixture(params=REGISTRY)
+def dynamic_inverters(request):
+    with open(request.param, "r") as f:
+        content = json.load(f)
+    yield content

@@ -1,4 +1,4 @@
-from typing import Protocol, Tuple
+from typing import List, Protocol, Tuple
 
 from voluptuous import Invalid
 
@@ -28,7 +28,7 @@ class PackerBuilder(Protocol):  # pragma: no cover
         ...
 
 
-def __u16_packer(*values: float) -> float:
+def u16_packer(*values: float) -> float:
     accumulator = 0.0
     stride = 1
     for value in values:
@@ -43,7 +43,7 @@ def pack_u16(*indexes: int) -> PackerBuilderResult:
     more 16 bit [aka "short"] registers). Here we combine
     them, in order of least to most significant.
     """
-    return (indexes, __u16_packer)
+    return (indexes, u16_packer)
 
 
 def startswith(something):
@@ -56,8 +56,9 @@ def startswith(something):
     return inner
 
 
-def div10(val):
-    return val / 10
+def div10(*val: float) -> float:
+    assert len(val) == 1
+    return val[0] / 10
 
 
 def div100(val):
@@ -65,18 +66,11 @@ def div100(val):
 
 
 INT16_MAX = 0x7FFF
-INT32_MAX = 0x7FFFFFFF
 
 
 def to_signed(val):
     if val > INT16_MAX:
         val -= 2**16
-    return val
-
-
-def to_signed32(val):
-    if val > INT32_MAX:
-        val -= 2**32
     return val
 
 

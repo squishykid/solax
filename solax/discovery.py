@@ -1,32 +1,11 @@
-from solax.inverter import Inverter, InverterError
-from solax.inverters import (
-    QVOLTHYBG33P,
-    X1,
-    X3,
-    X3V34,
-    X1Boost,
-    X1HybridGen4,
-    X1Mini,
-    X1MiniV34,
-    X1Smart,
-    X3HybridG4,
-    XHybrid,
-)
+import glob
+from pathlib import Path
 
-# registry of inverters
-REGISTRY = [
-    XHybrid,
-    X3,
-    X3V34,
-    X3HybridG4,
-    X1,
-    X1Mini,
-    X1MiniV34,
-    X1Smart,
-    QVOLTHYBG33P,
-    X1Boost,
-    X1HybridGen4,
-]
+from solax.http_client import all_variations
+from solax.inverter import Inverter, InverterError
+
+path = Path(__file__).parent
+REGISTRY = glob.glob(f"{path}/inverters/*.json")
 
 
 class DiscoveryError(Exception):
@@ -35,13 +14,16 @@ class DiscoveryError(Exception):
 
 async def discover(host, port, pwd="") -> Inverter:
     failures = []
-    for inverter in REGISTRY:
-        for i in inverter.build_all_variants(host, port, pwd):
-            try:
-                await i.get_data()
-                return i
-            except InverterError as ex:
-                failures.append(ex)
+    clients = all_variations(host, port, pwd)
+    for name, client in clients.items():
+        try:
+            response = await client.request()
+            for inverter_definition in REGISTRY:
+                inverter = Inverter(inverter_definition, client)
+                if inverter.identify(response):
+                    return inverter
+        except InverterError as ex:
+            failures.append(ex)
     msg = (
         "Unable to connect to the inverter at "
         f"host={host} port={port}, or your inverter is not supported yet.\n"

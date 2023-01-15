@@ -3,13 +3,15 @@ import pytest
 from solax.discovery import REGISTRY
 from solax.inverter import Inverter
 
+SCHEMA = Inverter.inverter_definition_schema()
 
-def test_all_registered_inverters_inherit_from_base():
+
+def test_all_inverter_schemas_are_json():
     for i in REGISTRY:
-        assert issubclass(i, Inverter)
+        assert isinstance(i, str)
+        assert i.endswith(".json")
 
 
-def test_unimplemented_response_decoder():
-    with pytest.raises(NotImplementedError):
-        versions = Inverter.build_all_variants("localhost", 80)
-        versions[0].response_decoder()
+def test_inverter(dynamic_inverters):
+    SCHEMA(dynamic_inverters)
+    print(dynamic_inverters)

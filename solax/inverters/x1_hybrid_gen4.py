@@ -1,7 +1,9 @@
 import voluptuous as vol
 
 from solax import utils
-from solax.inverter import Inverter, InverterHttpClient, Method, ResponseParser
+from solax.http_client import Method
+from solax.inverter import HttpClient, Inverter
+from solax.response_parser import ResponseParser
 from solax.units import Total, Units
 from solax.utils import div10, div100, pack_u16, to_signed
 
@@ -29,7 +31,7 @@ class X1HybridGen4(Inverter):
     @classmethod
     def _build(cls, host, port, pwd="", params_in_query=True):
         url = utils.to_url(host, port)
-        http_client = InverterHttpClient(url, Method.POST, pwd).with_default_data()
+        http_client = HttpClient(url, Method.POST, pwd).with_default_data()
 
         response_parser = ResponseParser(cls._schema, cls.response_decoder())
         return cls(http_client, response_parser)

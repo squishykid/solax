@@ -2,13 +2,16 @@ from enum import Enum
 
 import aiohttp
 
+from solax import utils
+from solax.inverter_error import InverterError
+
 
 class Method(Enum):
     GET = 1
     POST = 2
 
 
-class InverterHttpClient:
+class HttpClient:
     def __init__(self, url, method: Method = Method.POST, pwd=""):
         """Initialize the Http client."""
         self.url = url
@@ -51,9 +54,13 @@ class InverterHttpClient:
         return self.with_query(query)
 
     async def request(self):
-        if self.method is Method.POST:
-            return await self.post()
-        return await self.get()
+        try:
+            if self.method is Method.POST:
+                return await self.post()
+            return await self.get()
+        except aiohttp.ClientError as ex:
+            msg = "Could not connect to inverter endpoint"
+            raise InverterError(msg, str(self.__class__.__name__)) from ex
 
     async def get(self):
         url = self.url + "?" + self.query if self.query else self.url
@@ -71,3 +78,17 @@ class InverterHttpClient:
                 req.raise_for_status()
                 resp = await req.read()
         return resp
+
+
+def all_variations(host, port, pwd=""):
+    url = utils.to_url(host, port)
+    get = HttpClient(url, Method.GET, pwd)
+    post = HttpClient(url, Method.POST, pwd)
+    post_query = HttpClient(url, Method.POST, pwd).with_default_query()
+    post_data = HttpClient(url, Method.POST, pwd).with_default_data()
+    return {
+        "get": get,
+        "post": post,
+        "post_query": post_query,
+        "post_data": post_data,
+    }
