@@ -1,7 +1,12 @@
 import voluptuous as vol
 
-from solax.inverter import Inverter, InverterDefinition, InverterIdentification, InverterDataValue
-from solax.units import Total, Units, Measurement
+from solax.inverter import (
+    Inverter,
+    InverterDataValue,
+    InverterDefinition,
+    InverterIdentification,
+)
+from solax.units import Measurement, Total, Units
 from solax.utils import startswith
 
 
@@ -50,7 +55,9 @@ class X1(Inverter):
                 "Battery Current": InverterDataValue((14,), Measurement(Units.A)),
                 "Battery Power": InverterDataValue((15,), Measurement(Units.W)),
                 "Battery Temperature": InverterDataValue((16,), Measurement(Units.C)),
-                "Battery Remaining Capacity": InverterDataValue((21,), Measurement(Units.PERCENT)),
+                "Battery Remaining Capacity": InverterDataValue(
+                    (21,), Measurement(Units.PERCENT)
+                ),
                 "Total Feed-in Energy": InverterDataValue((41,), Total(Units.KWH)),
                 "Total Consumption": InverterDataValue((42,), Total(Units.KWH)),
                 "Power Now": InverterDataValue((43,), Measurement(Units.W)),
@@ -59,6 +66,7 @@ class X1(Inverter):
                 "EPS Current": InverterDataValue((54,), Measurement(Units.A)),
                 "EPS Power": InverterDataValue((55,), Measurement(Units.W)),
                 "EPS Frequency": InverterDataValue((56,), Measurement(Units.HZ)),
-            })
+            },
+        )
 
     # pylint: enable=duplicate-code

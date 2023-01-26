@@ -36,7 +36,7 @@ class InverterResponse:
 @dataclass
 class InverterIdentification:
     inverter_type: int
-    type_prefix: str = None
+    type_prefix: Optional[str] = None
 
 
 @dataclass
@@ -104,7 +104,9 @@ class Inverter:
         self, inverter_response: InverterRawResponse
     ) -> dict[str, float]:
         data = inverter_response["Data"]
-        highest_index = max((max(v.indexes) for v in self.inverter_definition().mapping.values()))
+        highest_index = max(
+            (max(v.indexes) for v in self.inverter_definition().mapping.values())
+        )
         if highest_index >= len(data):
             raise InverterError("unable to map response")
         accumulator = {}
@@ -151,7 +153,7 @@ class Inverter:
 
         actual_type = inverter_response.type
         self_type = identification.type_prefix
-        if isinstance(actual_type, str):
+        if isinstance(actual_type, str) and self_type:
             return actual_type.startswith(self_type)
 
         # compare type and inverter_type,

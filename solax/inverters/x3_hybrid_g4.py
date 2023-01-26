@@ -5,14 +5,7 @@ from solax.inverter import (
     InverterIdentification,
 )
 from solax.units import Measurement, Total, Units
-from solax.utils import (
-    div10,
-    div100,
-    to_signed,
-    to_signed32,
-    twoway_div10,
-    u16_packer,
-)
+from solax.utils import div10, div100, to_signed, to_signed32, twoway_div10, u16_packer
 
 
 class X3HybridG4(Inverter):

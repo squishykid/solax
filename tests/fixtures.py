@@ -4,7 +4,6 @@ from collections import namedtuple
 import pytest
 
 import solax.inverters as inverter
-from solax import Inverter
 from solax.discovery import REGISTRY
 from tests.samples.expected_values import (
     QVOLTHYBG33P_VALUES,

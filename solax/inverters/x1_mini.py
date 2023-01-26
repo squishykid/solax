@@ -1,5 +1,10 @@
-from solax.inverter import Inverter, InverterDefinition, InverterIdentification, InverterDataValue
-from solax.units import Total, Units, Measurement
+from solax.inverter import (
+    Inverter,
+    InverterDataValue,
+    InverterDefinition,
+    InverterIdentification,
+)
+from solax.units import Measurement, Total, Units
 
 
 class X1Mini(Inverter):
@@ -26,4 +31,5 @@ class X1Mini(Inverter):
                 "Total Consumption": InverterDataValue((42,), Total(Units.KWH)),
                 "Power Now": InverterDataValue((43,), Measurement(Units.W)),
                 "Grid Frequency": InverterDataValue((50,), Measurement(Units.HZ)),
-            })
+            },
+        )
