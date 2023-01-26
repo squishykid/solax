@@ -2,10 +2,10 @@
 
 set -e
 
-echo "Installing Dependencies..."
-python -m pip install --upgrade pip
-python setup.py install
-pip install --upgrade flake8 pylint pytest pytest-cov pytest-asyncio pytest-httpserver black mypy
+#echo "Installing Dependencies..."
+#python -m pip install --upgrade pip
+#python setup.py install
+#pip install --upgrade flake8 pylint pytest pytest-cov pytest-asyncio pytest-httpserver black mypy
 
 echo "Running black..."
 black --check .

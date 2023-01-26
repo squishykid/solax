@@ -1,48 +1,29 @@
-import voluptuous as vol
-
-from solax.inverter import Inverter
-from solax.units import Total, Units
-from solax.utils import startswith
+from solax.inverter import Inverter, InverterDefinition, InverterIdentification, InverterDataValue
+from solax.units import Total, Units, Measurement
 
 
 class X1Mini(Inverter):
-    # pylint: disable=duplicate-code
-    _schema = vol.Schema(
-        {
-            vol.Required("type"): vol.All(str, startswith("X1-")),
-            vol.Required("SN"): str,
-            vol.Required("ver"): str,
-            vol.Required("Data"): vol.Schema(
-                vol.All(
-                    [vol.Coerce(float)],
-                    vol.Length(min=69, max=69),
-                )
-            ),
-            vol.Required("Information"): vol.Schema(vol.All(vol.Length(min=9, max=9))),
-        },
-        extra=vol.REMOVE_EXTRA,
-    )
-
     @classmethod
-    def response_decoder(cls):
-        return {
-            "PV1 Current": (0, Units.A),
-            "PV2 Current": (1, Units.A),
-            "PV1 Voltage": (2, Units.V),
-            "PV2 Voltage": (3, Units.V),
-            "Output Current": (4, Units.A),
-            "Network Voltage": (5, Units.V),
-            "AC Power": (6, Units.W),
-            "Inverter Temperature": (7, Units.C),
-            "Today's Energy": (8, Units.KWH),
-            "Total Energy": (9, Total(Units.KWH)),
-            "Exported Power": (10, Units.W),
-            "PV1 Power": (11, Units.W),
-            "PV2 Power": (12, Units.W),
-            "Total Feed-in Energy": (41, Total(Units.KWH)),
-            "Total Consumption": (42, Total(Units.KWH)),
-            "Power Now": (43, Units.W),
-            "Grid Frequency": (50, Units.HZ),
-        }
-
-    # pylint: enable=duplicate-code
+    def inverter_definition(cls) -> InverterDefinition:
+        return InverterDefinition(
+            "X1",
+            InverterIdentification(4, "X1-"),
+            {
+                "PV1 Current": InverterDataValue((0,), Measurement(Units.A)),
+                "PV2 Current": InverterDataValue((1,), Measurement(Units.A)),
+                "PV1 Voltage": InverterDataValue((2,), Measurement(Units.V)),
+                "PV2 Voltage": InverterDataValue((3,), Measurement(Units.V)),
+                "Output Current": InverterDataValue((4,), Measurement(Units.A)),
+                "Network Voltage": InverterDataValue((5,), Measurement(Units.V)),
+                "AC Power": InverterDataValue((6,), Measurement(Units.W)),
+                "Inverter Temperature": InverterDataValue((7,), Measurement(Units.C)),
+                "Today's Energy": InverterDataValue((8,), Measurement(Units.KWH)),
+                "Total Energy": InverterDataValue((9,), Total(Units.KWH)),
+                "Exported Power": InverterDataValue((10,), Measurement(Units.W)),
+                "PV1 Power": InverterDataValue((11,), Measurement(Units.W)),
+                "PV2 Power": InverterDataValue((12,), Measurement(Units.W)),
+                "Total Feed-in Energy": InverterDataValue((41,), Total(Units.KWH)),
+                "Total Consumption": InverterDataValue((42,), Total(Units.KWH)),
+                "Power Now": InverterDataValue((43,), Measurement(Units.W)),
+                "Grid Frequency": InverterDataValue((50,), Measurement(Units.HZ)),
+            })

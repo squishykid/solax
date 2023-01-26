@@ -1,41 +1,53 @@
-from collections import namedtuple
-from json import load, loads
-from typing import Callable, Dict, List, Tuple, TypedDict, Union
+from dataclasses import dataclass, field
+from json import loads
+from typing import Any, Callable, Dict, List, Optional, Tuple, TypedDict, Union
 
-import aiohttp
 import voluptuous as vol
-from typing_extensions import NotRequired
+from mypy_extensions import VarArg
 from voluptuous import Invalid, MultipleInvalid
 from voluptuous.humanize import humanize_error
 
-from solax.http_client import HttpClient, all_variations
+from solax.http_client import HttpClient
 from solax.inverter_error import InverterError
-from solax.units import Measurement, Units
-from solax.utils import div10, u16_packer
+from solax.units import Measurement, Total
 
-Transformer = Callable[[Tuple[float, ...]], float]
-
-
-InverterResponse = namedtuple(
-    "InverterResponse", "data, serial_number, version, type, inverter_type"
-)
-
-ALL_HTTP_CLIENT_KEYS = all_variations("localhost", 80).keys()
+Transformer = Callable[[VarArg(float)], float]
 
 
-class InverterIdentification(TypedDict):
-    inverterType: int
+class InverterRawResponse(TypedDict):
+    Data: list[float]
+    sn: Optional[str]
+    SN: Optional[str]
+    version: Optional[str]
+    ver: Optional[str]
     type: Union[int, str]
+    Information: Optional[list[Any]]
 
 
-class InverterDataValue(TypedDict):
-    indexes: List[int]
-    transformations: List[str]
-    unit: Units
-    is_monotonic: NotRequired[bool]
+@dataclass
+class InverterResponse:
+    data: dict[str, float]
+    serial_number: str
+    version: str
+    type: Union[int, str]
+    inverter_type: int
 
 
-class InverterDefinition(TypedDict):
+@dataclass
+class InverterIdentification:
+    inverter_type: int
+    type_prefix: str = None
+
+
+@dataclass
+class InverterDataValue:
+    indexes: tuple[int, ...]
+    unit: Union[Measurement, Total]
+    transformations: tuple[Transformer, ...] = field(default_factory=tuple)
+
+
+@dataclass
+class InverterDefinition:
     name: str
     identification: InverterIdentification
     mapping: Dict[str, InverterDataValue]
@@ -45,7 +57,7 @@ class Inverter:
     """Base wrapper around Inverter HTTP API"""
 
     @staticmethod
-    def common_response_schema():
+    def common_response_schema() -> Callable[[Any], InverterRawResponse]:
         return vol.Schema(
             {
                 vol.Required("type"): vol.Any(str, int),
@@ -56,85 +68,49 @@ class Inverter:
                         [vol.Coerce(float)],
                     )
                 ),
-                vol.Required("Information"): list,
+                vol.Optional("Information"): list,
             },
             extra=vol.REMOVE_EXTRA,
         )
 
-    @staticmethod
-    def inverter_definition_schema():
-        transformations = Inverter.transformations().keys()
-        return vol.Schema(
-            {
-                vol.Required("name"): str,
-                vol.Required("identification"): vol.Schema(
-                    {
-                        vol.Required("inverterType"): int,
-                        vol.Required("type"): vol.Any(str, int),
-                    }
-                ),
-                vol.Required("mapping"): vol.Schema(
-                    {
-                        str: vol.Schema(
-                            {
-                                vol.Required("indexes"): vol.All(
-                                    [int], vol.Length(min=1)
-                                ),
-                                vol.Optional("transformations"): vol.Schema(
-                                    vol.All([vol.In(transformations)])
-                                ),
-                                vol.Required("unit"): vol.Coerce(Units),
-                                vol.Optional("is_monotonic"): bool,
-                            }
-                        )
-                    }
-                ),
-            }
-        )
-
-    @staticmethod
-    def transformations() -> Dict[str, Transformer]:
-        return {"div10": div10, "pack_u16": u16_packer}
+    @classmethod
+    def inverter_definition(cls) -> InverterDefinition:
+        raise NotImplementedError()
 
     @staticmethod
     def apply_transforms(
         data: List[float], mapping_instance: InverterDataValue
     ) -> float:
-        indexes = mapping_instance["indexes"]
-        transforms = mapping_instance.get("transformations", [])
+        indexes = mapping_instance.indexes
+        transforms = mapping_instance.transformations
         out = [data[i] for i in indexes]
-        for t in transforms:
-            f = Inverter.transformations()[t]
+        for transform in transforms:
             if isinstance(out, list):
-                out = f(*out)
+                out = [transform(*out)]
             else:
-                out = f(out)
+                out = [transform(out)]
         return out[0] if isinstance(out, list) else out
 
     async def get_data(self) -> InverterResponse:
         try:
-            response = await self.make_request()
+            response = await self.http_client.request()
             data = self.handle_response(response)
         except vol.Invalid as ex:
             msg = "Received malformed JSON from inverter"
             raise InverterError(msg, str(self.__class__.__name__)) from ex
         return data
 
-    async def make_request(self) -> bytearray:
-        """
-        Return instance of 'InverterResponse'
-        Raise exception if unable to get data
-        """
-        return await self.http_client.request()
-        # raw_response = await self.http_client.request()
-        # return self.handle_response(raw_response)
-
-    def map_response_v2(self, inverter_response: InverterResponse):
+    def map_response_v2(
+        self, inverter_response: InverterRawResponse
+    ) -> dict[str, float]:
         data = inverter_response["Data"]
-        bingo = {}
-        for k, v in self.inverter_definition["mapping"].items():
-            bingo[k] = self.apply_transforms(data, v)
-        return bingo
+        highest_index = max((max(v.indexes) for v in self.inverter_definition().mapping.values()))
+        if highest_index >= len(data):
+            raise InverterError("unable to map response")
+        accumulator = {}
+        for k, mapping_instance in self.inverter_definition().mapping.items():
+            accumulator[k] = self.apply_transforms(data, mapping_instance)
+        return accumulator
 
     def handle_response(self, resp: bytes) -> InverterResponse:
         """
@@ -154,50 +130,47 @@ class Inverter:
         except (Invalid, MultipleInvalid) as ex:
             _ = humanize_error(json_response, ex)
             raise
+        serial = response.get("SN", response.get("sn"))
+        version = response.get("ver", response.get("version"))
+        information = response.get("Information")
         return InverterResponse(
-            data=self.map_response_v2(response),
-            serial_number=response.get("SN", response.get("sn")),
-            version=response.get("ver", response.get("version")),
-            type=response["type"],
-            inverter_type=response["Information"][1],
+            self.map_response_v2(response),
+            serial if serial else "unknown serial",
+            version if version else "unknown version",
+            response["type"],
+            information[1] if information and len(information) > 1 else -1,
         )
 
     def identify(self, response: bytes) -> bool:
         inverter_response = self.handle_response(response)
         actual_inverter_type = inverter_response.inverter_type
-        identification = self.inverter_definition["identification"]
-        self_inverter_type = identification["inverterType"]
+        identification = self.inverter_definition().identification
+        self_inverter_type = identification.inverter_type
         if actual_inverter_type != self_inverter_type:
             return False
 
         actual_type = inverter_response.type
-        self_type = identification["type"]
-        if isinstance(self_type, str):
-            return isinstance(actual_type, str) and actual_type.startswith(self_type)
-        return actual_type == self_type
+        self_type = identification.type_prefix
+        if isinstance(actual_type, str):
+            return actual_type.startswith(self_type)
 
-    def __init__(self, inverter_definition_file: str, http_client: HttpClient):
-        self.inverter_definition_file_name = inverter_definition_file
-        with open(inverter_definition_file, "r") as f:
-            inv_def = load(f)
-        inv_def_schema = self.inverter_definition_schema()
-        self.inverter_definition: InverterDefinition = inv_def_schema(inv_def)
+        # compare type and inverter_type,
+        #  instead of type and type, since type and inverter_type
+        #  should be the same value if 'type' is int
+        return actual_type == self_inverter_type
+
+    def __init__(self, http_client: HttpClient):
         self.http_client = http_client
 
-    # @classmethod
-    # def build_all_variants(cls, http_client):
-    #     return [cls("solax/inverters/X3.json", http_client)]
-
-    def sensor_map(self) -> Dict[str, Tuple[int, Measurement]]:
+    def sensor_map(self) -> Dict[str, Tuple[int, Union[Measurement, Total]]]:
         """
         Return sensor map
         Warning, HA depends on this
         """
-        sensors: Dict[str, Tuple[int, Measurement]] = {}
-        for name, mapping in self.inverter_definition["mapping"].items():
-            unit = mapping["unit"]
-            is_monitonic = mapping.get("is_monotonic", False)
-            idx = mapping["indexes"][0]
-            sensors[name] = (idx, Measurement(unit, is_monitonic))
+        sensors: Dict[str, Tuple[int, Union[Measurement, Total]]] = {}
+        for name, mapping in self.inverter_definition().mapping.items():
+            unit = mapping.unit
+            idx = mapping.indexes[0]
+            sensors[name] = (idx, unit)
 
         return sensors

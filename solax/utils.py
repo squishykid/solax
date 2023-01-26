@@ -1,4 +1,4 @@
-from typing import List, Protocol, Tuple
+from typing import Protocol, Tuple
 
 from voluptuous import Invalid
 
@@ -61,24 +61,35 @@ def div10(*val: float) -> float:
     return val[0] / 10
 
 
-def div100(val):
+def div100(*arg: float):
+    val = arg[0]
     return val / 100
 
 
 INT16_MAX = 0x7FFF
+INT32_MAX = 0x7FFFFFFF
 
 
-def to_signed(val):
+def to_signed(*arg: float):
+    val = arg[0]
     if val > INT16_MAX:
         val -= 2**16
     return val
 
 
-def twoway_div10(val):
+def to_signed32(val):
+    if val > INT32_MAX:
+        val -= 2**32
+    return val
+
+
+def twoway_div10(*arg: float):
+    val = arg[0]
     return to_signed(val) / 10
 
 
-def twoway_div100(val):
+def twoway_div100(*arg: float):
+    val = arg[0]
     return to_signed(val) / 100
 
 

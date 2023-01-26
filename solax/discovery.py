@@ -1,11 +1,21 @@
-import glob
-from pathlib import Path
+from typing import Type
 
 from solax.http_client import all_variations
 from solax.inverter import Inverter, InverterError
+from solax.inverters import X3, X3V34, X3HybridG4, XHybrid, X1, X1Mini
 
-path = Path(__file__).parent
-REGISTRY = glob.glob(f"{path}/inverters/*.json")
+REGISTRY: list[Type[Inverter]] = [
+    XHybrid,
+    X3,
+    X3V34,
+    X3HybridG4,
+    X1,
+    X1Mini,
+    # X1Smart,
+    # QVOLTHYBG33P,
+    # X1Boost,
+    # X1HybridGen4,
+]
 
 
 class DiscoveryError(Exception):
@@ -15,15 +25,21 @@ class DiscoveryError(Exception):
 async def discover(host, port, pwd="") -> Inverter:
     failures = []
     clients = all_variations(host, port, pwd)
-    for name, client in clients.items():
+    for client_name, client in clients.items():
         try:
             response = await client.request()
-            for inverter_definition in REGISTRY:
-                inverter = Inverter(inverter_definition, client)
+        except InverterError as ex:
+            failures.append((client_name, ex,))
+            continue
+        for inverter_class in REGISTRY:
+            try:
+                inverter = inverter_class(client)
                 if inverter.identify(response):
                     return inverter
-        except InverterError as ex:
-            failures.append(ex)
+                else:
+                    failures.append((client_name, inverter_class.__name__, "did not identify",))
+            except InverterError as ex:
+                failures.append((client_name, inverter_class.__name__, ex,))
     msg = (
         "Unable to connect to the inverter at "
         f"host={host} port={port}, or your inverter is not supported yet.\n"

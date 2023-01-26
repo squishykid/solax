@@ -1,35 +1,22 @@
-import voluptuous as vol
-
-from solax.inverter import Inverter
-from solax.units import Total, Units
-from solax.utils import div10, div100, pack_u16, to_signed, to_signed32, twoway_div10
+from solax.inverter import (
+    Inverter,
+    InverterDataValue,
+    InverterDefinition,
+    InverterIdentification,
+)
+from solax.units import Measurement, Total, Units
+from solax.utils import (
+    div10,
+    div100,
+    to_signed,
+    to_signed32,
+    twoway_div10,
+    u16_packer,
+)
 
 
 class X3HybridG4(Inverter):
     """X3 Hybrid G4 v3.006.04"""
-
-    # pylint: disable=duplicate-code
-    _schema = vol.Schema(
-        {
-            vol.Required("type"): vol.All(int, 14),
-            vol.Required("sn"): str,
-            vol.Required("ver"): str,
-            vol.Required("Data"): vol.Schema(
-                vol.All(
-                    [vol.Coerce(float)],
-                    vol.Length(min=300, max=300),
-                )
-            ),
-            vol.Required("Information"): vol.Schema(
-                vol.All(vol.Length(min=10, max=10))
-            ),
-        },
-        extra=vol.REMOVE_EXTRA,
-    )
-
-    @classmethod
-    def build_all_variants(cls, host, port, pwd=""):
-        return [cls._build(host, port, pwd, False)]
 
     @classmethod
     def _decode_run_mode(cls, run_mode):
@@ -48,46 +35,135 @@ class X3HybridG4(Inverter):
         }.get(run_mode)
 
     @classmethod
-    def response_decoder(cls):
-        return {
-            "Grid 1 Voltage": (0, Units.V, div10),
-            "Grid 2 Voltage": (1, Units.V, div10),
-            "Grid 3 Voltage": (2, Units.V, div10),
-            "Grid 1 Current": (3, Units.A, twoway_div10),
-            "Grid 2 Current": (4, Units.A, twoway_div10),
-            "Grid 3 Current": (5, Units.A, twoway_div10),
-            "Grid 1 Power": (6, Units.W, to_signed),
-            "Grid 2 Power": (7, Units.W, to_signed),
-            "Grid 3 Power": (8, Units.W, to_signed),
-            "PV1 Voltage": (10, Units.V, div10),
-            "PV2 Voltage": (11, Units.V, div10),
-            "PV1 Current": (12, Units.A, div10),
-            "PV2 Current": (13, Units.A, div10),
-            "PV1 Power": (14, Units.W),
-            "PV2 Power": (15, Units.W),
-            "Grid 1 Frequency": (16, Units.HZ, div100),
-            "Grid 2 Frequency": (17, Units.HZ, div100),
-            "Grid 3 Frequency": (18, Units.HZ, div100),
-            "Run mode": (19, Units.NONE),
-            "Run mode text": (19, Units.NONE, X3HybridG4._decode_run_mode),
-            "EPS 1 Voltage": (23, Units.W, div10),
-            "EPS 2 Voltage": (24, Units.W, div10),
-            "EPS 3 Voltage": (25, Units.W, div10),
-            "EPS 1 Current": (26, Units.W, twoway_div10),
-            "EPS 2 Current": (27, Units.W, twoway_div10),
-            "EPS 3 Current": (28, Units.W, twoway_div10),
-            "EPS 1 Power": (29, Units.W, to_signed),
-            "EPS 2 Power": (30, Units.W, to_signed),
-            "EPS 3 Power": (31, Units.W, to_signed),
-            "Feed-in Power ": (pack_u16(34, 35), Units.W, to_signed32),
-            "Battery Power": (41, Units.W, to_signed),
-            "Yield total": (pack_u16(68, 69), Total(Units.KWH), div10),
-            "Yield today": (70, Units.KWH, div10),
-            "Feed-in Energy": (pack_u16(86, 87), Total(Units.KWH), div100),
-            "Consumed Energy": (pack_u16(88, 89), Total(Units.KWH), div100),
-            "Battery Remaining Capacity": (103, Units.PERCENT),
-            "Battery Temperature": (105, Units.C, to_signed),
-            "Battery Voltage": (pack_u16(169, 170), Units.V, div100),
-        }
-
-    # pylint: enable=duplicate-code
+    def inverter_definition(cls):
+        return InverterDefinition(
+            "X3 Hybrid G4",
+            InverterIdentification(14),
+            {
+                "Grid 1 Voltage": InverterDataValue(
+                    (0,), Measurement(Units.V), (div10,)
+                ),
+                "Grid 2 Voltage": InverterDataValue(
+                    (1,), Measurement(Units.V), (div10,)
+                ),
+                "Grid 3 Voltage": InverterDataValue(
+                    (2,), Measurement(Units.V), (div10,)
+                ),
+                "Grid 1 Current": InverterDataValue(
+                    (3,), Measurement(Units.A), (twoway_div10,)
+                ),
+                "Grid 2 Current": InverterDataValue(
+                    (4,), Measurement(Units.A), (twoway_div10,)
+                ),
+                "Grid 3 Current": InverterDataValue(
+                    (5,), Measurement(Units.A), (twoway_div10,)
+                ),
+                "Grid 1 Power": InverterDataValue(
+                    (6,), Measurement(Units.W), (to_signed,)
+                ),
+                "Grid 2 Power": InverterDataValue(
+                    (7,), Measurement(Units.W), (to_signed,)
+                ),
+                "Grid 3 Power": InverterDataValue(
+                    (8,), Measurement(Units.W), (to_signed,)
+                ),
+                "PV1 Voltage": InverterDataValue((10,), Measurement(Units.V), (div10,)),
+                "PV2 Voltage": InverterDataValue((11,), Measurement(Units.V), (div10,)),
+                "PV1 Current": InverterDataValue((12,), Measurement(Units.A), (div10,)),
+                "PV2 Current": InverterDataValue((13,), Measurement(Units.A), (div10,)),
+                "PV1 Power": InverterDataValue((14,), Measurement(Units.W)),
+                "PV2 Power": InverterDataValue((15,), Measurement(Units.W)),
+                "Grid 1 Frequency": InverterDataValue(
+                    (16,), Measurement(Units.HZ), (div100,)
+                ),
+                "Grid 2 Frequency": InverterDataValue(
+                    (17,), Measurement(Units.HZ), (div100,)
+                ),
+                "Grid 3 Frequency": InverterDataValue(
+                    (18,), Measurement(Units.HZ), (div100,)
+                ),
+                "Run mode": InverterDataValue((19,), Measurement(Units.NONE)),
+                "Run mode text": InverterDataValue(
+                    (19,), Measurement(Units.NONE), (X3HybridG4._decode_run_mode,)
+                ),
+                "EPS 1 Voltage": InverterDataValue(
+                    (23,), Measurement(Units.W), (div10,)
+                ),
+                "EPS 2 Voltage": InverterDataValue(
+                    (24,), Measurement(Units.W), (div10,)
+                ),
+                "EPS 3 Voltage": InverterDataValue(
+                    (25,), Measurement(Units.W), (div10,)
+                ),
+                "EPS 1 Current": InverterDataValue(
+                    (26,), Measurement(Units.W), (twoway_div10,)
+                ),
+                "EPS 2 Current": InverterDataValue(
+                    (27,), Measurement(Units.W), (twoway_div10,)
+                ),
+                "EPS 3 Current": InverterDataValue(
+                    (28,), Measurement(Units.W), (twoway_div10,)
+                ),
+                "EPS 1 Power": InverterDataValue(
+                    (29,), Measurement(Units.W), (to_signed,)
+                ),
+                "EPS 2 Power": InverterDataValue(
+                    (30,), Measurement(Units.W), (to_signed,)
+                ),
+                "EPS 3 Power": InverterDataValue(
+                    (31,), Measurement(Units.W), (to_signed,)
+                ),
+                "Feed-in Power ": InverterDataValue(
+                    (34, 35),
+                    Measurement(Units.W),
+                    (
+                        u16_packer,
+                        to_signed32,
+                    ),
+                ),
+                "Battery Power": InverterDataValue(
+                    (41,), Measurement(Units.W), (to_signed,)
+                ),
+                "Yield total": InverterDataValue(
+                    (68, 69),
+                    Total(Units.KWH),
+                    (
+                        u16_packer,
+                        div10,
+                    ),
+                ),
+                "Yield today": InverterDataValue(
+                    (70,), Measurement(Units.HZ), (div10,)
+                ),
+                "Feed-in Energy": InverterDataValue(
+                    (86, 87),
+                    Total(Units.KWH),
+                    (
+                        u16_packer,
+                        div100,
+                    ),
+                ),
+                "Consumed Energy": InverterDataValue(
+                    (88, 89),
+                    Total(Units.KWH),
+                    (
+                        u16_packer,
+                        div100,
+                    ),
+                ),
+                "Battery Remaining Capacity": InverterDataValue(
+                    (103,), Measurement(Units.PERCENT)
+                ),
+                "Battery Temperature": InverterDataValue(
+                    (105,), Measurement(Units.C), (to_signed,)
+                ),
+                "Battery Voltage": InverterDataValue(
+                    (169, 170),
+                    Measurement(Units.V),
+                    (
+                        u16_packer,
+                        div100,
+                    ),
+                ),
+            },
+        )

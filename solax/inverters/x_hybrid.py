@@ -1,76 +1,49 @@
-import voluptuous as vol
-
-from solax.http_client import Method
-from solax.inverter import HttpClient, Inverter
-from solax.response_parser import ResponseParser
-from solax.units import Total, Units
+from solax.inverter import (
+    Inverter,
+    InverterDataValue,
+    InverterDefinition,
+    InverterIdentification,
+)
+from solax.units import Measurement, Total, Units
 
 
 class XHybrid(Inverter):
-    """
-    Tested with:
-    * SK-TL5000E
-    """
-
-    _schema = vol.Schema(
-        {
-            vol.Required("method"): str,
-            vol.Required("version"): str,
-            vol.Required("type"): str,
-            vol.Required("SN"): str,
-            vol.Required("Data"): vol.Schema(
-                vol.All(
-                    [vol.Coerce(float)],
-                    vol.Any(vol.Length(min=58, max=58), vol.Length(min=68, max=68)),
-                )
-            ),
-            vol.Required("Status"): vol.All(vol.Coerce(int), vol.Range(min=0)),
-        },
-        extra=vol.REMOVE_EXTRA,
-    )
-
-    @classmethod
-    def _build(cls, host, port, pwd="", params_in_query=True):
-        base = "http://{}:{}/api/realTimeData.htm"
-        url = base.format(host, port)
-        http_client = HttpClient.build_w_url(url, Method.GET)
-        response_parser = ResponseParser(cls._schema, cls.response_decoder())
-        return cls(http_client, response_parser)
-
-    @classmethod
-    def build_all_variants(cls, host, port, pwd=""):
-        versions = [cls._build(host, port)]
-        return versions
 
     # key: name of sensor
     # value.0: index
     # value.1: unit (String) or None
     # from https://github.com/GitHobi/solax/wiki/direct-data-retrieval
     @classmethod
-    def response_decoder(cls):
-        return {
-            "PV1 Current": (0, Units.A),
-            "PV2 Current": (1, Units.A),
-            "PV1 Voltage": (2, Units.V),
-            "PV2 Voltage": (3, Units.V),
-            "Output Current": (4, Units.A),
-            "Network Voltage": (5, Units.V),
-            "Power Now": (6, Units.W),
-            "Inverter Temperature": (7, Units.C),
-            "Today's Energy": (8, Units.KWH),
-            "Total Energy": (9, Total(Units.KWH)),
-            "Exported Power": (10, Units.W),
-            "PV1 Power": (11, Units.W),
-            "PV2 Power": (12, Units.W),
-            "Battery Voltage": (13, Units.V),
-            "Battery Current": (14, Units.A),
-            "Battery Power": (15, Units.W),
-            "Battery Temperature": (16, Units.C),
-            "Battery Remaining Capacity": (17, Units.PERCENT),
-            "Month's Energy": (19, Units.KWH),
-            "Grid Frequency": (50, Units.HZ),
-            "EPS Voltage": (53, Units.V),
-            "EPS Current": (54, Units.A),
-            "EPS Power": (55, Units.W),
-            "EPS Frequency": (56, Units.HZ),
-        }
+    def inverter_definition(cls) -> InverterDefinition:
+        return InverterDefinition(
+            "XHybrid",
+            InverterIdentification(-1, "AL_SE"),
+            {
+                "PV1 Current": InverterDataValue((0,), Measurement(Units.A)),
+                "PV2 Current": InverterDataValue((1,), Measurement(Units.A)),
+                "PV1 Voltage": InverterDataValue((2,), Measurement(Units.V)),
+                "PV2 Voltage": InverterDataValue((3,), Measurement(Units.V)),
+                "Output Current": InverterDataValue((4,), Measurement(Units.A)),
+                "Network Voltage": InverterDataValue((5,), Measurement(Units.V)),
+                "Power Now": InverterDataValue((6,), Measurement(Units.W)),
+                "Inverter Temperature": InverterDataValue((7,), Measurement(Units.C)),
+                "Today's Energy": InverterDataValue((8,), Measurement(Units.KWH)),
+                "Total Energy": InverterDataValue((9,), Total(Units.KWH)),
+                "Exported Power": InverterDataValue((10,), Measurement(Units.W)),
+                "PV1 Power": InverterDataValue((11,), Measurement(Units.W)),
+                "PV2 Power": InverterDataValue((12,), Measurement(Units.W)),
+                "Battery Voltage": InverterDataValue((13,), Measurement(Units.V)),
+                "Battery Current": InverterDataValue((14,), Measurement(Units.A)),
+                "Battery Power": InverterDataValue((15,), Measurement(Units.W)),
+                "Battery Temperature": InverterDataValue((16,), Measurement(Units.C)),
+                "Battery Remaining Capacity": InverterDataValue(
+                    (17,), Measurement(Units.PERCENT)
+                ),
+                "Month's Energy": InverterDataValue((19,), Measurement(Units.KWH)),
+                "Grid Frequency": InverterDataValue((50,), Measurement(Units.HZ)),
+                "EPS Voltage": InverterDataValue((53,), Measurement(Units.V)),
+                "EPS Current": InverterDataValue((54,), Measurement(Units.A)),
+                "EPS Power": InverterDataValue((55,), Measurement(Units.W)),
+                "EPS Frequency": InverterDataValue((56,), Measurement(Units.HZ)),
+            },
+        )

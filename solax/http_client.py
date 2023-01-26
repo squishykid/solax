@@ -82,10 +82,17 @@ class HttpClient:
 
 def all_variations(host, port, pwd=""):
     url = utils.to_url(host, port)
-    get = HttpClient(url, Method.GET, pwd)
+    get = HttpClient.build_w_url(
+        f"http://{host}:{port}/api/realTimeData.htm", Method.GET
+    )
     post = HttpClient(url, Method.POST, pwd)
-    post_query = HttpClient(url, Method.POST, pwd).with_default_query()
-    post_data = HttpClient(url, Method.POST, pwd).with_default_data()
+    headers = {"X-Forwarded-For": "5.8.8.8"}
+    post_query = (
+        HttpClient(url, Method.POST, pwd).with_default_query().with_headers(headers)
+    )
+    post_data = (
+        HttpClient(url, Method.POST, pwd).with_default_data().with_headers(headers)
+    )
     return {
         "get": get,
         "post": post,

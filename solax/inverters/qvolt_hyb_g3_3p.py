@@ -45,7 +45,7 @@ class QVOLTHYBG33P(Inverter):
             }.get(value, f"unmapped value '{value}'")
 
     def __init__(self, http_client: HttpClient, response_parser: ResponseParser):
-        super().__init__(http_client, response_parser)
+        super().__init__(http_client)
         self.manufacturer = "Qcells"
 
     _schema = vol.Schema(
