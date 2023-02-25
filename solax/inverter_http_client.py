@@ -71,3 +71,7 @@ class InverterHttpClient:
                 req.raise_for_status()
                 resp = await req.read()
         return resp
+
+    def __str__(self) -> str:
+        using = "query in url" if self.query else "data in the body"
+        return f"{self.url} using {using}"
