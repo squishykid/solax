@@ -36,7 +36,7 @@ class InverterResponse:
 @dataclass
 class InverterIdentification:
     inverter_type: int
-    type_prefix: Optional[str] = None
+    old_type_prefix: Optional[str] = None
 
 
 @dataclass
@@ -152,9 +152,9 @@ class Inverter:
             return False
 
         actual_type = inverter_response.type
-        self_type = identification.type_prefix
-        if isinstance(actual_type, str) and self_type:
-            return actual_type.startswith(self_type)
+        old_type_prefix = identification.old_type_prefix
+        if old_type_prefix is not None:
+            return isinstance(actual_type, str) and actual_type.startswith(old_type_prefix)
 
         # compare type and inverter_type,
         #  instead of type and type, since type and inverter_type

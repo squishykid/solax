@@ -2,7 +2,7 @@ from typing import Type
 
 from solax.http_client import all_variations
 from solax.inverter import Inverter, InverterError
-from solax.inverters import X1, X3, X3V34, X1Mini, X3HybridG4, XHybrid
+from solax.inverters import X1, X3, X3V34, X1Mini, X3HybridG4, XHybrid, X1Smart, X1MiniV34
 
 REGISTRY: list[Type[Inverter]] = [
     XHybrid,
@@ -11,7 +11,8 @@ REGISTRY: list[Type[Inverter]] = [
     X3HybridG4,
     X1,
     X1Mini,
-    # X1Smart,
+    X1MiniV34,
+    X1Smart,
     # QVOLTHYBG33P,
     # X1Boost,
     # X1HybridGen4,

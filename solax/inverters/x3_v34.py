@@ -18,6 +18,10 @@ from solax.utils import (
 class X3V34(Inverter):
     """X3 v2.034.06"""
 
+    def identify(self, response: bytes) -> bool:
+        a = super().identify(response)
+        return a
+
     @classmethod
     def inverter_definition(cls) -> InverterDefinition:
         return InverterDefinition(
