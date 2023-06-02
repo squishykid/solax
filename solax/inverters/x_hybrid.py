@@ -66,6 +66,8 @@ class XHybrid(Inverter):
             "Battery Temperature": (16, Units.C),
             "Battery Remaining Capacity": (17, Units.PERCENT),
             "Month's Energy": (19, Units.KWH),
+            "Grid Exported Energy": (41, Units.KWH),
+            "Grid Imported Energy": (42, Units.KWH),
             "Grid Frequency": (50, Units.HZ),
             "EPS Voltage": (53, Units.V),
             "EPS Current": (54, Units.A),
