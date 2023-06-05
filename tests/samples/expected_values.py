@@ -23,6 +23,8 @@ XHYBRID_VALUES = {
     "PV2 Voltage": 3,
     "Power Now": 6,
     "Total Energy": 9,
+    "Grid Exported Energy": 41,
+    "Grid Imported Energy": 42,
 }
 
 
