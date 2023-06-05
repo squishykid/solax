@@ -8,7 +8,6 @@ from solax.units import Measurement, Total, Units
 
 
 class XHybrid(Inverter):
-
     # key: name of sensor
     # value.0: index
     # value.1: unit (String) or None

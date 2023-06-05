@@ -8,11 +8,9 @@ from solax.units import Measurement, Total, Units
 
 
 class X3(Inverter):
-
     def identify(self, response: bytes) -> bool:
         a = super().identify(response)
         return a
-
 
     @classmethod
     def inverter_definition(cls) -> InverterDefinition:

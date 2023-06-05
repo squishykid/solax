@@ -154,7 +154,9 @@ class Inverter:
         actual_type = inverter_response.type
         old_type_prefix = identification.old_type_prefix
         if old_type_prefix is not None:
-            return isinstance(actual_type, str) and actual_type.startswith(old_type_prefix)
+            return isinstance(actual_type, str) and actual_type.startswith(
+                old_type_prefix
+            )
 
         # compare type and inverter_type,
         #  instead of type and type, since type and inverter_type

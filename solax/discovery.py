@@ -3,7 +3,16 @@ from typing import Type
 
 from solax.http_client import all_variations
 from solax.inverter import Inverter, InverterError
-from solax.inverters import X1, X3, X3V34, X1Mini, X3HybridG4, XHybrid, X1Smart, X1MiniV34
+from solax.inverters import (
+    X1,
+    X3,
+    X3V34,
+    X1Mini,
+    X3HybridG4,
+    XHybrid,
+    X1Smart,
+    X1MiniV34,
+)
 
 REGISTRY: list[Type[Inverter]] = [
     XHybrid,
@@ -56,10 +65,12 @@ async def discover(host, port, pwd="") -> Inverter:
                 )
 
     for sleep, (name, client) in enumerate(clients.items()):
-        pending.append(asyncio.create_task(
-            identify_inverter(sleep, name, client),
-            name=name,
-        ))
+        pending.append(
+            asyncio.create_task(
+                identify_inverter(sleep, name, client),
+                name=name,
+            )
+        )
 
     while pending:
         done, pending = await asyncio.wait(pending, return_when=asyncio.FIRST_COMPLETED)
@@ -80,8 +91,6 @@ async def discover(host, port, pwd="") -> Inverter:
                         ex,
                     )
                 )
-
-
 
     msg = (
         "Unable to connect to the inverter at "
