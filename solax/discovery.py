@@ -36,7 +36,7 @@ class DiscoveryError(Exception):
 async def discover(host, port, pwd="") -> Inverter:
     failures: list = []
     clients = all_variations(host, port, pwd)
-    pending = {}
+    pending = set()
 
     async def identify_inverter(sleep, client_name, client):
         await asyncio.sleep(sleep)  # don't spam the inverter
@@ -45,16 +45,17 @@ async def discover(host, port, pwd="") -> Inverter:
             await asyncio.sleep(0)
             try:
                 inverter = inverter_class(client)
+
                 if inverter.identify(response):
                     return inverter
-                else:
-                    failures.append(
-                        (
-                            client_name,
-                            inverter_class.__name__,
-                            "did not identify",
-                        )
+
+                failures.append(
+                    (
+                        client_name,
+                        inverter_class.__name__,
+                        "did not identify",
                     )
+                )
             except InverterError as ex:
                 failures.append(
                     (
@@ -65,7 +66,7 @@ async def discover(host, port, pwd="") -> Inverter:
                 )
 
     for sleep, (name, client) in enumerate(clients.items()):
-        pending.append(
+        pending.add(
             asyncio.create_task(
                 identify_inverter(sleep, name, client),
                 name=name,
@@ -81,10 +82,12 @@ async def discover(host, port, pwd="") -> Inverter:
 
             try:
                 inverter = await task
-                for t in pending:
-                    t.cancel()
+
+                for loser in pending:
+                    loser.cancel()
+
                 return inverter
-            except Exception as ex:
+            except RuntimeError as ex:
                 failures.append(
                     (
                         task.get_name(),
@@ -92,10 +95,11 @@ async def discover(host, port, pwd="") -> Inverter:
                     )
                 )
 
-    msg = (
-        "Unable to connect to the inverter at "
-        f"host={host} port={port}, or your inverter is not supported yet.\n"
-        "Please see https://github.com/squishykid/solax/wiki/DiscoveryError\n"
-        f"Failures={str(failures)}"
+    raise DiscoveryError(
+        (
+            "Unable to connect to the inverter at "
+            f"host={host} port={port}, or your inverter is not supported yet.\n"
+            "Please see https://github.com/squishykid/solax/wiki/DiscoveryError\n"
+            f"Failures={str(failures)}"
+        )
     )
-    raise DiscoveryError(msg)
