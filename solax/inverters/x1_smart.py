@@ -1,10 +1,10 @@
 from solax.inverter import (
     Inverter,
+    InverterDataValue,
     InverterDefinition,
     InverterIdentification,
-    InverterDataValue,
 )
-from solax.units import Total, Units, Measurement
+from solax.units import Measurement, Total, Units
 from solax.utils import div10, div100, to_signed
 
 

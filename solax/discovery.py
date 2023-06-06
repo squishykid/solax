@@ -8,10 +8,10 @@ from solax.inverters import (
     X3,
     X3V34,
     X1Mini,
+    X1MiniV34,
+    X1Smart,
     X3HybridG4,
     XHybrid,
-    X1Smart,
-    X1MiniV34,
 )
 
 REGISTRY: list[Type[Inverter]] = [
