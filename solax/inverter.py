@@ -82,15 +82,19 @@ class Inverter:
         Warning, HA depends on this
         """
         sensors: Dict[str, Tuple[int, Measurement]] = {}
-        for idx, (name, mapping) in enumerate(cls.response_decoder().items()):
+        for name, mapping in cls.response_decoder().items():
             unit = Measurement(Units.NONE)
-            unit_or_measurement = mapping[1]
+
+            (idx, unit_or_measurement, *_) = mapping
 
             if isinstance(unit_or_measurement, Units):
                 unit = Measurement(unit_or_measurement)
             else:
                 unit = unit_or_measurement
-
+            if isinstance(idx, tuple):
+                sensor_indexes = idx[0]
+                first_sensor_index = sensor_indexes[0]
+                idx = first_sensor_index
             sensors[name] = (idx, unit)
         return sensors
 
