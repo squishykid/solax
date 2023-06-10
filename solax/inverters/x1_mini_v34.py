@@ -1,6 +1,6 @@
 import voluptuous as vol
 
-from solax.inverter import Inverter
+from solax.inverter import Inverter, InverterIdentification, ResponseDecoder
 from solax.units import Total, Units
 from solax.utils import div10, div100
 
@@ -37,9 +37,14 @@ class X1MiniV34(Inverter):
         },
         extra=vol.REMOVE_EXTRA,
     )
+    
+    
+    @classmethod
+    def inverter_identification(cls) -> InverterIdentification:
+        return InverterIdentification(999)#4)
 
     @classmethod
-    def response_decoder(cls):
+    def response_decoder(cls) -> ResponseDecoder:
         return {
             "Network Voltage": (0, Units.V, div10),
             "Output Current": (1, Units.A, div10),

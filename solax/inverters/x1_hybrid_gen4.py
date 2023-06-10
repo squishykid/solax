@@ -1,9 +1,9 @@
 import voluptuous as vol
 
 from solax import utils
-from solax.inverter import Inverter, InverterHttpClient, Method, ResponseParser
+from solax.inverter import Inverter, InverterIdentification, ResponseDecoder
 from solax.units import Total, Units
-from solax.utils import div10, div100, pack_u16, to_signed
+from solax.utils import div10, div100, to_signed, u16_packer
 
 
 class X1HybridGen4(Inverter):
@@ -38,9 +38,14 @@ class X1HybridGen4(Inverter):
     def build_all_variants(cls, host, port, pwd=""):
         versions = [cls._build(host, port, pwd)]
         return versions
+    
+    
+    @classmethod
+    def inverter_identification(cls) -> InverterIdentification:
+        return InverterIdentification(15)
 
     @classmethod
-    def response_decoder(cls):
+    def response_decoder(cls) -> ResponseDecoder:
         return {
             "AC voltage R": (0, Units.V, div10),
             "AC current": (1, Units.A, div10),
@@ -52,7 +57,7 @@ class X1HybridGen4(Inverter):
             "PV2 current": (7, Units.A, div10),
             "PV1 power": (8, Units.W),
             "PV2 power": (9, Units.W),
-            "On-grid total yield": (pack_u16(11, 12), Total(Units.KWH), div10),
+            "On-grid total yield": ((11, 12), Total(Units.KWH), (u16_packer, div10)),
             "On-grid daily yield": (13, Units.KWH, div10),
             "Battery voltage": (14, Units.V, div100),
             "Battery current": (15, Units.A, div100),
@@ -60,6 +65,6 @@ class X1HybridGen4(Inverter):
             "Battery temperature": (17, Units.C),
             "Battery SoC": (18, Units.PERCENT),
             "Grid power": (32, Units.W, to_signed),
-            "Total feed-in energy": (pack_u16(34, 35), Total(Units.KWH), div100),
-            "Total consumption": (pack_u16(36, 37), Total(Units.KWH), div100),
+            "Total feed-in energy": ((34, 35), Total(Units.KWH), (u16_packer, div100)),
+            "Total consumption": ((36, 37), Total(Units.KWH), (u16_packer, div100)),
         }

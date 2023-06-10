@@ -1,9 +1,9 @@
 import voluptuous as vol
 
 from solax import utils
-from solax.inverter import Inverter, InverterHttpClient, Method, ResponseParser
+from solax.inverter import Inverter, HttpClient, InverterIdentification, ResponseDecoder
 from solax.units import Total, Units
-from solax.utils import div10, div100, to_signed
+from solax.utils import div10, div100, max_float, to_signed
 
 
 class X1Boost(Inverter):
@@ -34,7 +34,11 @@ class X1Boost(Inverter):
     )
 
     @classmethod
-    def response_decoder(cls):
+    def inverter_identification(cls) -> InverterIdentification:
+        return InverterIdentification(4)
+
+    @classmethod
+    def response_decoder(cls) -> ResponseDecoder:
         return {
             "AC Voltage": (0, Units.V, div10),
             "AC Output Current": (1, Units.A, div10),
@@ -50,8 +54,8 @@ class X1Boost(Inverter):
             "Today's Generated Energy": (13, Total(Units.KWH), div10),
             "Inverter Temperature": (39, Units.C),
             "Exported Power": (48, Units.W, to_signed),
-            "Total Export Energy": (50, Total(Units.KWH), div100),
-            "Total Import Energy": (52, Total(Units.KWH), div100),
+            "Total Export Energy": ((41, 50), Total(Units.KWH), (max_float, div100)),
+            "Total Import Energy": ((42, 52), Total(Units.KWH), (max_float, div100)),
         }
 
     @classmethod

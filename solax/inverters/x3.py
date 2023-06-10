@@ -1,6 +1,6 @@
 import voluptuous as vol
 
-from solax.inverter import Inverter
+from solax.inverter import Inverter, InverterIdentification
 from solax.units import Total, Units
 from solax.utils import startswith
 
@@ -21,6 +21,10 @@ class X3(Inverter):
         },
         extra=vol.REMOVE_EXTRA,
     )
+
+    @classmethod
+    def inverter_identification(cls) -> InverterIdentification:
+        return InverterIdentification(7, "X3")
 
     # pylint: disable=duplicate-code
     @classmethod

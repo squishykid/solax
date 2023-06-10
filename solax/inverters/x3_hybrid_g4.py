@@ -1,8 +1,8 @@
 import voluptuous as vol
 
-from solax.inverter import Inverter
+from solax.inverter import Inverter, ResponseDecoder
 from solax.units import Total, Units
-from solax.utils import div10, div100, pack_u16, to_signed, to_signed32, twoway_div10
+from solax.utils import div10, div100, to_signed, to_signed32, twoway_div10, u16_packer
 
 
 class X3HybridG4(Inverter):
@@ -31,8 +31,9 @@ class X3HybridG4(Inverter):
     def build_all_variants(cls, host, port, pwd=""):
         return [cls._build(host, port, pwd, False)]
 
-    @classmethod
-    def _decode_run_mode(cls, run_mode):
+    @staticmethod
+    def _decode_run_mode(*arg: float):
+        run_mode = int(arg[0])
         return {
             0: "Waiting",
             1: "Checking",
@@ -48,7 +49,7 @@ class X3HybridG4(Inverter):
         }.get(run_mode)
 
     @classmethod
-    def response_decoder(cls):
+    def response_decoder(cls) -> ResponseDecoder:
         return {
             "Grid 1 Voltage": (0, Units.V, div10),
             "Grid 2 Voltage": (1, Units.V, div10),
@@ -79,15 +80,15 @@ class X3HybridG4(Inverter):
             "EPS 1 Power": (29, Units.W, to_signed),
             "EPS 2 Power": (30, Units.W, to_signed),
             "EPS 3 Power": (31, Units.W, to_signed),
-            "Feed-in Power ": (pack_u16(34, 35), Units.W, to_signed32),
+            "Feed-in Power ": ((34, 35), Units.W, (u16_packer, to_signed32)),
             "Battery Power": (41, Units.W, to_signed),
-            "Yield total": (pack_u16(68, 69), Total(Units.KWH), div10),
+            "Yield total": ((68, 69), Total(Units.KWH), (u16_packer, div10)),
             "Yield today": (70, Units.KWH, div10),
-            "Feed-in Energy": (pack_u16(86, 87), Total(Units.KWH), div100),
-            "Consumed Energy": (pack_u16(88, 89), Total(Units.KWH), div100),
+            "Feed-in Energy": ((86, 87), Total(Units.KWH), (u16_packer, div100)),
+            "Consumed Energy": ((88, 89), Total(Units.KWH), (u16_packer, div100)),
             "Battery Remaining Capacity": (103, Units.PERCENT),
             "Battery Temperature": (105, Units.C, to_signed),
-            "Battery Voltage": (pack_u16(169, 170), Units.V, div100),
+            "Battery Voltage": ((169, 170), Units.V, (u16_packer, div100)),
         }
 
     # pylint: enable=duplicate-code

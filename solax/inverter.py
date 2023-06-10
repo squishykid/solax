@@ -1,21 +1,89 @@
-from typing import Dict, Tuple
+from dataclasses import dataclass, field
+from json import loads
+from typing import Any, Callable, Dict, List, Optional, Tuple, TypedDict, Union
 
-import aiohttp
 import voluptuous as vol
+from mypy_extensions import VarArg
+from voluptuous import Invalid, MultipleInvalid
+from voluptuous.humanize import humanize_error
 
-from solax import utils
-from solax.inverter_http_client import InverterHttpClient, Method
-from solax.response_parser import InverterResponse, ResponseDecoder, ResponseParser
-from solax.units import Measurement, Units
+from solax.http_client import HttpClient
+from solax.inverter_error import InverterError
+from solax.units import Measurement, Total, Units
+from solax.units import SensorUnit, Units
+
+Transformer = Callable[[VarArg(float)], float]
+
+SensorIndexSpec = Union[int, Tuple[int, ...]]
+ResponseDecoder = Dict[
+    str,
+    Union[
+        Tuple[SensorIndexSpec, Units],
+        Tuple[SensorIndexSpec, Units, Union[Transformer, Tuple[Transformer, ...]]],
+        Tuple[SensorIndexSpec, SensorUnit],
+        Tuple[SensorIndexSpec, SensorUnit, Union[Transformer, Tuple[Transformer, ...]]],
+    ],
+]
 
 
-class InverterError(Exception):
-    """Indicates error communicating with inverter"""
+class InverterRawResponse(TypedDict):
+    Data: list[float]
+    sn: Optional[str]
+    SN: Optional[str]
+    version: Optional[str]
+    ver: Optional[str]
+    type: Union[int, str]
+    Information: Optional[list[Any]]
+
+
+@dataclass
+class InverterResponse:
+    data: dict[str, float]
+    serial_number: str
+    version: str
+    type: Union[int, str]
+    inverter_type: int
+
+
+@dataclass
+class InverterIdentification:
+    inverter_type: int
+    old_type_prefix: Optional[str] = None
+
+
+@dataclass
+class InverterDataValue:
+    indexes: tuple[int, ...]
+    unit: Union[Measurement, Total]
+    transformations: tuple[Transformer, ...] = field(default_factory=tuple)
+
+
+@dataclass
+class InverterDefinition:
+    identification: InverterIdentification
+    mapping: Dict[str, InverterDataValue]
 
 
 class Inverter:
     """Base wrapper around Inverter HTTP API"""
 
+    @staticmethod
+    def common_response_schema() -> Callable[[Any], InverterRawResponse]:
+        return vol.Schema(
+            {
+                vol.Required("type"): vol.Any(str, int),
+                vol.Required(vol.Any("SN", "sn")): str,
+                vol.Required(vol.Any("ver", "version")): str,
+                vol.Required("Data"): vol.Schema(
+                    vol.All(
+                        [vol.Coerce(float)],
+                    )
+                ),
+                vol.Optional("Information"): list,
+            },
+            extra=vol.REMOVE_EXTRA,
+        )
+    
     @classmethod
     def response_decoder(cls) -> ResponseDecoder:
         """
@@ -23,87 +91,136 @@ class Inverter:
         this to return a decoding map
         """
         raise NotImplementedError()
+    
+    @classmethod
+    def inverter_identification(cls) -> InverterIdentification:
+        return InverterIdentification(99999)
+        raise NotImplementedError()
 
-    # pylint: enable=C0301
-    _schema = vol.Schema({})  # type: vol.Schema
-
-    def __init__(
-        self, http_client: InverterHttpClient, response_parser: ResponseParser
-    ):
-        self.manufacturer = "Solax"
-        self.response_parser = response_parser
-        self.http_client = http_client
 
     @classmethod
-    def _build(cls, host, port, pwd="", params_in_query=True):
-        url = utils.to_url(host, port)
-        http_client = InverterHttpClient(url, Method.POST, pwd)
-        if params_in_query:
-            http_client.with_default_query()
-        else:
-            http_client.with_default_data()
+    def inverter_definition(cls) -> InverterDefinition:
+        old_mapping = cls.response_decoder()
+        mapping: Dict[str, InverterDataValue] = {}
+        for k, v in old_mapping.items():
+            indexes = v[0]
+            if isinstance(indexes, (tuple, list)):
+                indexes = tuple(indexes)
+            elif isinstance(indexes, int):
+                indexes = (indexes,)
+            else:
+                raise TypeError('unexpected index type')
+            
+            unit = v[1]
+            if isinstance(unit, Units):
+                unit = Measurement(unit)
+            
+            if len(v) < 3:
+                mapping[k] = InverterDataValue(indexes, unit)
+                continue
+            transformers: Union[Transformer, Tuple[Transformer, ...]] = v[2]# type: ignore
+            if not isinstance(transformers, tuple):
+                transformers = (transformers,)
+            mapping[k] = InverterDataValue(indexes, unit, transformers)
+        return InverterDefinition(cls.inverter_identification(), mapping)
+        
 
-        schema = cls.schema()
-        response_decoder = cls.response_decoder()
-        response_parser = ResponseParser(schema, response_decoder)
-        return cls(http_client, response_parser)
-
-    @classmethod
-    def build_all_variants(cls, host, port, pwd=""):
-        versions = [
-            cls._build(host, port, pwd, True),
-            cls._build(host, port, pwd, False),
-        ]
-        return versions
+    @staticmethod
+    def apply_transforms(
+        data: List[float], mapping_instance: InverterDataValue
+    ) -> float:
+        indexes = mapping_instance.indexes
+        transforms = mapping_instance.transformations
+        out = [data[i] for i in indexes]
+        for transform in transforms:
+            if isinstance(out, list):
+                out = [transform(*out)]
+            else:
+                out = [transform(out)]
+        return out[0] if isinstance(out, list) else out
 
     async def get_data(self) -> InverterResponse:
         try:
-            data = await self.make_request()
-        except aiohttp.ClientError as ex:
-            msg = "Could not connect to inverter endpoint"
-            raise InverterError(msg, str(self.__class__.__name__)) from ex
+            response = await self.http_client.request()
+            data = self.handle_response(response)
         except vol.Invalid as ex:
             msg = "Received malformed JSON from inverter"
             raise InverterError(msg, str(self.__class__.__name__)) from ex
         return data
 
-    async def make_request(self) -> InverterResponse:
-        """
-        Return instance of 'InverterResponse'
-        Raise exception if unable to get data
-        """
-        raw_response = await self.http_client.request()
-        return self.response_parser.handle_response(raw_response)
+    def map_response_v2(
+        self, inverter_response: InverterRawResponse
+    ) -> dict[str, float]:
+        data = inverter_response["Data"]
+        highest_index = max(
+            (max(v.indexes) for v in self.inverter_definition().mapping.values())
+        )
+        if highest_index >= len(data):
+            raise InverterError("unable to map response")
+        accumulator = {}
+        for k, mapping_instance in self.inverter_definition().mapping.items():
+            accumulator[k] = self.apply_transforms(data, mapping_instance)
+        return accumulator
 
-    @classmethod
-    def sensor_map(cls) -> Dict[str, Tuple[int, Measurement]]:
+    def handle_response(self, resp: bytes) -> InverterResponse:
+        """
+        Decode response and map array result using mapping definition.
+
+        Args:
+            resp (bytearray): The response
+
+        Returns:
+            InverterResponse: The decoded and mapped interver response.
+        """
+
+        raw_json = resp.decode("utf-8").replace(",,", ",0.0,").replace(",,", ",0.0,")
+        json_response = loads(raw_json)
+        try:
+            response = self.common_response_schema()(json_response)
+        except (Invalid, MultipleInvalid) as ex:
+            _ = humanize_error(json_response, ex)
+            raise
+        serial = response.get("SN", response.get("sn"))
+        version = response.get("ver", response.get("version"))
+        information = response.get("Information")
+        return InverterResponse(
+            self.map_response_v2(response),
+            serial if serial else "unknown serial",
+            version if version else "unknown version",
+            response["type"],
+            information[1] if information and len(information) > 1 else -1,
+        )
+
+    def identify(self, response: bytes) -> bool:
+        inverter_response = self.handle_response(response)
+        actual_inverter_type = inverter_response.inverter_type
+        identification = self.inverter_definition().identification
+        self_inverter_type = identification.inverter_type
+        if actual_inverter_type != self_inverter_type:
+            return False
+
+        actual_type = inverter_response.type
+        old_type_prefix = identification.old_type_prefix
+        if old_type_prefix is not None:
+            return isinstance(actual_type, str) and actual_type.startswith(old_type_prefix)
+
+        # compare type and inverter_type,
+        #  instead of type and type, since type and inverter_type
+        #  should be the same value if 'type' is int
+        return actual_type == self_inverter_type
+
+    def __init__(self, http_client: HttpClient):
+        self.http_client = http_client
+
+    def sensor_map(self) -> Dict[str, Tuple[int, Union[Measurement, Total]]]:
         """
         Return sensor map
         Warning, HA depends on this
         """
-        sensors: Dict[str, Tuple[int, Measurement]] = {}
-        for name, mapping in cls.response_decoder().items():
-            unit = Measurement(Units.NONE)
-
-            (idx, unit_or_measurement, *_) = mapping
-
-            if isinstance(unit_or_measurement, Units):
-                unit = Measurement(unit_or_measurement)
-            else:
-                unit = unit_or_measurement
-            if isinstance(idx, tuple):
-                sensor_indexes = idx[0]
-                first_sensor_index = sensor_indexes[0]
-                idx = first_sensor_index
+        sensors: Dict[str, Tuple[int, Union[Measurement, Total]]] = {}
+        for name, mapping in self.inverter_definition().mapping.items():
+            unit = mapping.unit
+            idx = mapping.indexes[0]
             sensors[name] = (idx, unit)
+
         return sensors
-
-    @classmethod
-    def schema(cls) -> vol.Schema:
-        """
-        Return schema
-        """
-        return cls._schema
-
-    def __str__(self) -> str:
-        return f"{self.__class__.__name__} :: {self.http_client}"

@@ -1,7 +1,7 @@
 import voluptuous as vol
 
 from solax import utils
-from solax.inverter import Inverter, InverterHttpClient, Method, ResponseParser
+from solax.inverter import Inverter, InverterIdentification, ResponseDecoder
 from solax.units import Total, Units
 from solax.utils import div10, div100, to_signed
 
@@ -30,9 +30,14 @@ class X1Smart(Inverter):
         },
         extra=vol.REMOVE_EXTRA,
     )
+    
+    
+    @classmethod
+    def inverter_identification(cls) -> InverterIdentification:
+        return InverterIdentification(8)
 
     @classmethod
-    def response_decoder(cls):
+    def response_decoder(cls) -> ResponseDecoder:
         return {
             "Network Voltage": (0, Units.V, div10),
             "Output Current": (1, Units.A, div10),

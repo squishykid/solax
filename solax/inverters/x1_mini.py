@@ -1,6 +1,6 @@
 import voluptuous as vol
 
-from solax.inverter import Inverter
+from solax.inverter import Inverter, InverterIdentification, ResponseDecoder
 from solax.units import Total, Units
 from solax.utils import startswith
 
@@ -22,9 +22,14 @@ class X1Mini(Inverter):
         },
         extra=vol.REMOVE_EXTRA,
     )
+    
+    
+    @classmethod
+    def inverter_identification(cls) -> InverterIdentification:
+        return InverterIdentification(4, "X1-Boost-Air-Mini")
 
     @classmethod
-    def response_decoder(cls):
+    def response_decoder(cls) -> ResponseDecoder:
         return {
             "PV1 Current": (0, Units.A),
             "PV2 Current": (1, Units.A),
