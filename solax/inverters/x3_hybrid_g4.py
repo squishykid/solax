@@ -1,6 +1,6 @@
 import voluptuous as vol
 
-from solax.inverter import Inverter, ResponseDecoder
+from solax.inverter import Inverter, InverterIdentification, ResponseDecoder
 from solax.units import Total, Units
 from solax.utils import div10, div100, to_signed, to_signed32, twoway_div10, u16_packer
 
@@ -47,6 +47,11 @@ class X3HybridG4(Inverter):
             9: "Idle",
             10: "Standby",
         }.get(run_mode)
+    
+    
+    @classmethod
+    def inverter_identification(cls) -> InverterIdentification:
+        return InverterIdentification(14)
 
     @classmethod
     def response_decoder(cls) -> ResponseDecoder:

@@ -161,6 +161,15 @@ class Inverter:
         for k, mapping_instance in self.inverter_definition().mapping.items():
             accumulator[k] = self.apply_transforms(data, mapping_instance)
         return accumulator
+    
+    _schema: vol.Schema = vol.Schema({})
+    
+    @classmethod
+    def schema(cls) -> vol.Schema:
+        """
+        Return schema
+        """
+        return cls._schema
 
     def handle_response(self, resp: bytes) -> InverterResponse:
         """
@@ -176,7 +185,7 @@ class Inverter:
         raw_json = resp.decode("utf-8").replace(",,", ",0.0,").replace(",,", ",0.0,")
         json_response = loads(raw_json)
         try:
-            response = self.common_response_schema()(json_response)
+            response = self.schema()(json_response)
         except (Invalid, MultipleInvalid) as ex:
             _ = humanize_error(json_response, ex)
             raise
@@ -192,22 +201,12 @@ class Inverter:
         )
 
     def identify(self, response: bytes) -> bool:
-        inverter_response = self.handle_response(response)
-        actual_inverter_type = inverter_response.inverter_type
-        identification = self.inverter_definition().identification
-        self_inverter_type = identification.inverter_type
-        if actual_inverter_type != self_inverter_type:
+        try:
+            inverter_response = self.handle_response(response)
+        except (Invalid, MultipleInvalid) as ex:
+            _ = humanize_error(response, ex)
             return False
-
-        actual_type = inverter_response.type
-        old_type_prefix = identification.old_type_prefix
-        if old_type_prefix is not None:
-            return isinstance(actual_type, str) and actual_type.startswith(old_type_prefix)
-
-        # compare type and inverter_type,
-        #  instead of type and type, since type and inverter_type
-        #  should be the same value if 'type' is int
-        return actual_type == self_inverter_type
+        return True
 
     def __init__(self, http_client: HttpClient):
         self.http_client = http_client

@@ -54,8 +54,8 @@ class X1Boost(Inverter):
             "Today's Generated Energy": (13, Total(Units.KWH), div10),
             "Inverter Temperature": (39, Units.C),
             "Exported Power": (48, Units.W, to_signed),
-            "Total Export Energy": ((41, 50), Total(Units.KWH), (max_float, div100)),
-            "Total Import Energy": ((42, 52), Total(Units.KWH), (max_float, div100)),
+            "Total Export Energy": (50, Total(Units.KWH), div100),
+            "Total Import Energy": (50, Total(Units.KWH), div100),
         }
 
     @classmethod
