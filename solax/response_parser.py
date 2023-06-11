@@ -44,6 +44,8 @@ class ResponseParser:
         """
         sensors: Dict[str, Callable[[Any], Any]] = {}
         for name, mapping in self.response_decoder.items():
+            if isinstance(mapping, dict):
+                mapping = mapping["decoder"]
             processor = None
             (_, _, *processor) = mapping
             if processor:
