@@ -66,6 +66,9 @@ class X1(Inverter):
             "EPS Power": (55, Units.W),
             "EPS Frequency": (56, Units.HZ),
             "Export Limit": (72, Units.W),
+            "Battery Minimum Capacity": (74, Units.PERCENT),
+            "Charge Max Current": (75, Units.A),
+            "Discharge Max Current": (76, Units.A),
             "Work Mode": (77, Units.NONE, X1._decode_work_mode),
         }
 
