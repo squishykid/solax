@@ -33,6 +33,8 @@ class ResponseParser:
     def _decode_map(self) -> Dict[str, SensorIndexSpec]:
         sensors: Dict[str, SensorIndexSpec] = {}
         for name, mapping in self.response_decoder.items():
+            if isinstance(mapping, dict):
+                mapping = mapping["decoder"]
             sensors[name] = mapping[0]
         return sensors
 

@@ -288,6 +288,7 @@ X3_MICPRO_G2_VALUES = {
     "Grid 1 Frequency": 49.98,
     "Grid 2 Frequency": 49.99,
     "Grid 3 Frequency": 49.94,
+    "Run Mode Raw": 2.0,
     "Run Mode": "Normal",
     "Total Yield": 795.7,
     "Daily Yield": 20.0,
