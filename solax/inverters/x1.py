@@ -28,6 +28,15 @@ class X1(Inverter):
     )
 
     @classmethod
+    def _decode_work_mode(cls, work_mode):
+        return {
+            0: "Self Use",
+            1: "Force Time Use",
+            2: "Backup Mode",
+            3: "Feed In Priority",
+        }.get(work_mode)
+
+    @classmethod
     def response_decoder(cls):
         return {
             "PV1 Current": (0, Units.A),
@@ -56,6 +65,8 @@ class X1(Inverter):
             "EPS Current": (54, Units.A),
             "EPS Power": (55, Units.W),
             "EPS Frequency": (56, Units.HZ),
+            "Export Limit": (72, Units.W),
+            "Work Mode": (77, Units.NONE, X1._decode_work_mode),
         }
 
     # pylint: enable=duplicate-code
