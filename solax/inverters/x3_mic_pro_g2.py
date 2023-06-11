@@ -68,7 +68,7 @@ class X3MicProG2(Inverter):
             "Grid 3 Frequency": (20, Units.HZ, div100),
             "Run Mode Raw": {
                 "decoder": (21, Units.NONE),
-                "unique_id": 200,
+                "unique_id": 500,
             },
             "Run Mode": (21, Units.NONE, X3MicProG2._decode_run_mode),
             "Total Yield": (pack_u16(22, 23), Total(Units.KWH), div10),

@@ -89,6 +89,10 @@ class QVOLTHYBG33P(Inverter):
             "Grid Frequency Phase 2": (17, Units.HZ, div100),
             "Grid Frequency Phase 3": (18, Units.HZ, div100),
             "Inverter Operation mode": (19, Units.NONE, cls.Processors.inverter_modes),
+            "Inverter Operation mode raw": {
+                "decoder": (19, Units.NONE),
+                "unique_id": 500,
+            },
             # 20 - 32: always 0
             # 33: always 1
             # instead of to_signed this is actually 34 - 35,
@@ -156,6 +160,10 @@ class QVOLTHYBG33P(Inverter):
             # 127,128 resetting counter /1000, around battery charge + discharge
             # 164,165,166 some curves
             "Battery Operation mode": (168, Units.NONE, cls.Processors.battery_modes),
+            "Battery Operation mode raw": {
+                "decoder": (168, Units.NONE),
+                "unique_id": 501,
+            }
             # 169: div100 same as [39]
             # 170-199: always 0
         }
