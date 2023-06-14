@@ -257,6 +257,7 @@ X3_HYBRID_G4_VALUES = {
     "EPS 3 Power": 0.0,
     "Feed-in Power ": -152.0,
     "Battery Power": 0.0,
+    "Radiator Temperature": 23.0,
     "Yield total": 4.4,
     "Yield today": 0.1,
     "Feed-in Energy": 0.0,
