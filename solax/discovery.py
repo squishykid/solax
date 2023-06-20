@@ -1,5 +1,5 @@
 import asyncio
-from typing import Type
+from typing import Type, List
 
 from solax.http_client import all_variations
 from solax.inverter import Inverter, InverterError
@@ -14,7 +14,7 @@ from solax.inverters import (
     XHybrid,
 )
 
-REGISTRY: list[Type[Inverter]] = [
+REGISTRY: List[Type[Inverter]] = [
     XHybrid,
     X3,
     X3V34,
@@ -34,7 +34,7 @@ class DiscoveryError(Exception):
 
 
 async def discover(host, port, pwd="") -> Inverter:
-    failures: list = []
+    failures: List = []
     clients = all_variations(host, port, pwd)
     pending = set()
 
