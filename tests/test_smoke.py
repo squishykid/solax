@@ -2,8 +2,9 @@ import pytest
 
 import solax
 from solax.discovery import REGISTRY
+from solax.http_client import all_variations
 from solax.inverter import Inverter, InverterError
-from solax.units import Measurement
+from solax.units import Measurement, Total
 from tests import fixtures
 
 
@@ -20,8 +21,10 @@ async def build_right_variant(inverter, conn) -> Inverter:
 
 @pytest.mark.asyncio
 async def test_smoke(inverters_fixture):
-    conn, inverter_class, values = inverters_fixture
-    inv = await build_right_variant(inverter_class, conn)
+    conn, inverter_class, client, values = inverters_fixture
+    host, port = conn
+    http_client = all_variations(host, port)[client]
+    inv = inverter_class(http_client)
     rt_api = solax.RealTimeAPI(inv)
     parsed = await rt_api.get_data()
 
@@ -35,9 +38,11 @@ async def test_smoke(inverters_fixture):
 
 @pytest.mark.asyncio
 async def test_throws_when_unable_to_parse(inverters_garbage_fixture):
-    conn, inverter_class = inverters_garbage_fixture
+    conn, inverter_class, client_name = inverters_garbage_fixture
+    host, port = conn
+    http_client = all_variations(host, port)[client_name]
     with pytest.raises(InverterError):
-        i = await build_right_variant(inverter_class, conn)
+        i = inverter_class(http_client)
         await i.get_data()
 
 
@@ -50,7 +55,8 @@ def test_registry_matches_inverters_under_test():
 def test_inverter_sensors_match():
     test_values = ((i.inverter, i.values) for i in fixtures.INVERTERS_UNDER_TEST)
     for i, expected_values in test_values:
-        sensor_map = i.sensor_map()
+        inverter = i(None)
+        sensor_map = inverter.sensor_map()
         msg = f"""{sorted(sensor_map.keys())} vs
 {sorted(expected_values.keys())}"""
         assert len(sensor_map) == len(expected_values), msg
@@ -59,10 +65,11 @@ def test_inverter_sensors_match():
 
 
 def test_inverter_sensors_define_valid_units(inverters_under_test):
-    sensor_map = inverters_under_test.sensor_map()
+    inverter = inverters_under_test(None)
+    sensor_map = inverter.sensor_map()
     for name, (_, unit, *_) in sensor_map.items():
         msg = (
             f"provided unit '{unit}'({type(unit)}) "
             f"is not a proper Unit on sensor '{name}' of Inverter '{inverters_under_test}'"
         )
-        assert isinstance(unit, Measurement), msg
+        assert isinstance(unit, (Measurement, Total)), msg

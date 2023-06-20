@@ -1,8 +1,8 @@
 import voluptuous as vol
 
-from solax.inverter import Inverter
+from solax.inverter import Inverter, InverterIdentification, ResponseDecoder
 from solax.units import Total, Units
-from solax.utils import div10, div100, pack_u16, to_signed, twoway_div10, twoway_div100
+from solax.utils import div10, div100, to_signed, twoway_div10, twoway_div100, u16_packer
 
 
 class X3V34(Inverter):
@@ -26,9 +26,13 @@ class X3V34(Inverter):
         },
         extra=vol.REMOVE_EXTRA,
     )
+    
+    @classmethod
+    def inverter_identification(cls) -> InverterIdentification:
+        return InverterIdentification(5)
 
     @classmethod
-    def response_decoder(cls):
+    def response_decoder(cls) -> ResponseDecoder:
         return {
             "Network Voltage Phase 1": (0, Units.V, div10),
             "Network Voltage Phase 2": (1, Units.V, div10),
@@ -45,12 +49,12 @@ class X3V34(Inverter):
             "PV2 Current": (12, Units.A, div10),
             "PV1 Power": (13, Units.W),
             "PV2 Power": (14, Units.W),
-            "Total PV Energy": (pack_u16(89, 90), Total(Units.KWH), div10),
+            "Total PV Energy": ((89, 90), Total(Units.KWH), (u16_packer, div10)),
             "Today's PV Energy": (112, Units.KWH, div10),
             "Grid Frequency Phase 1": (15, Units.HZ, div100),
             "Grid Frequency Phase 2": (16, Units.HZ, div100),
             "Grid Frequency Phase 3": (17, Units.HZ, div100),
-            "Total Energy": (pack_u16(19, 20), Total(Units.KWH), div10),
+            "Total Energy": ((19, 20), Total(Units.KWH), (u16_packer, div10)),
             "Today's Energy": (21, Units.KWH, div10),
             "Battery Voltage": (24, Units.V, div100),
             "Battery Current": (25, Units.A, twoway_div100),
@@ -58,24 +62,24 @@ class X3V34(Inverter):
             "Battery Temperature": (27, Units.C),
             "Battery Remaining Capacity": (28, Units.PERCENT),
             "Total Battery Discharge Energy": (
-                pack_u16(30, 31),
+                (30, 31),
                 Total(Units.KWH),
-                div10,
+                (u16_packer, div10),
             ),
             "Today's Battery Discharge Energy": (113, Units.KWH, div10),
             "Battery Remaining Energy": (32, Units.KWH, div10),
             "Total Battery Charge Energy": (
-                pack_u16(87, 88),
+                (87, 88),
                 Total(Units.KWH),
-                div10,
+                (u16_packer, div10),
             ),
             "Today's Battery Charge Energy": (114, Units.KWH, div10),
             "Exported Power": (65, Units.W, to_signed),
-            "Total Feed-in Energy": (pack_u16(67, 68), Total(Units.KWH), div100),
-            "Total Consumption": (pack_u16(69, 70), Total(Units.KWH), div100),
+            "Total Feed-in Energy": ((67, 68), Total(Units.KWH), (u16_packer, div100)),
+            "Total Consumption": ((69, 70), Total(Units.KWH), (u16_packer, div100)),
             "AC Power": (181, Units.W, to_signed),
             "EPS Frequency": (63, Units.HZ, div100),
-            "EPS Total Energy": (pack_u16(110, 111), Units.KWH, div10),
+            "EPS Total Energy": ((110, 111), Units.KWH, (u16_packer, div10)),
         }
 
     # pylint: enable=duplicate-code

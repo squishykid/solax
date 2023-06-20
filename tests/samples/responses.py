@@ -1079,7 +1079,7 @@ X1_HYBRID_G3_RESPONSE = {
         100,
         101,
     ],
-    "Information": [8.000, 7, "X3-MIC", "XXXXXXX", 1, 1.10, 1.02, 1.09, 1.02],
+    "Information": [3.680, 3, "X1-Hybiyd-G3", "XYZ123", 1, 3.10, 0.00, 3.12, 1.05],
 }
 
 X1_HYBRID_G3_2X_MPPT_RESPONSE = {

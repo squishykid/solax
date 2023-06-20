@@ -1,6 +1,6 @@
 import voluptuous as vol
 
-from solax.inverter import Inverter, InverterHttpClient, Method, ResponseParser
+from solax.inverter import Inverter, HttpClient, InverterIdentification, ResponseDecoder 
 from solax.units import Total, Units
 
 
@@ -39,13 +39,17 @@ class XHybrid(Inverter):
     def build_all_variants(cls, host, port, pwd=""):
         versions = [cls._build(host, port)]
         return versions
+    
+    @classmethod
+    def inverter_identification(cls) -> InverterIdentification:
+        return InverterIdentification(-1, "AL_SE")
 
     # key: name of sensor
     # value.0: index
     # value.1: unit (String) or None
     # from https://github.com/GitHobi/solax/wiki/direct-data-retrieval
     @classmethod
-    def response_decoder(cls):
+    def response_decoder(cls) -> ResponseDecoder:
         return {
             "PV1 Current": (0, Units.A),
             "PV2 Current": (1, Units.A),

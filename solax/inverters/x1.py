@@ -1,6 +1,6 @@
 import voluptuous as vol
 
-from solax.inverter import Inverter
+from solax.inverter import Inverter, ResponseDecoder
 from solax.units import Total, Units
 from solax.utils import startswith
 
@@ -28,7 +28,7 @@ class X1(Inverter):
     )
 
     @classmethod
-    def response_decoder(cls):
+    def response_decoder(cls) -> ResponseDecoder:
         return {
             "PV1 Current": (0, Units.A),
             "PV2 Current": (1, Units.A),
