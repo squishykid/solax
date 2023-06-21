@@ -1,11 +1,16 @@
 import voluptuous as vol
 
-from solax.inverter import Inverter
+from solax.inverter import Inverter, InverterHttpClient, Method, ResponseParser
 from solax.units import Total, Units
-from solax.utils import startswith
+from solax.utils import startswith, to_url
 
 
 class X1(Inverter):
+    """
+    X1 with Pocket WiFi 2.034.06
+    Includes X-Forwarded-For for direct LAN API access
+    """
+
     # pylint: disable=duplicate-code
     _schema = vol.Schema(
         {
@@ -26,6 +31,15 @@ class X1(Inverter):
         },
         extra=vol.REMOVE_EXTRA,
     )
+
+    @classmethod
+    def _decode_work_mode(cls, work_mode):
+        return {
+            0: "Self Use",
+            1: "Force Time Use",
+            2: "Backup Mode",
+            3: "Feed In Priority",
+        }.get(work_mode)
 
     @classmethod
     def response_decoder(cls):
@@ -56,6 +70,35 @@ class X1(Inverter):
             "EPS Current": (54, Units.A),
             "EPS Power": (55, Units.W),
             "EPS Frequency": (56, Units.HZ),
+            "Export Limit": (72, Units.W),
+            "Battery Minimum Capacity": (74, Units.PERCENT),
+            "Charge Max Current": (75, Units.A),
+            "Discharge Max Current": (76, Units.A),
+            "Work Mode": (77, Units.NONE, X1._decode_work_mode),
         }
+
+    @classmethod
+    def _build(cls, host, port, pwd="", params_in_query=True):
+        url = to_url(host, port)
+        http_client = InverterHttpClient(url, Method.POST, pwd)
+        if params_in_query:
+            http_client.with_default_query()
+        else:
+            http_client.with_default_data()
+
+        headers = {"X-Forwarded-For": "5.8.8.8"}
+        http_client.with_headers(headers)
+        schema = cls._schema
+        response_decoder = cls.response_decoder()
+        response_parser = ResponseParser(schema, response_decoder)
+        return cls(http_client, response_parser)
+
+    @classmethod
+    def build_all_variants(cls, host, port, pwd=""):
+        versions = [
+            cls._build(host, port, pwd, True),
+            cls._build(host, port, pwd, False),
+        ]
+        return versions
 
     # pylint: enable=duplicate-code
