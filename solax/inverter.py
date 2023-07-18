@@ -199,7 +199,7 @@ class Inverter:
 
     def identify(self, response: bytes) -> bool:
         try:
-            inverter_response = self.handle_response(response)
+            _ = self.handle_response(response)
         except (Invalid, MultipleInvalid) as ex:
             _ = humanize_error(response, ex)
             return False
