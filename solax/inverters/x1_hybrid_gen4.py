@@ -38,8 +38,7 @@ class X1HybridGen4(Inverter):
     def build_all_variants(cls, host, port, pwd=""):
         versions = [cls._build(host, port, pwd)]
         return versions
-    
-    
+
     @classmethod
     def inverter_identification(cls) -> InverterIdentification:
         return InverterIdentification(15)

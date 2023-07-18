@@ -83,7 +83,7 @@ class Inverter:
             },
             extra=vol.REMOVE_EXTRA,
         )
-    
+
     @classmethod
     def response_decoder(cls) -> ResponseDecoder:
         """
@@ -91,12 +91,11 @@ class Inverter:
         this to return a decoding map
         """
         raise NotImplementedError()
-    
+
     @classmethod
     def inverter_identification(cls) -> InverterIdentification:
         return InverterIdentification(99999)
         raise NotImplementedError()
-
 
     @classmethod
     def inverter_definition(cls) -> InverterDefinition:
@@ -109,21 +108,20 @@ class Inverter:
             elif isinstance(indexes, int):
                 indexes = (indexes,)
             else:
-                raise TypeError('unexpected index type')
-            
+                raise TypeError("unexpected index type")
+
             unit = v[1]
             if isinstance(unit, Units):
                 unit = Measurement(unit)
-            
+
             if len(v) < 3:
                 mapping[k] = InverterDataValue(indexes, unit)
                 continue
-            transformers: Union[Transformer, Tuple[Transformer, ...]] = v[2]# type: ignore
+            transformers: Union[Transformer, Tuple[Transformer, ...]] = v[2]  # type: ignore
             if not isinstance(transformers, tuple):
                 transformers = (transformers,)
             mapping[k] = InverterDataValue(indexes, unit, transformers)
         return InverterDefinition(cls.inverter_identification(), mapping)
-        
 
     @staticmethod
     def apply_transforms(
@@ -161,9 +159,9 @@ class Inverter:
         for k, mapping_instance in self.inverter_definition().mapping.items():
             accumulator[k] = self.apply_transforms(data, mapping_instance)
         return accumulator
-    
+
     _schema: vol.Schema = vol.Schema({})
-    
+
     @classmethod
     def schema(cls) -> vol.Schema:
         """

@@ -30,8 +30,7 @@ class X1Smart(Inverter):
         },
         extra=vol.REMOVE_EXTRA,
     )
-    
-    
+
     @classmethod
     def inverter_identification(cls) -> InverterIdentification:
         return InverterIdentification(8)

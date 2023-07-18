@@ -56,23 +56,25 @@ InverterUnderTest = namedtuple(
     "uri, method, query_string, response, inverter, values, headers, data, client, id",
 )
 
-def inverter_under_test_maker(uri: str,
-        method,
-        query_string,
-        response,
-        inverter,
-        values,
-        headers,
-        data,
-        client):
+
+def inverter_under_test_maker(
+    uri: str, method, query_string, response, inverter, values, headers, data, client
+):
     callers_local_vars = inspect.currentframe().f_back.f_locals.items()
-    response_var_name = [var_name for var_name, var_val in callers_local_vars if var_val is response]
+    response_var_name = [
+        var_name for var_name, var_val in callers_local_vars if var_val is response
+    ]
     assert len(response_var_name) == 1
-    values_var_name = [var_name for var_name, var_val in callers_local_vars if var_val is values]
+    values_var_name = [
+        var_name for var_name, var_val in callers_local_vars if var_val is values
+    ]
     assert len(values_var_name) == 1
     id = f"{inverter.__name__}_http({client})_{response_var_name[0]}_produces_{values_var_name[0]}"
 
-    return InverterUnderTest(uri, method, query_string, response, inverter, values, headers, data, client, id)
+    return InverterUnderTest(
+        uri, method, query_string, response, inverter, values, headers, data, client, id
+    )
+
 
 INVERTERS_UNDER_TEST = [
     inverter_under_test_maker(
@@ -299,4 +301,8 @@ def inverters_garbage_fixture(httpserver, request):
         method=request.param.method,
         query_string=request.param.query_string,
     ).respond_with_json({"bingo": "bango"})
-    yield ((httpserver.host, httpserver.port), request.param.inverter, request.param.client,)
+    yield (
+        (httpserver.host, httpserver.port),
+        request.param.inverter,
+        request.param.client,
+    )

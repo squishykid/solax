@@ -37,11 +37,10 @@ class X1MiniV34(Inverter):
         },
         extra=vol.REMOVE_EXTRA,
     )
-    
-    
+
     @classmethod
     def inverter_identification(cls) -> InverterIdentification:
-        return InverterIdentification(999)#4)
+        return InverterIdentification(999)  # 4)
 
     @classmethod
     def response_decoder(cls) -> ResponseDecoder:

@@ -22,8 +22,7 @@ class X1Mini(Inverter):
         },
         extra=vol.REMOVE_EXTRA,
     )
-    
-    
+
     @classmethod
     def inverter_identification(cls) -> InverterIdentification:
         return InverterIdentification(4, "X1-Boost-Air-Mini")

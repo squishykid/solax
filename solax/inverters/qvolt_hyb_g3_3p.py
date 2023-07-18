@@ -4,7 +4,14 @@ from solax import utils
 from solax.inverter import Inverter, ResponseDecoder
 from solax.http_client import HttpClient
 from solax.units import Total, Units
-from solax.utils import div10, div100, to_signed, twoway_div10, twoway_div100, u16_packer
+from solax.utils import (
+    div10,
+    div100,
+    to_signed,
+    twoway_div10,
+    twoway_div100,
+    u16_packer,
+)
 
 
 class QVOLTHYBG33P(Inverter):
@@ -45,9 +52,7 @@ class QVOLTHYBG33P(Inverter):
                 3: "Feed-in Priority",
             }.get(value, f"unmapped value '{value}'")
 
-    def __init__(
-        self, http_client: HttpClient
-    ):
+    def __init__(self, http_client: HttpClient):
         super().__init__(http_client)
         self.manufacturer = "Qcells"
 
@@ -130,8 +135,7 @@ class QVOLTHYBG33P(Inverter):
             ),
             "Today's Battery Discharge Energy": (78, Units.KWH, div10),
             "Today's Battery Charge Energy": (79, Units.KWH, div10),
-            "Total PV Energy": ((80, 81), Total(Units.KWH), 
-                (u16_packer, div10)),
+            "Total PV Energy": ((80, 81), Total(Units.KWH), (u16_packer, div10)),
             "Today's Energy": (82, Units.KWH, div10),
             # 83-85: always 0
             "Total Feed-in Energy": ((86, 87), Total(Units.KWH), (u16_packer, div100)),

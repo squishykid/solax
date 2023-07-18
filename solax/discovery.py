@@ -34,7 +34,6 @@ REGISTRY = [
 ]
 
 
-
 class DiscoveryError(Exception):
     """Raised when unable to discover inverter"""
 

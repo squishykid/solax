@@ -16,8 +16,6 @@
 # InverterResponse = namedtuple("InverterResponse", "data, serial_number, version, type")
 
 
-
-
 # class ResponseParser:
 #     def __init__(self, schema: vol.Schema, decoder: ResponseDecoder):
 #         self.schema = schema

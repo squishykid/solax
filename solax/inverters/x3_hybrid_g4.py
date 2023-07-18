@@ -47,8 +47,7 @@ class X3HybridG4(Inverter):
             9: "Idle",
             10: "Standby",
         }.get(run_mode)
-    
-    
+
     @classmethod
     def inverter_identification(cls) -> InverterIdentification:
         return InverterIdentification(14)

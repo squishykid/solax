@@ -2,7 +2,14 @@ import voluptuous as vol
 
 from solax.inverter import Inverter, InverterIdentification, ResponseDecoder
 from solax.units import Total, Units
-from solax.utils import div10, div100, to_signed, twoway_div10, twoway_div100, u16_packer
+from solax.utils import (
+    div10,
+    div100,
+    to_signed,
+    twoway_div10,
+    twoway_div100,
+    u16_packer,
+)
 
 
 class X3V34(Inverter):
@@ -26,7 +33,7 @@ class X3V34(Inverter):
         },
         extra=vol.REMOVE_EXTRA,
     )
-    
+
     @classmethod
     def inverter_identification(cls) -> InverterIdentification:
         return InverterIdentification(5)
