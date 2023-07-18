@@ -9,8 +9,7 @@ from voluptuous.humanize import humanize_error
 
 from solax.http_client import HttpClient
 from solax.inverter_error import InverterError
-from solax.units import Measurement, Total, Units
-from solax.units import SensorUnit, Units
+from solax.units import Measurement, SensorUnit, Total, Units
 
 Transformer = Callable[[VarArg(float)], float]
 

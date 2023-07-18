@@ -1,7 +1,7 @@
 import voluptuous as vol
 
 from solax import utils
-from solax.inverter import Inverter, HttpClient, InverterIdentification, ResponseDecoder
+from solax.inverter import HttpClient, Inverter, InverterIdentification, ResponseDecoder
 from solax.units import Total, Units
 from solax.utils import div10, div100, max_float, to_signed
 

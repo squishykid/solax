@@ -1,7 +1,7 @@
+import inspect
 from collections import namedtuple
 
 import pytest
-import inspect
 
 import solax.inverters as inverter
 from tests.samples.expected_values import (
@@ -60,7 +60,7 @@ InverterUnderTest = namedtuple(
 def inverter_under_test_maker(
     uri: str, method, query_string, response, inverter, values, headers, data, client
 ):
-    callers_local_vars = inspect.currentframe().f_back.f_locals.items()
+    callers_local_vars = inspect.currentframe().f_back.f_locals.items()  # type: ignore
     response_var_name = [
         var_name for var_name, var_val in callers_local_vars if var_val is response
     ]
