@@ -1,5 +1,3 @@
-from typing import Protocol, Tuple
-
 from voluptuous import Invalid
 
 
