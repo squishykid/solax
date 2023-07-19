@@ -1,7 +1,7 @@
 import voluptuous as vol
 
 from solax import utils
-from solax.http_client import HttpClient
+from solax.http_client import HttpClient, Method
 from solax.inverter import Inverter, ResponseDecoder
 from solax.units import Total, Units
 from solax.utils import (
@@ -167,18 +167,3 @@ class QVOLTHYBG33P(Inverter):
             # 169: div100 same as [39]
             # 170-199: always 0
         }
-
-    @classmethod
-    def _build(cls, host, port, pwd="", params_in_query=True):
-        url = utils.to_url(host, port)
-        http_client = HttpClient(url, Method.POST, pwd).with_default_data()
-
-        schema = cls._schema
-        response_decoder = cls.response_decoder()
-        response_parser = ResponseParser(schema, response_decoder)
-        return cls(http_client, response_parser)
-
-    @classmethod
-    def build_all_variants(cls, host, port, pwd=""):
-        versions = [cls._build(host, port, pwd)]
-        return versions
