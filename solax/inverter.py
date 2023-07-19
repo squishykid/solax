@@ -99,8 +99,8 @@ class Inverter:
     def inverter_definition(cls) -> InverterDefinition:
         old_mapping = cls.response_decoder()
         mapping: Dict[str, InverterDataValue] = {}
-        for k, v in old_mapping.items():
-            indexes = v[0]
+        for key, val in old_mapping.items():
+            indexes = val[0]
             if isinstance(indexes, (tuple, list)):
                 indexes = tuple(indexes)
             elif isinstance(indexes, int):
@@ -108,17 +108,17 @@ class Inverter:
             else:
                 raise TypeError("unexpected index type")
 
-            unit = v[1]
+            unit = val[1]
             if isinstance(unit, Units):
                 unit = Measurement(unit)
 
-            if len(v) < 3:
-                mapping[k] = InverterDataValue(indexes, unit)
+            if len(val) < 3:
+                mapping[key] = InverterDataValue(indexes, unit)
                 continue
-            transformers: Union[Transformer, Tuple[Transformer, ...]] = v[2]  # type: ignore
+            transformers: Union[Transformer, Tuple[Transformer, ...]] = val[2]  # type: ignore
             if not isinstance(transformers, tuple):
                 transformers = (transformers,)
-            mapping[k] = InverterDataValue(indexes, unit, transformers)
+            mapping[key] = InverterDataValue(indexes, unit, transformers)
         return InverterDefinition(cls.inverter_identification(), mapping)
 
     @staticmethod

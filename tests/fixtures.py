@@ -3,7 +3,7 @@ from collections import namedtuple
 
 import pytest
 
-import solax.inverters as inverters
+from solax import inverters
 from tests.samples.expected_values import (
     QVOLTHYBG33P_VALUES,
     X1_BOOST_VALUES,
@@ -57,6 +57,7 @@ InverterUnderTest = namedtuple(
 )
 
 
+# pylint: disable=too-many-arguments
 def inverter_under_test_maker(
     uri: str, method, query_string, response, inverter, values, headers, data, client
 ):
@@ -69,7 +70,8 @@ def inverter_under_test_maker(
         var_name for var_name, var_val in callers_local_vars if var_val is values
     ]
     assert len(values_var_name) == 1
-    unique_id = f"{inverter.__name__}_http({client})_{response_var_name[0]}_produces_{values_var_name[0]}"
+    unique_id = f"{inverter.__name__}_http({client})_\
+    {response_var_name[0]}_produces_{values_var_name[0]}"
 
     return InverterUnderTest(
         uri,
