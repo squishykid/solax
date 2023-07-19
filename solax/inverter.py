@@ -205,6 +205,7 @@ class Inverter:
         return True
 
     def __init__(self, http_client: HttpClient):
+        self.manufacturer = "Solax"  # default value, override if necessary
         self.http_client = http_client
 
     def sensor_map(self) -> Dict[str, Tuple[int, Union[Measurement, Total]]]:
