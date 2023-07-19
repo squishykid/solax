@@ -1,6 +1,5 @@
 import voluptuous as vol
 
-from solax import utils
 from solax.inverter import Inverter, InverterIdentification, ResponseDecoder
 from solax.units import Total, Units
 from solax.utils import div10, div100, to_signed

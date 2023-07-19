@@ -1,7 +1,6 @@
 import voluptuous as vol
 
-from solax import utils
-from solax.http_client import HttpClient, Method
+from solax.http_client import HttpClient
 from solax.inverter import Inverter, ResponseDecoder
 from solax.units import Total, Units
 from solax.utils import (

@@ -3,9 +3,10 @@ import pytest
 import solax
 from solax.discovery import REGISTRY
 from solax.http_client import all_variations
-from solax.inverter import Inverter, InverterError
+from solax.inverter import InverterError
 from solax.units import Measurement, Total
 from tests import fixtures
+
 
 @pytest.mark.asyncio
 async def test_smoke(inverters_fixture):
