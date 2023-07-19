@@ -159,7 +159,7 @@ INVERTERS_UNDER_TEST = [
         method="POST",
         query_string="optType=ReadRealTimeData",
         response=X1_BOOST_RESPONSE,
-        inverter=inverters.X1MiniV34,
+        inverter=inverters.X1Boost,
         values=X1_BOOST_VALUES,
         headers=X_FORWARDED_HEADER,
         data=None,

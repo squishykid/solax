@@ -54,5 +54,5 @@ class X1Boost(Inverter):
             "Inverter Temperature": (39, Units.C),
             "Exported Power": (48, Units.W, to_signed),
             "Total Export Energy": (50, Total(Units.KWH), div100),
-            "Total Import Energy": (50, Total(Units.KWH), div100),
+            "Total Import Energy": (52, Total(Units.KWH), div100),
         }
