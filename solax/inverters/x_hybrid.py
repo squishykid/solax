@@ -28,19 +28,6 @@ class XHybrid(Inverter):
     )
 
     @classmethod
-    def _build(cls, host, port, pwd="", params_in_query=True):
-        base = "http://{}:{}/api/realTimeData.htm"
-        url = base.format(host, port)
-        http_client = InverterHttpClient.build_w_url(url, Method.GET)
-        response_parser = ResponseParser(cls._schema, cls.response_decoder())
-        return cls(http_client, response_parser)
-
-    @classmethod
-    def build_all_variants(cls, host, port, pwd=""):
-        versions = [cls._build(host, port)]
-        return versions
-
-    @classmethod
     def inverter_identification(cls) -> InverterIdentification:
         return InverterIdentification(-1, "AL_SE")
 
