@@ -27,10 +27,6 @@ class X3HybridG4(Inverter):
         extra=vol.REMOVE_EXTRA,
     )
 
-    @classmethod
-    def build_all_variants(cls, host, port, pwd=""):
-        return [cls._build(host, port, pwd, False)]
-
     @staticmethod
     def _decode_run_mode(*arg: float):
         run_mode = int(arg[0])

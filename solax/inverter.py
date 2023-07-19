@@ -94,7 +94,6 @@ class Inverter:
     @classmethod
     def inverter_identification(cls) -> InverterIdentification:
         return InverterIdentification(99999)
-        raise NotImplementedError()
 
     @classmethod
     def inverter_definition(cls) -> InverterDefinition:

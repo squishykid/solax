@@ -3,7 +3,7 @@ from collections import namedtuple
 
 import pytest
 
-import solax.inverters as inverter
+import solax.inverters as inverters
 from tests.samples.expected_values import (
     QVOLTHYBG33P_VALUES,
     X1_BOOST_VALUES,
@@ -69,10 +69,19 @@ def inverter_under_test_maker(
         var_name for var_name, var_val in callers_local_vars if var_val is values
     ]
     assert len(values_var_name) == 1
-    id = f"{inverter.__name__}_http({client})_{response_var_name[0]}_produces_{values_var_name[0]}"
+    unique_id = f"{inverter.__name__}_http({client})_{response_var_name[0]}_produces_{values_var_name[0]}"
 
     return InverterUnderTest(
-        uri, method, query_string, response, inverter, values, headers, data, client, id
+        uri,
+        method,
+        query_string,
+        response,
+        inverter,
+        values,
+        headers,
+        data,
+        client,
+        unique_id,
     )
 
 
@@ -82,7 +91,7 @@ INVERTERS_UNDER_TEST = [
         method="GET",
         query_string=None,
         response=XHYBRID_DE01_RESPONSE,
-        inverter=inverter.XHybrid,
+        inverter=inverters.XHybrid,
         values=XHYBRID_VALUES,
         headers=None,
         data=None,
@@ -93,7 +102,7 @@ INVERTERS_UNDER_TEST = [
         method="GET",
         query_string=None,
         response=XHYBRID_DE02_RESPONSE,
-        inverter=inverter.XHybrid,
+        inverter=inverters.XHybrid,
         values=XHYBRID_VALUES,
         headers=None,
         data=None,
@@ -104,7 +113,7 @@ INVERTERS_UNDER_TEST = [
         method="POST",
         query_string=None,
         response=X1_HYBRID_G4_RESPONSE,
-        inverter=inverter.X1HybridGen4,
+        inverter=inverters.X1HybridGen4,
         values=X1_HYBRID_G4_VALUES,
         headers=None,
         data="optType=ReadRealTimeData",
@@ -115,7 +124,7 @@ INVERTERS_UNDER_TEST = [
         method="POST",
         query_string="optType=ReadRealTimeData",
         response=X1_BOOST_AIR_MINI_RESPONSE,
-        inverter=inverter.X1Mini,
+        inverter=inverters.X1Mini,
         values=X1_MINI_VALUES,
         headers=None,
         data=None,
@@ -126,7 +135,7 @@ INVERTERS_UNDER_TEST = [
         method="POST",
         query_string="optType=ReadRealTimeData",
         response=X1_MINI_RESPONSE_V34,
-        inverter=inverter.X1MiniV34,
+        inverter=inverters.X1MiniV34,
         values=X1_MINI_VALUES_V34,
         headers=None,
         data=None,
@@ -137,7 +146,7 @@ INVERTERS_UNDER_TEST = [
         method="POST",
         query_string="optType=ReadRealTimeData",
         response=X1_SMART_RESPONSE,
-        inverter=inverter.X1Smart,
+        inverter=inverters.X1Smart,
         values=X1_SMART_VALUES,
         headers=X_FORWARDED_HEADER,
         data=None,
@@ -148,7 +157,7 @@ INVERTERS_UNDER_TEST = [
         method="POST",
         query_string="optType=ReadRealTimeData",
         response=X1_BOOST_RESPONSE,
-        inverter=inverter.X1MiniV34,
+        inverter=inverters.X1MiniV34,
         values=X1_BOOST_VALUES,
         headers=X_FORWARDED_HEADER,
         data=None,
@@ -159,7 +168,7 @@ INVERTERS_UNDER_TEST = [
         method="POST",
         query_string="optType=ReadRealTimeData",
         response=X3_MIC_RESPONSE,
-        inverter=inverter.X3,
+        inverter=inverters.X3,
         values=X3_VALUES,
         headers=None,
         data=None,
@@ -170,7 +179,7 @@ INVERTERS_UNDER_TEST = [
         method="POST",
         query_string="optType=ReadRealTimeData",
         response=X3_HYBRID_G3_RESPONSE,
-        inverter=inverter.X3,
+        inverter=inverters.X3,
         values=X3_VALUES,
         headers=None,
         data=None,
@@ -181,7 +190,7 @@ INVERTERS_UNDER_TEST = [
         method="POST",
         query_string="optType=ReadRealTimeData",
         response=X1_HYBRID_G3_RESPONSE,
-        inverter=inverter.X1,
+        inverter=inverters.X1,
         values=X1_VALUES,
         headers=None,
         data=None,
@@ -192,7 +201,7 @@ INVERTERS_UNDER_TEST = [
         method="POST",
         query_string="optType=ReadRealTimeData",
         response=X1_HYBRID_G3_2X_MPPT_RESPONSE,
-        inverter=inverter.X1,
+        inverter=inverters.X1,
         values=X1_VALUES,
         headers=None,
         data=None,
@@ -203,7 +212,7 @@ INVERTERS_UNDER_TEST = [
         method="POST",
         query_string="optType=ReadRealTimeData",
         response=X3_HYBRID_G3_2X_MPPT_RESPONSE,
-        inverter=inverter.X3,
+        inverter=inverters.X3,
         values=X3_HYBRID_VALUES,
         headers=None,
         data=None,
@@ -214,7 +223,7 @@ INVERTERS_UNDER_TEST = [
         method="POST",
         query_string="optType=ReadRealTimeData",
         response=X3_HYBRID_G3_2X_MPPT_RESPONSE_V34,
-        inverter=inverter.X3V34,
+        inverter=inverters.X3V34,
         values=X3V34_HYBRID_VALUES,
         headers=None,
         data=None,
@@ -225,7 +234,7 @@ INVERTERS_UNDER_TEST = [
         method="POST",
         query_string="optType=ReadRealTimeData",
         response=X3_HYBRID_G3_2X_MPPT_RESPONSE_V34_NEGATIVE_POWER,
-        inverter=inverter.X3V34,
+        inverter=inverters.X3V34,
         values=X3V34_HYBRID_VALUES_NEGATIVE_POWER,
         headers=None,
         data=None,
@@ -236,7 +245,7 @@ INVERTERS_UNDER_TEST = [
         method="POST",
         query_string="optType=ReadRealTimeData",
         response=X3_HYBRID_G3_2X_MPPT_RESPONSE_V34_EPS_MODE,
-        inverter=inverter.X3V34,
+        inverter=inverters.X3V34,
         values=X3V34_HYBRID_VALUES_EPS_MODE,
         headers=None,
         data=None,
@@ -247,7 +256,7 @@ INVERTERS_UNDER_TEST = [
         method="POST",
         query_string=None,
         response=X3_HYBRID_G4_RESPONSE,
-        inverter=inverter.X3HybridG4,
+        inverter=inverters.X3HybridG4,
         values=X3_HYBRID_G4_VALUES,
         headers=None,
         data="optType=ReadRealTimeData",
@@ -258,7 +267,7 @@ INVERTERS_UNDER_TEST = [
         method="POST",
         query_string="",
         response=QVOLTHYBG33P_RESPONSE_V34,
-        inverter=inverter.QVOLTHYBG33P,
+        inverter=inverters.QVOLTHYBG33P,
         values=QVOLTHYBG33P_VALUES,
         headers=None,
         data=None,
@@ -270,6 +279,7 @@ INVERTERS_UNDER_TEST = [
 def inverter_id_getter(val):
     if isinstance(val, (InverterUnderTest,)):
         return val.id
+    return None
 
 
 @pytest.fixture(params=INVERTERS_UNDER_TEST, ids=inverter_id_getter)
