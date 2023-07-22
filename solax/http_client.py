@@ -1,8 +1,8 @@
 from enum import Enum
 
 import aiohttp
-from solax.inverter_error import InverterError
 
+from solax.inverter_error import InverterError
 from solax.utils import to_url
 
 

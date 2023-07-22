@@ -1,10 +1,16 @@
 import voluptuous as vol
 
-from solax import utils
-from solax.inverter import Inverter, ResponseDecoder
 from solax.http_client import HttpClient
+from solax.inverter import Inverter, ResponseDecoder
 from solax.units import Total, Units
-from solax.utils import div10, div100, to_signed, twoway_div10, twoway_div100, u16_packer
+from solax.utils import (
+    div10,
+    div100,
+    to_signed,
+    twoway_div10,
+    twoway_div100,
+    u16_packer,
+)
 
 
 class QVOLTHYBG33P(Inverter):
@@ -45,9 +51,7 @@ class QVOLTHYBG33P(Inverter):
                 3: "Feed-in Priority",
             }.get(value, f"unmapped value '{value}'")
 
-    def __init__(
-        self, http_client: HttpClient
-    ):
+    def __init__(self, http_client: HttpClient):
         super().__init__(http_client)
         self.manufacturer = "Qcells"
 
@@ -130,8 +134,7 @@ class QVOLTHYBG33P(Inverter):
             ),
             "Today's Battery Discharge Energy": (78, Units.KWH, div10),
             "Today's Battery Charge Energy": (79, Units.KWH, div10),
-            "Total PV Energy": ((80, 81), Total(Units.KWH), 
-                (u16_packer, div10)),
+            "Total PV Energy": ((80, 81), Total(Units.KWH), (u16_packer, div10)),
             "Today's Energy": (82, Units.KWH, div10),
             # 83-85: always 0
             "Total Feed-in Energy": ((86, 87), Total(Units.KWH), (u16_packer, div100)),
@@ -163,18 +166,3 @@ class QVOLTHYBG33P(Inverter):
             # 169: div100 same as [39]
             # 170-199: always 0
         }
-
-    @classmethod
-    def _build(cls, host, port, pwd="", params_in_query=True):
-        url = utils.to_url(host, port)
-        http_client = HttpClient(url, Method.POST, pwd).with_default_data()
-
-        schema = cls._schema
-        response_decoder = cls.response_decoder()
-        response_parser = ResponseParser(schema, response_decoder)
-        return cls(http_client, response_parser)
-
-    @classmethod
-    def build_all_variants(cls, host, port, pwd=""):
-        versions = [cls._build(host, port, pwd)]
-        return versions

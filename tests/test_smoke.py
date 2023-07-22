@@ -3,20 +3,9 @@ import pytest
 import solax
 from solax.discovery import REGISTRY
 from solax.http_client import all_variations
-from solax.inverter import Inverter, InverterError
+from solax.inverter import InverterError
 from solax.units import Measurement, Total
 from tests import fixtures
-
-
-async def build_right_variant(inverter, conn) -> Inverter:
-    last_error: BaseException = BaseException("anticipating errors")
-    for i in inverter.build_all_variants(*conn):
-        try:
-            await i.get_data()
-            return i
-        except InverterError as ex:
-            last_error = ex
-    raise last_error
 
 
 @pytest.mark.asyncio

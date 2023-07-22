@@ -1,6 +1,5 @@
 import voluptuous as vol
 
-from solax import utils
 from solax.inverter import Inverter, InverterIdentification, ResponseDecoder
 from solax.units import Total, Units
 from solax.utils import div10, div100, to_signed
@@ -30,8 +29,7 @@ class X1Smart(Inverter):
         },
         extra=vol.REMOVE_EXTRA,
     )
-    
-    
+
     @classmethod
     def inverter_identification(cls) -> InverterIdentification:
         return InverterIdentification(8)
@@ -56,27 +54,3 @@ class X1Smart(Inverter):
             "Total Feed-in Energy": (50, Total(Units.KWH), div100),
             "Total Consumption": (52, Total(Units.KWH), div100),
         }
-
-    @classmethod
-    def _build(cls, host, port, pwd="", params_in_query=True):
-        url = utils.to_url(host, port)
-        http_client = InverterHttpClient(url, Method.POST, pwd)
-        if params_in_query:
-            http_client.with_default_query()
-        else:
-            http_client.with_default_data()
-
-        headers = {"X-Forwarded-For": "5.8.8.8"}
-        http_client.with_headers(headers)
-        schema = cls._schema
-        response_decoder = cls.response_decoder()
-        response_parser = ResponseParser(schema, response_decoder)
-        return cls(http_client, response_parser)
-
-    @classmethod
-    def build_all_variants(cls, host, port, pwd=""):
-        versions = [
-            cls._build(host, port, pwd, True),
-            cls._build(host, port, pwd, False),
-        ]
-        return versions

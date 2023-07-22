@@ -9,8 +9,7 @@ from voluptuous.humanize import humanize_error
 
 from solax.http_client import HttpClient
 from solax.inverter_error import InverterError
-from solax.units import Measurement, Total, Units
-from solax.units import SensorUnit, Units
+from solax.units import Measurement, SensorUnit, Total, Units
 
 Transformer = Callable[[VarArg(float)], float]
 
@@ -67,23 +66,23 @@ class InverterDefinition:
 class Inverter:
     """Base wrapper around Inverter HTTP API"""
 
-    @staticmethod
-    def common_response_schema() -> Callable[[Any], InverterRawResponse]:
-        return vol.Schema(
-            {
-                vol.Required("type"): vol.Any(str, int),
-                vol.Required(vol.Any("SN", "sn")): str,
-                vol.Required(vol.Any("ver", "version")): str,
-                vol.Required("Data"): vol.Schema(
-                    vol.All(
-                        [vol.Coerce(float)],
-                    )
-                ),
-                vol.Optional("Information"): list,
-            },
-            extra=vol.REMOVE_EXTRA,
-        )
-    
+    # @staticmethod
+    # def common_response_schema() -> Callable[[Any], InverterRawResponse]:
+    #     return vol.Schema(
+    #         {
+    #             vol.Required("type"): vol.Any(str, int),
+    #             vol.Required(vol.Any("SN", "sn")): str,
+    #             vol.Required(vol.Any("ver", "version")): str,
+    #             vol.Required("Data"): vol.Schema(
+    #                 vol.All(
+    #                     [vol.Coerce(float)],
+    #                 )
+    #             ),
+    #             vol.Optional("Information"): list,
+    #         },
+    #         extra=vol.REMOVE_EXTRA,
+    #     )
+
     @classmethod
     def response_decoder(cls) -> ResponseDecoder:
         """
@@ -91,39 +90,36 @@ class Inverter:
         this to return a decoding map
         """
         raise NotImplementedError()
-    
+
     @classmethod
     def inverter_identification(cls) -> InverterIdentification:
         return InverterIdentification(99999)
-        raise NotImplementedError()
-
 
     @classmethod
     def inverter_definition(cls) -> InverterDefinition:
         old_mapping = cls.response_decoder()
         mapping: Dict[str, InverterDataValue] = {}
-        for k, v in old_mapping.items():
-            indexes = v[0]
+        for key, val in old_mapping.items():
+            indexes = val[0]
             if isinstance(indexes, (tuple, list)):
                 indexes = tuple(indexes)
             elif isinstance(indexes, int):
                 indexes = (indexes,)
             else:
-                raise TypeError('unexpected index type')
-            
-            unit = v[1]
+                raise TypeError("unexpected index type")
+
+            unit = val[1]
             if isinstance(unit, Units):
                 unit = Measurement(unit)
-            
-            if len(v) < 3:
-                mapping[k] = InverterDataValue(indexes, unit)
+
+            if len(val) < 3:
+                mapping[key] = InverterDataValue(indexes, unit)
                 continue
-            transformers: Union[Transformer, Tuple[Transformer, ...]] = v[2]# type: ignore
+            transformers: Union[Transformer, Tuple[Transformer, ...]] = val[2]  # type: ignore
             if not isinstance(transformers, tuple):
                 transformers = (transformers,)
-            mapping[k] = InverterDataValue(indexes, unit, transformers)
+            mapping[key] = InverterDataValue(indexes, unit, transformers)
         return InverterDefinition(cls.inverter_identification(), mapping)
-        
 
     @staticmethod
     def apply_transforms(
@@ -133,11 +129,8 @@ class Inverter:
         transforms = mapping_instance.transformations
         out = [data[i] for i in indexes]
         for transform in transforms:
-            if isinstance(out, list):
-                out = [transform(*out)]
-            else:
-                out = [transform(out)]
-        return out[0] if isinstance(out, list) else out
+            out = [transform(*out)]
+        return out[0]
 
     async def get_data(self) -> InverterResponse:
         try:
@@ -161,9 +154,9 @@ class Inverter:
         for k, mapping_instance in self.inverter_definition().mapping.items():
             accumulator[k] = self.apply_transforms(data, mapping_instance)
         return accumulator
-    
+
     _schema: vol.Schema = vol.Schema({})
-    
+
     @classmethod
     def schema(cls) -> vol.Schema:
         """
@@ -202,13 +195,14 @@ class Inverter:
 
     def identify(self, response: bytes) -> bool:
         try:
-            inverter_response = self.handle_response(response)
+            _ = self.handle_response(response)
         except (Invalid, MultipleInvalid) as ex:
             _ = humanize_error(response, ex)
             return False
         return True
 
     def __init__(self, http_client: HttpClient):
+        self.manufacturer = "Solax"  # default value, override if necessary
         self.http_client = http_client
 
     def sensor_map(self) -> Dict[str, Tuple[int, Union[Measurement, Total]]]:

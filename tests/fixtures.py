@@ -1,9 +1,9 @@
+import inspect
 from collections import namedtuple
 
 import pytest
-import inspect
 
-import solax.inverters as inverter
+from solax import inverters
 from tests.samples.expected_values import (
     QVOLTHYBG33P_VALUES,
     X1_BOOST_VALUES,
@@ -56,7 +56,25 @@ InverterUnderTest = namedtuple(
     "uri, method, query_string, response, inverter, values, headers, data, client, id",
 )
 
-def inverter_under_test_maker(uri: str,
+
+# pylint: disable=too-many-arguments
+def inverter_under_test_maker(
+    uri: str, method, query_string, response, inverter, values, headers, data, client
+):
+    callers_local_vars = inspect.currentframe().f_back.f_locals.items()  # type: ignore
+    response_var_name = [
+        var_name for var_name, var_val in callers_local_vars if var_val is response
+    ]
+    assert len(response_var_name) == 1
+    values_var_name = [
+        var_name for var_name, var_val in callers_local_vars if var_val is values
+    ]
+    assert len(values_var_name) == 1
+    unique_id = f"{inverter.__name__}_http({client})_\
+    {response_var_name[0]}_produces_{values_var_name[0]}"
+
+    return InverterUnderTest(
+        uri,
         method,
         query_string,
         response,
@@ -64,15 +82,10 @@ def inverter_under_test_maker(uri: str,
         values,
         headers,
         data,
-        client):
-    callers_local_vars = inspect.currentframe().f_back.f_locals.items()
-    response_var_name = [var_name for var_name, var_val in callers_local_vars if var_val is response]
-    assert len(response_var_name) == 1
-    values_var_name = [var_name for var_name, var_val in callers_local_vars if var_val is values]
-    assert len(values_var_name) == 1
-    id = f"{inverter.__name__}_http({client})_{response_var_name[0]}_produces_{values_var_name[0]}"
+        client,
+        unique_id,
+    )
 
-    return InverterUnderTest(uri, method, query_string, response, inverter, values, headers, data, client, id)
 
 INVERTERS_UNDER_TEST = [
     inverter_under_test_maker(
@@ -80,7 +93,7 @@ INVERTERS_UNDER_TEST = [
         method="GET",
         query_string=None,
         response=XHYBRID_DE01_RESPONSE,
-        inverter=inverter.XHybrid,
+        inverter=inverters.XHybrid,
         values=XHYBRID_VALUES,
         headers=None,
         data=None,
@@ -91,7 +104,7 @@ INVERTERS_UNDER_TEST = [
         method="GET",
         query_string=None,
         response=XHYBRID_DE02_RESPONSE,
-        inverter=inverter.XHybrid,
+        inverter=inverters.XHybrid,
         values=XHYBRID_VALUES,
         headers=None,
         data=None,
@@ -102,7 +115,7 @@ INVERTERS_UNDER_TEST = [
         method="POST",
         query_string=None,
         response=X1_HYBRID_G4_RESPONSE,
-        inverter=inverter.X1HybridGen4,
+        inverter=inverters.X1HybridGen4,
         values=X1_HYBRID_G4_VALUES,
         headers=None,
         data="optType=ReadRealTimeData",
@@ -113,7 +126,7 @@ INVERTERS_UNDER_TEST = [
         method="POST",
         query_string="optType=ReadRealTimeData",
         response=X1_BOOST_AIR_MINI_RESPONSE,
-        inverter=inverter.X1Mini,
+        inverter=inverters.X1Mini,
         values=X1_MINI_VALUES,
         headers=None,
         data=None,
@@ -124,7 +137,7 @@ INVERTERS_UNDER_TEST = [
         method="POST",
         query_string="optType=ReadRealTimeData",
         response=X1_MINI_RESPONSE_V34,
-        inverter=inverter.X1MiniV34,
+        inverter=inverters.X1MiniV34,
         values=X1_MINI_VALUES_V34,
         headers=None,
         data=None,
@@ -135,7 +148,7 @@ INVERTERS_UNDER_TEST = [
         method="POST",
         query_string="optType=ReadRealTimeData",
         response=X1_SMART_RESPONSE,
-        inverter=inverter.X1Smart,
+        inverter=inverters.X1Smart,
         values=X1_SMART_VALUES,
         headers=X_FORWARDED_HEADER,
         data=None,
@@ -146,7 +159,7 @@ INVERTERS_UNDER_TEST = [
         method="POST",
         query_string="optType=ReadRealTimeData",
         response=X1_BOOST_RESPONSE,
-        inverter=inverter.X1MiniV34,
+        inverter=inverters.X1Boost,
         values=X1_BOOST_VALUES,
         headers=X_FORWARDED_HEADER,
         data=None,
@@ -157,7 +170,7 @@ INVERTERS_UNDER_TEST = [
         method="POST",
         query_string="optType=ReadRealTimeData",
         response=X3_MIC_RESPONSE,
-        inverter=inverter.X3,
+        inverter=inverters.X3,
         values=X3_VALUES,
         headers=None,
         data=None,
@@ -168,7 +181,7 @@ INVERTERS_UNDER_TEST = [
         method="POST",
         query_string="optType=ReadRealTimeData",
         response=X3_HYBRID_G3_RESPONSE,
-        inverter=inverter.X3,
+        inverter=inverters.X3,
         values=X3_VALUES,
         headers=None,
         data=None,
@@ -179,7 +192,7 @@ INVERTERS_UNDER_TEST = [
         method="POST",
         query_string="optType=ReadRealTimeData",
         response=X1_HYBRID_G3_RESPONSE,
-        inverter=inverter.X1,
+        inverter=inverters.X1,
         values=X1_VALUES,
         headers=None,
         data=None,
@@ -190,7 +203,7 @@ INVERTERS_UNDER_TEST = [
         method="POST",
         query_string="optType=ReadRealTimeData",
         response=X1_HYBRID_G3_2X_MPPT_RESPONSE,
-        inverter=inverter.X1,
+        inverter=inverters.X1,
         values=X1_VALUES,
         headers=None,
         data=None,
@@ -201,7 +214,7 @@ INVERTERS_UNDER_TEST = [
         method="POST",
         query_string="optType=ReadRealTimeData",
         response=X3_HYBRID_G3_2X_MPPT_RESPONSE,
-        inverter=inverter.X3,
+        inverter=inverters.X3,
         values=X3_HYBRID_VALUES,
         headers=None,
         data=None,
@@ -212,7 +225,7 @@ INVERTERS_UNDER_TEST = [
         method="POST",
         query_string="optType=ReadRealTimeData",
         response=X3_HYBRID_G3_2X_MPPT_RESPONSE_V34,
-        inverter=inverter.X3V34,
+        inverter=inverters.X3V34,
         values=X3V34_HYBRID_VALUES,
         headers=None,
         data=None,
@@ -223,7 +236,7 @@ INVERTERS_UNDER_TEST = [
         method="POST",
         query_string="optType=ReadRealTimeData",
         response=X3_HYBRID_G3_2X_MPPT_RESPONSE_V34_NEGATIVE_POWER,
-        inverter=inverter.X3V34,
+        inverter=inverters.X3V34,
         values=X3V34_HYBRID_VALUES_NEGATIVE_POWER,
         headers=None,
         data=None,
@@ -234,7 +247,7 @@ INVERTERS_UNDER_TEST = [
         method="POST",
         query_string="optType=ReadRealTimeData",
         response=X3_HYBRID_G3_2X_MPPT_RESPONSE_V34_EPS_MODE,
-        inverter=inverter.X3V34,
+        inverter=inverters.X3V34,
         values=X3V34_HYBRID_VALUES_EPS_MODE,
         headers=None,
         data=None,
@@ -245,18 +258,18 @@ INVERTERS_UNDER_TEST = [
         method="POST",
         query_string=None,
         response=X3_HYBRID_G4_RESPONSE,
-        inverter=inverter.X3HybridG4,
+        inverter=inverters.X3HybridG4,
         values=X3_HYBRID_G4_VALUES,
         headers=None,
         data="optType=ReadRealTimeData",
-        client="post_query",
+        client="post_data",
     ),
     inverter_under_test_maker(
         uri="/",
         method="POST",
         query_string="",
         response=QVOLTHYBG33P_RESPONSE_V34,
-        inverter=inverter.QVOLTHYBG33P,
+        inverter=inverters.QVOLTHYBG33P,
         values=QVOLTHYBG33P_VALUES,
         headers=None,
         data=None,
@@ -268,6 +281,7 @@ INVERTERS_UNDER_TEST = [
 def inverter_id_getter(val):
     if isinstance(val, (InverterUnderTest,)):
         return val.id
+    return None
 
 
 @pytest.fixture(params=INVERTERS_UNDER_TEST, ids=inverter_id_getter)
@@ -299,4 +313,22 @@ def inverters_garbage_fixture(httpserver, request):
         method=request.param.method,
         query_string=request.param.query_string,
     ).respond_with_json({"bingo": "bango"})
-    yield ((httpserver.host, httpserver.port), request.param.inverter, request.param.client,)
+    yield (
+        (httpserver.host, httpserver.port),
+        request.param.inverter,
+        request.param.client,
+    )
+
+
+@pytest.fixture(params=INVERTERS_UNDER_TEST, ids=inverter_id_getter)
+def inverters_less_garbage_fixture(httpserver, request):
+    httpserver.expect_request(
+        uri=request.param.uri,
+        method=request.param.method,
+        query_string=request.param.query_string,
+    ).respond_with_json(X3_MIC_RESPONSE)
+    yield (
+        (httpserver.host, httpserver.port),
+        request.param.inverter,
+        request.param.client,
+    )

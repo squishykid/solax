@@ -1,8 +1,4 @@
-import asyncio
-import logging
-import typing
 from solax.http_client import all_variations
-
 from solax.inverter import Inverter, InverterError
 from solax.inverters import (
     QVOLTHYBG33P,
@@ -34,7 +30,6 @@ REGISTRY = [
 ]
 
 
-
 class DiscoveryError(Exception):
     """Raised when unable to discover inverter"""
 
@@ -58,14 +53,13 @@ async def discover(host, port, pwd="") -> Inverter:
                 inverter = inverter_class(client)
                 if inverter.identify(response):
                     return inverter
-                else:
-                    failures.append(
-                        (
-                            client_name,
-                            inverter_class.__name__,
-                            "did not identify",
-                        )
+                failures.append(
+                    (
+                        client_name,
+                        inverter_class.__name__,
+                        "did not identify",
                     )
+                )
             except InverterError as ex:
                 failures.append(
                     (
