@@ -30,8 +30,8 @@ def div100(*arg: float):
     return val / 100
 
 
-def max_float(*arg: float) -> float:
-    return max(arg)
+# def max_float(*arg: float) -> float:
+#     return max(arg)
 
 
 INT16_MAX = 0x7FFF
