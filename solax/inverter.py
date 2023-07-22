@@ -66,22 +66,22 @@ class InverterDefinition:
 class Inverter:
     """Base wrapper around Inverter HTTP API"""
 
-    @staticmethod
-    def common_response_schema() -> Callable[[Any], InverterRawResponse]:
-        return vol.Schema(
-            {
-                vol.Required("type"): vol.Any(str, int),
-                vol.Required(vol.Any("SN", "sn")): str,
-                vol.Required(vol.Any("ver", "version")): str,
-                vol.Required("Data"): vol.Schema(
-                    vol.All(
-                        [vol.Coerce(float)],
-                    )
-                ),
-                vol.Optional("Information"): list,
-            },
-            extra=vol.REMOVE_EXTRA,
-        )
+    # @staticmethod
+    # def common_response_schema() -> Callable[[Any], InverterRawResponse]:
+    #     return vol.Schema(
+    #         {
+    #             vol.Required("type"): vol.Any(str, int),
+    #             vol.Required(vol.Any("SN", "sn")): str,
+    #             vol.Required(vol.Any("ver", "version")): str,
+    #             vol.Required("Data"): vol.Schema(
+    #                 vol.All(
+    #                     [vol.Coerce(float)],
+    #                 )
+    #             ),
+    #             vol.Optional("Information"): list,
+    #         },
+    #         extra=vol.REMOVE_EXTRA,
+    #     )
 
     @classmethod
     def response_decoder(cls) -> ResponseDecoder:
