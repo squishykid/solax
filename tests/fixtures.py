@@ -262,7 +262,7 @@ INVERTERS_UNDER_TEST = [
         values=X3_HYBRID_G4_VALUES,
         headers=None,
         data="optType=ReadRealTimeData",
-        client="post_query",
+        client="post_data",
     ),
     inverter_under_test_maker(
         uri="/",
