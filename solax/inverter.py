@@ -129,11 +129,8 @@ class Inverter:
         transforms = mapping_instance.transformations
         out = [data[i] for i in indexes]
         for transform in transforms:
-            if isinstance(out, list):
-                out = [transform(*out)]
-            else:
-                out = [transform(out)]
-        return out[0] if isinstance(out, list) else out
+            out = [transform(*out)]
+        return out[0]
 
     async def get_data(self) -> InverterResponse:
         try:
