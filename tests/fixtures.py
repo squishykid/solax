@@ -318,3 +318,17 @@ def inverters_garbage_fixture(httpserver, request):
         request.param.inverter,
         request.param.client,
     )
+
+
+@pytest.fixture(params=INVERTERS_UNDER_TEST, ids=inverter_id_getter)
+def inverters_less_garbage_fixture(httpserver, request):
+    httpserver.expect_request(
+        uri=request.param.uri,
+        method=request.param.method,
+        query_string=request.param.query_string,
+    ).respond_with_json(X3_MIC_RESPONSE)
+    yield (
+        (httpserver.host, httpserver.port),
+        request.param.inverter,
+        request.param.client,
+    )
