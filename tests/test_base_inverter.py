@@ -35,6 +35,11 @@ def test_all_registered_inverters_inherit_from_base():
         assert issubclass(i, Inverter)
 
 
+def test_http_client_str():
+    dummyurl = "example.com/"
+    assert dummyurl in str(HttpClient(dummyurl))
+
+
 def test_bogus_inverter_throws():
     inv = BogusInverter(HttpClient(""))
     with pytest.raises(TypeError):
