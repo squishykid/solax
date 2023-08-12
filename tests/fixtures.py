@@ -19,6 +19,7 @@ from tests.samples.expected_values import (
     X3V34_HYBRID_VALUES_EPS_MODE,
     X3V34_HYBRID_VALUES_NEGATIVE_POWER,
     XHYBRID_VALUES,
+    X1_MINI_VALUES_V34_VER3,
 )
 from tests.samples.responses import (
     QVOLTHYBG33P_RESPONSE_V34,
@@ -39,6 +40,7 @@ from tests.samples.responses import (
     X3_MICPRO_G2_RESPONSE,
     XHYBRID_DE01_RESPONSE,
     XHYBRID_DE02_RESPONSE,
+    X1_MINI_RESPONSE_V34_VER3,
 )
 
 X_FORWARDED_HEADER = {"X-Forwarded-For": "5.8.8.8"}
@@ -237,6 +239,16 @@ INVERTERS_UNDER_TEST = [
         values=QVOLTHYBG33P_VALUES,
         headers=None,
         data=None,
+    ),
+    InverterUnderTest(
+        uri="/",
+        method="POST",
+        query_string=None,
+        response=X1_MINI_RESPONSE_V34,
+        inverter=inverter.X1MiniV34,
+        values=X1_MINI_VALUES_V34,
+        headers=None,
+        data="optType=ReadRealTimeData",
     ),
 ]
 
