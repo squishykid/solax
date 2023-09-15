@@ -83,7 +83,7 @@ class X3HybridG4(Inverter):
             "Feed-in Power ": (pack_u16(34, 35), Units.W, to_signed32),
             "Battery Power": (41, Units.W, to_signed),
             "Yield total": (pack_u16(68, 69), Total(Units.KWH), div10),
-            "Yield today": (70, Units.KWH, div10),
+            "Yield today": (70, Total(Units.KWH), div10),
             "Feed-in Energy": (pack_u16(86, 87), Total(Units.KWH), div100),
             "Consumed Energy": (pack_u16(88, 89), Total(Units.KWH), div100),
             "Battery Remaining Capacity": (103, Units.PERCENT),
