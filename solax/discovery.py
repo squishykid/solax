@@ -71,8 +71,8 @@ class DiscoveryState:
 
     async def discover(self, host, port, pwd="", model="") -> Inverter:       
         for inverter in REGISTRY:
-            logging.debug("Model: %s Inverter: %s", model, inverter.__class)
-            if model != "" or inverter.__class__ == model:
+            logging.debug("Model: %s Inverter: %s", model, inverter)
+            if model != "" or inverter == model:
                 for i in inverter.build_all_variants(host, port, pwd):
                     task = asyncio.create_task(self._discovery_task(i), name=f"{i}")
                     task.add_done_callback(self._task_handler)
