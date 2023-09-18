@@ -23,6 +23,8 @@ XHYBRID_VALUES = {
     "PV2 Voltage": 3,
     "Power Now": 6,
     "Total Energy": 9,
+    "Grid Exported Energy": 41,
+    "Grid Imported Energy": 42,
 }
 
 
@@ -255,6 +257,7 @@ X3_HYBRID_G4_VALUES = {
     "EPS 3 Power": 0.0,
     "Feed-in Power ": -152.0,
     "Battery Power": 0.0,
+    "Radiator Temperature": 23.0,
     "Yield total": 4.4,
     "Yield today": 0.1,
     "Feed-in Energy": 0.0,
@@ -262,6 +265,36 @@ X3_HYBRID_G4_VALUES = {
     "Battery Remaining Capacity": 30.0,
     "Battery Temperature": 22.0,
     "Battery Voltage": 234.6,
+}
+
+X3_MICPRO_G2_VALUES = {
+    "Grid 1 Voltage": 237.1,
+    "Grid 2 Voltage": 234.5,
+    "Grid 3 Voltage": 237.8,
+    "Grid 1 Current": 4.1,
+    "Grid 2 Current": 4.1,
+    "Grid 3 Current": 4.1,
+    "Grid 1 Power": 1018.0,
+    "Grid 2 Power": 992.0,
+    "Grid 3 Power": 970.0,
+    "PV1 Voltage": 174.1,
+    "PV2 Voltage": 174.5,
+    "PV3 Voltage": 0.0,
+    "PV1 Current": 8.8,
+    "PV2 Current": 8.7,
+    "PV3 Current": 0.0,
+    "PV1 Power": 1544.0,
+    "PV2 Power": 1531.0,
+    "PV3 Power": 0.0,
+    "Grid 1 Frequency": 49.98,
+    "Grid 2 Frequency": 49.99,
+    "Grid 3 Frequency": 49.94,
+    "Run Mode": "Normal",
+    "Total Yield": 795.7,
+    "Daily Yield": 20.0,
+    "Feed-in Power ": 2707.0,
+    "Total Feed-in Energy": 657.24,
+    "Total Consumption": 307.33,
 }
 
 X1_VALUES = {
