@@ -69,7 +69,7 @@ class DiscoveryState:
         await i.get_data()
         return i
 
-    async def discover(self, host, port, pwd="", model=None) -> Inverter:       
+    async def discover(self, host, port, pwd="", model=None) -> Inverter:
         for inverter in REGISTRY:
             if inverter.__name__ == model or model is None:
                 for i in inverter.build_all_variants(host, port, pwd):
