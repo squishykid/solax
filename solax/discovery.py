@@ -69,10 +69,10 @@ class DiscoveryState:
         await i.get_data()
         return i
 
-    async def discover(self, host, port, pwd="", model="") -> Inverter:       
+    async def discover(self, host, port, pwd="", model=None) -> Inverter:       
         for inverter in REGISTRY:
             logging.warning("Model: %s Inverter: %s", model, inverter.__name__)
-            if model == "" or inverter.__name__ == model:
+            if inverter.__name__ == model or model is None:
                 logging.warning("Found inverter for model %s", model)
                 for i in inverter.build_all_variants(host, port, pwd):
                     task = asyncio.create_task(self._discovery_task(i), name=f"{i}")
@@ -100,7 +100,7 @@ class DiscoveryError(Exception):
     """Raised when unable to discover inverter"""
 
 
-async def discover(host, port, pwd="", model="") -> Inverter:
+async def discover(host, port, pwd="", model=None) -> Inverter:
     discover_state = DiscoveryState()
     await discover_state.discover(host, port, pwd, model)
     return discover_state.get_discovered_inverter()
