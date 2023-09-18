@@ -71,9 +71,7 @@ class DiscoveryState:
 
     async def discover(self, host, port, pwd="", model=None) -> Inverter:       
         for inverter in REGISTRY:
-            logging.warning("Model: %s Inverter: %s", model, inverter.__name__)
             if inverter.__name__ == model or model is None:
-                logging.warning("Found inverter for model %s", model)
                 for i in inverter.build_all_variants(host, port, pwd):
                     task = asyncio.create_task(self._discovery_task(i), name=f"{i}")
                     task.add_done_callback(self._task_handler)
