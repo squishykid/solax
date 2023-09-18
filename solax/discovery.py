@@ -69,10 +69,10 @@ class DiscoveryState:
         await i.get_data()
         return i
 
-    async def discover(self, host, port, pwd="") -> Inverter:
+    async def discover(self, host, port, pwd="", inverterClass="X3HybridG4") -> Inverter:
         for inverter in REGISTRY:
             logging.debug("Inverter class %s", inverter.__class__)
-            if inverter.__class__ == "X3HybridG4":
+            if inverterClass != "" or inverter.__class__ == inverterClass:
                 for i in inverter.build_all_variants(host, port, pwd):
                     task = asyncio.create_task(self._discovery_task(i), name=f"{i}")
                     task.add_done_callback(self._task_handler)
