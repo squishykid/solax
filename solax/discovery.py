@@ -98,7 +98,7 @@ class DiscoveryError(Exception):
     """Raised when unable to discover inverter"""
 
 
-async def discover(host, port, pwd="") -> Inverter:
+async def discover(host, port, pwd="", model="") -> Inverter:
     discover_state = DiscoveryState()
-    await discover_state.discover(host, port, pwd)
+    await discover_state.discover(host, port, pwd, model)
     return discover_state.get_discovered_inverter()
