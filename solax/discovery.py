@@ -103,7 +103,7 @@ async def discover(host, port, pwd="", model=None) -> Inverter:
     await discover_state.discover(host, port, pwd, model)
     return discover_state.get_discovered_inverter()
 
-def get_models() -> List[str]:
+def get_models() -> list[str]:
     models = list(map(lambda inverter: inverter.__name__, REGISTRY))
     models.sort()
     return models
