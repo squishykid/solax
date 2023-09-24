@@ -1,4 +1,4 @@
-""" Units and different measrement types"""
+""" Units and different measurement types"""
 from enum import Enum
 from typing import NamedTuple, Union
 
@@ -18,14 +18,14 @@ class Units(Enum):
 
 
 class Measurement(NamedTuple):
-    """Respresention of measurement with a given unit and arbitrary values."""
+    """Representation of measurement with a given unit and arbitrary values."""
 
     unit: Units
     is_monotonic: bool = False
 
 
 class Total(Measurement):
-    """A Measuremeant where the values are continuously increasing."""
+    """A Measurement where the values are continuously increasing."""
 
     is_monotonic: bool = True
 

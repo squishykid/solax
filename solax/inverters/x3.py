@@ -1,10 +1,11 @@
 import voluptuous as vol
-from solax.inverter import InverterPost
-from solax.units import Units, Total
+
+from solax.inverter import Inverter
+from solax.units import Total, Units
 from solax.utils import startswith
 
 
-class X3(InverterPost):
+class X3(Inverter):
     _schema = vol.Schema(
         {
             vol.Required("type"): vol.All(str, startswith("X3-")),

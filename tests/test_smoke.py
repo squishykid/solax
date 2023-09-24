@@ -1,15 +1,27 @@
 import pytest
+
 import solax
-from solax.inverter import InverterError
 from solax.discovery import REGISTRY
+from solax.inverter import Inverter, InverterError
 from solax.units import Measurement
 from tests import fixtures
+
+
+async def build_right_variant(inverter, conn) -> Inverter:
+    last_error: BaseException = BaseException("anticipating errors")
+    for i in inverter.build_all_variants(*conn):
+        try:
+            await i.get_data()
+            return i
+        except InverterError as ex:
+            last_error = ex
+    raise last_error
 
 
 @pytest.mark.asyncio
 async def test_smoke(inverters_fixture):
     conn, inverter_class, values = inverters_fixture
-    inv = inverter_class(*conn)
+    inv = await build_right_variant(inverter_class, conn)
     rt_api = solax.RealTimeAPI(inv)
     parsed = await rt_api.get_data()
 
@@ -25,7 +37,7 @@ async def test_smoke(inverters_fixture):
 async def test_throws_when_unable_to_parse(inverters_garbage_fixture):
     conn, inverter_class = inverters_garbage_fixture
     with pytest.raises(InverterError):
-        i = inverter_class(*conn)
+        i = await build_right_variant(inverter_class, conn)
         await i.get_data()
 
 

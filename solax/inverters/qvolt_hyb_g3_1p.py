@@ -1,6 +1,7 @@
 import voluptuous as vol
-import aiohttp
-from solax.inverter import InverterPost
+
+from solax import utils
+from solax.inverter import Inverter, InverterHttpClient, Method, ResponseParser
 from solax.units import Total, Units
 from solax.utils import (
     div10,
@@ -13,7 +14,7 @@ from solax.utils import (
 )
 
 
-class QVOLTHYBG31P(InverterPost):
+class QVOLTHYBG31P(Inverter):
     """
     QCells
     Q.VOLT HYB-G3-1P
@@ -49,8 +50,10 @@ class QVOLTHYBG31P(InverterPost):
                 3: "Feed-in Priority",
             }.get(value, f"unmapped value '{value}'")
 
-    def __init__(self, host, port, pwd=""):
-        super().__init__(host, port, pwd)
+    def __init__(
+        self, http_client: InverterHttpClient, response_parser: ResponseParser
+    ):
+        super().__init__(http_client, response_parser)
         self.manufacturer = "Qcells"
 
     _schema = vol.Schema(
@@ -147,15 +150,18 @@ class QVOLTHYBG31P(InverterPost):
             "Battery Operation mode": (157, Units.NONE, cls.Processors.battery_modes),
             # 158 - 199: always 0
         }
+    
+    @classmethod
+    def _build(cls, host, port, pwd="", params_in_query=True):
+        url = utils.to_url(host, port)
+        http_client = InverterHttpClient(url, Method.POST, pwd).with_default_data()
+
+        schema = cls._schema
+        response_decoder = cls.response_decoder()
+        response_parser = ResponseParser(schema, response_decoder)
+        return cls(http_client, response_parser)
 
     @classmethod
-    async def make_request(cls, host, port=80, pwd="", headers=None):
-
-        url = f"http://{host}:{port}/"
-        data = f"optType=ReadRealTimeData&pwd={pwd}"
-
-        async with aiohttp.ClientSession() as session:
-            async with session.post(url, headers=headers, data=data) as req:
-                resp = await req.read()
-
-        return cls.handle_response(resp)
+    def build_all_variants(cls, host, port, pwd=""):
+        versions = [cls._build(host, port, pwd)]
+        return versions
