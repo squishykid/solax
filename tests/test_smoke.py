@@ -66,3 +66,18 @@ def test_inverter_sensors_define_valid_units(inverters_under_test):
             f"is not a proper Unit on sensor '{name}' of Inverter '{inverters_under_test}'"
         )
         assert isinstance(unit, Measurement), msg
+
+
+@pytest.mark.asyncio
+async def test_smoke_zero(inverters_fixture_all_zero):
+    """Responses with all zero values should be treated as an error.
+    Args:
+        inverters_fixture_all_zero (_type_): all responses with zero value data
+    """
+    conn, inverter_class, _ = inverters_fixture_all_zero
+
+    # msg = 'all zero values should be discarded'
+    with pytest.raises(InverterError):
+        inv = await build_right_variant(inverter_class, conn)
+        rt_api = solax.RealTimeAPI(inv)
+        await rt_api.get_data()
