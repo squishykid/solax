@@ -7,9 +7,9 @@ from solax.utils import (
     div10,
     div100,
     pack_u16,
-    twoway_div10,
     to_signed,
     to_signed32,
+    twoway_div10,
     twoway_div100,
 )
 
@@ -150,7 +150,7 @@ class QVOLTHYBG31P(Inverter):
             "Battery Operation mode": (157, Units.NONE, cls.Processors.battery_modes),
             # 158 - 199: always 0
         }
-    
+
     @classmethod
     def _build(cls, host, port, pwd="", params_in_query=True):
         url = utils.to_url(host, port)

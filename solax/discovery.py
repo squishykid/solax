@@ -4,8 +4,8 @@ import typing
 
 from solax.inverter import Inverter, InverterError
 from solax.inverters import (
-    QVOLTHYBG33P,
     QVOLTHYBG31P,
+    QVOLTHYBG33P,
     X1,
     X3,
     X3V34,

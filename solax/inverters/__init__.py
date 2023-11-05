@@ -1,5 +1,5 @@
-from .qvolt_hyb_g3_3p import QVOLTHYBG33P
 from .qvolt_hyb_g3_1p import QVOLTHYBG31P
+from .qvolt_hyb_g3_3p import QVOLTHYBG33P
 from .x1 import X1
 from .x1_boost import X1Boost
 from .x1_hybrid_gen4 import X1HybridGen4
