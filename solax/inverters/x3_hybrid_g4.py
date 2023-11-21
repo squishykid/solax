@@ -95,6 +95,8 @@ class X3HybridG4(Inverter):
             "Yield today": (70, Units.KWH, div10),
             "Feed-in Energy": (pack_u16(86, 87), Total(Units.KWH), div100),
             "Consumed Energy": (pack_u16(88, 89), Total(Units.KWH), div100),
+            "Feed-in Energy total": (pack_u16(90, 91), Total(Units.KWH), div100),
+            "Consumed Energy total": (pack_u16(92, 93), Total(Units.KWH), div100),
             "Battery Remaining Capacity": (103, Units.PERCENT),
             "Battery Temperature": (105, Units.C, to_signed),
             "Battery Remaining Energy": (106, Units.KWH, div10),
