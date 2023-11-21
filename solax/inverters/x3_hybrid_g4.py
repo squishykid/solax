@@ -97,6 +97,7 @@ class X3HybridG4(Inverter):
             "Consumed Energy": (pack_u16(88, 89), Total(Units.KWH), div100),
             "Battery Remaining Capacity": (103, Units.PERCENT),
             "Battery Temperature": (105, Units.C, to_signed),
+            "Battery Remaining Energy": (106, Units.KWH, div10),
             "Battery mode": (168, Units.NONE),
             "Battery mode text": (168, Units.NONE, X3HybridG4.battery_mode),
             "Battery Voltage": (pack_u16(169, 170), Units.V, div100),
