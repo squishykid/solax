@@ -89,6 +89,8 @@ class X3HybridG4(Inverter):
             "EPS 2 Power": (30, Units.W, to_signed),
             "EPS 3 Power": (31, Units.W, to_signed),
             "Feed-in Power ": (pack_u16(34, 35), Units.W, to_signed32),
+            "Battery Voltage": (39, Units.V, div100),
+            "Battery Current": (40, Units.A, twoway_div100),
             "Battery Power": (41, Units.W, to_signed),
             "Load/Generator Power": (47, Units.W, to_signed),
             "Radiator Temperature": (54, Units.C, to_signed),
