@@ -2,7 +2,7 @@ import voluptuous as vol
 
 from solax.inverter import Inverter
 from solax.units import Total, Units
-from solax.utils import div10, div100, pack_u16, to_signed, to_signed32, twoway_div10
+from solax.utils import div10, div100, pack_u16, to_signed, to_signed32, twoway_div10, twoway_div100
 
 
 class X3HybridG4(Inverter):
