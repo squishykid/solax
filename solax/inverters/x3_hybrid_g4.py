@@ -48,6 +48,15 @@ class X3HybridG4(Inverter):
         }.get(run_mode)
 
     @classmethod
+    def battery_modes(value):
+        return {
+            0: "Self Use Mode",
+            1: "Force Time Use",
+            2: "Back Up Mode",
+            3: "Feed-in Priority",
+        }.get(value, f"unmapped value '{value}'")
+    
+    @classmethod
     def response_decoder(cls):
         return {
             "Grid 1 Voltage": (0, Units.V, div10),
@@ -88,6 +97,8 @@ class X3HybridG4(Inverter):
             "Consumed Energy": (pack_u16(88, 89), Total(Units.KWH), div100),
             "Battery Remaining Capacity": (103, Units.PERCENT),
             "Battery Temperature": (105, Units.C, to_signed),
+            "Battery mode": (168, Units.NONE),
+            "Battery mode text": (168, Units.NONE, X3HybridG4.battery_mode),
             "Battery Voltage": (pack_u16(169, 170), Units.V, div100),
         }
 
