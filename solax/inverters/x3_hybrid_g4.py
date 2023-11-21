@@ -93,6 +93,8 @@ class X3HybridG4(Inverter):
             "Radiator Temperature": (54, Units.C, to_signed),
             "Yield total": (pack_u16(68, 69), Total(Units.KWH), div10),
             "Yield today": (70, Units.KWH, div10),
+            "EPS Energy total": (pack_u16(83, 84), Total(Units.KWH), div10),
+            "EPS Energy today": (85, Units.KWH, div10),
             "Feed-in Energy": (pack_u16(86, 87), Total(Units.KWH), div100),
             "Consumed Energy": (pack_u16(88, 89), Total(Units.KWH), div100),
             "Feed-in Energy total": (pack_u16(90, 91), Total(Units.KWH), div100),
