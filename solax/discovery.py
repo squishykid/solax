@@ -83,8 +83,7 @@ class DiscoveryState:
     @classmethod
     async def _discovery_task(cls, i) -> Inverter:
         logging.info("Trying inverter %s", i)
-        final_data = await i.get_data()
-
+        await i.get_data()
         return i
 
     async def discover(self, host, port, pwd="") -> Inverter:
