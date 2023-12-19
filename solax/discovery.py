@@ -16,6 +16,15 @@ from solax.inverters import (
     X3HybridG4,
     X3MicProG2,
     XHybrid,
+    J1EssHb,
+    X1HybridG2,
+    X1MiniG3,
+    X1MiniG4,
+    X1HybridLv,
+    X1Ies,
+    X3Ies,
+    X3Ultra,
+    X1BoostG4
 )
 
 # registry of inverters
@@ -32,8 +41,16 @@ REGISTRY = [
     X1Boost,
     X1HybridGen4,
     X3MicProG2,
+    J1EssHb,
+    X1HybridG2,
+    X1MiniG3,
+    X1MiniG4,
+    X1HybridLv,
+    X1Ies,
+    X3Ies,
+    X3Ultra,
+    X1BoostG4
 ]
-
 
 logging.basicConfig(level=logging.INFO)
 
@@ -66,7 +83,8 @@ class DiscoveryState:
     @classmethod
     async def _discovery_task(cls, i) -> Inverter:
         logging.info("Trying inverter %s", i)
-        await i.get_data()
+        final_data = await i.get_data()
+
         return i
 
     async def discover(self, host, port, pwd="") -> Inverter:
