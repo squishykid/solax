@@ -4,7 +4,7 @@ import logging
 
 from async_timeout import timeout
 
-from solax.discovery import discover
+from solax.discovery import discover, discover_single_inverter
 from solax.inverter import Inverter, InverterResponse
 
 _LOGGER = logging.getLogger(__name__)
@@ -33,6 +33,12 @@ async def rt_request(inv: Inverter, retry, t_wait=0) -> InverterResponse:
 
 async def real_time_api(ip_address, port=80, pwd=""):
     i = await discover(ip_address, port, pwd)
+    return RealTimeAPI(i)
+
+
+# bypass the full discovery process, and only do it for the specified inverter type
+async def real_time_api_inverter(inverter_name, ip_address, port=80, pwd=""):
+    i = await discover_single_inverter(inverter_name, ip_address, port, pwd)
     return RealTimeAPI(i)
 
 

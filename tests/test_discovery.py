@@ -12,9 +12,28 @@ async def test_discovery(inverters_fixture):
 
 
 @pytest.mark.asyncio
+async def test_discovery_single_inverter(inverters_fixture):
+    conn, inverter_class, _ = inverters_fixture
+    rt_api = await solax.real_time_api_inverter(inverter_class.__name__, *conn)
+    assert rt_api.inverter.__class__ == inverter_class
+
+
+@pytest.mark.asyncio
+async def test_discovery_unsupported_inverter():
+    with pytest.raises(DiscoveryError):
+        await solax.real_time_api_inverter("doesnotexist", "localhost", 2)
+
+
+@pytest.mark.asyncio
 async def test_discovery_no_host():
     with pytest.raises(DiscoveryError):
         await solax.real_time_api("localhost", 2)
+
+
+@pytest.mark.asyncio
+async def test_discovery_single_inverter_no_host():
+    with pytest.raises(DiscoveryError):
+        await solax.real_time_api_inverter("X1HybridGen4", "localhost", 2)
 
 
 @pytest.mark.asyncio

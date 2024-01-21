@@ -92,6 +92,37 @@ class DiscoveryState:
         )
         raise DiscoveryError(msg)
 
+    async def discover_single_inverter(
+        self, inverter_name, host, port, pwd=""
+    ) -> Inverter:
+        found = False
+        for invclass in REGISTRY:
+            if invclass.__name__ == inverter_name:
+                found = True
+                for i in invclass.build_all_variants(host, port, pwd):
+                    task = asyncio.create_task(self._discovery_task(i), name=f"{i}")
+                    task.add_done_callback(self._task_handler)
+                    self._tasks.add(task)
+
+        if not found:
+            raise DiscoveryError(f"Unknown inverter type {inverter_name}")
+
+        while len(self._tasks) > 0:
+            logging.debug("%d discovery tasks are still running...", len(self._tasks))
+            await asyncio.sleep(0.5)
+
+        if self._discovered_inverter is not None:
+            logging.info("Discovered inverter: %s", self._discovered_inverter)
+            return self._discovered_inverter
+
+        msg = (
+            "Unable to connect to the inverter at "
+            f"host={host} port={port} of type {inverter_name}.\n"
+            "Please see https://github.com/squishykid/solax/wiki/DiscoveryError\n"
+            f"Failures={str(self._failures)}"
+        )
+        raise DiscoveryError(msg)
+
 
 class DiscoveryError(Exception):
     """Raised when unable to discover inverter"""
@@ -100,4 +131,10 @@ class DiscoveryError(Exception):
 async def discover(host, port, pwd="") -> Inverter:
     discover_state = DiscoveryState()
     await discover_state.discover(host, port, pwd)
+    return discover_state.get_discovered_inverter()
+
+
+async def discover_single_inverter(inverter, host, port, pwd="") -> Inverter:
+    discover_state = DiscoveryState()
+    await discover_state.discover_single_inverter(inverter, host, port, pwd)
     return discover_state.get_discovered_inverter()
