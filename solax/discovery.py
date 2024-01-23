@@ -4,19 +4,9 @@ import typing
 
 from solax.inverter import Inverter, InverterError
 from solax.inverters import (
-    QVOLTHYBG33P,
-    X1,
-    X3,
-    X3V34,
-    X1Boost,
     X1HybridGen4,
-    X1Mini,
-    X1MiniV34,
-    X1Smart,
     X3HybridG4,
     X3MicProG2,
-    XHybrid,
-    J1EssHb,
     X1HybridG2,
     X1MiniG3,
     X1MiniG4,
@@ -29,27 +19,17 @@ from solax.inverters import (
 
 # registry of inverters
 REGISTRY = [
-    XHybrid,
-    X3,
-    X3V34,
     X3HybridG4,
-    X1,
-    X1Mini,
-    X1MiniV34,
-    X1Smart,
-    QVOLTHYBG33P,
-    X1Boost,
     X1HybridGen4,
     X3MicProG2,
-    J1EssHb,
     X1HybridG2,
+    X1Ies,
     X1MiniG3,
     X1MiniG4,
     X1HybridLv,
-    X1Ies,
     X3Ies,
     X3Ultra,
-    X1BoostG4
+    X1BoostG4,
 ]
 
 logging.basicConfig(level=logging.INFO)

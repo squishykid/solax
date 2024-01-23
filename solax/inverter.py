@@ -1,5 +1,4 @@
 from typing import Dict, Tuple
-
 import aiohttp
 import voluptuous as vol
 
@@ -76,7 +75,12 @@ class Inverter:
         Return instance of 'InverterResponse'
         Raise exception if unable to get data
         """
-        raw_response = await self.http_client.request()
+        for i in range(3):
+            try:
+                raw_response = await self.http_client.request()
+                break
+            except aiohttp.ClientError as ex:
+                print('request error:', ex)
         str_raw_response = raw_response.decode('utf-8')
         if str_raw_response.startswith('{"code":'):
             pass
