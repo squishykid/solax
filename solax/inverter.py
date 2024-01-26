@@ -15,18 +15,18 @@ Transformer = Callable[[VarArg(float)], float]
 
 
 class InverterRawResponse(TypedDict):
-    Data: list[float]
+    Data: List[float]
     sn: Optional[str]
     SN: Optional[str]
     version: Optional[str]
     ver: Optional[str]
     type: Union[int, str]
-    Information: Optional[list[Any]]
+    Information: Optional[List[Any]]
 
 
 @dataclass
 class InverterResponse:
-    data: dict[str, float]
+    data: Dict[str, float]
     serial_number: str
     version: str
     type: Union[int, str]
@@ -102,7 +102,7 @@ class Inverter:
 
     def map_response_v2(
         self, inverter_response: InverterRawResponse
-    ) -> dict[str, float]:
+    ) -> Dict[str, float]:
         data = inverter_response["Data"]
         highest_index = max(
             (max(v.indexes) for v in self.inverter_definition().mapping.values())
@@ -154,7 +154,9 @@ class Inverter:
         actual_type = inverter_response.type
         old_type_prefix = identification.old_type_prefix
         if old_type_prefix is not None:
-            return isinstance(actual_type, str) and actual_type.startswith(old_type_prefix)
+            return isinstance(actual_type, str) and actual_type.startswith(
+                old_type_prefix
+            )
 
         # compare type and inverter_type,
         #  instead of type and type, since type and inverter_type

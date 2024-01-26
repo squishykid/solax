@@ -1,10 +1,20 @@
-from typing import Type
+import asyncio
+from typing import Type, List
 
 from solax.http_client import all_variations
 from solax.inverter import Inverter, InverterError
-from solax.inverters import X1, X3, X3V34, X1Mini, X3HybridG4, XHybrid, X1Smart, X1MiniV34
+from solax.inverters import (
+    X1,
+    X3,
+    X3V34,
+    X1Mini,
+    X1MiniV34,
+    X1Smart,
+    X3HybridG4,
+    XHybrid,
+)
 
-REGISTRY: list[Type[Inverter]] = [
+REGISTRY: List[Type[Inverter]] = [
     XHybrid,
     X3,
     X3V34,
@@ -24,32 +34,28 @@ class DiscoveryError(Exception):
 
 
 async def discover(host, port, pwd="") -> Inverter:
-    failures: list = []
+    failures: List = []
     clients = all_variations(host, port, pwd)
-    for client_name, client in clients.items():
-        try:
-            response = await client.request()
-        except InverterError as ex:
-            failures.append(
-                (
-                    client_name,
-                    ex,
-                )
-            )
-            continue
+    pending = set()
+
+    async def identify_inverter(sleep, client_name, client):
+        await asyncio.sleep(sleep)  # don't spam the inverter
+        response = await client.request()
         for inverter_class in REGISTRY:
+            await asyncio.sleep(0)
             try:
                 inverter = inverter_class(client)
+
                 if inverter.identify(response):
                     return inverter
-                else:
-                    failures.append(
-                        (
-                            client_name,
-                            inverter_class.__name__,
-                            "did not identify",
-                        )
+
+                failures.append(
+                    (
+                        client_name,
+                        inverter_class.__name__,
+                        "did not identify",
                     )
+                )
             except InverterError as ex:
                 failures.append(
                     (
@@ -58,10 +64,42 @@ async def discover(host, port, pwd="") -> Inverter:
                         ex,
                     )
                 )
-    msg = (
-        "Unable to connect to the inverter at "
-        f"host={host} port={port}, or your inverter is not supported yet.\n"
-        "Please see https://github.com/squishykid/solax/wiki/DiscoveryError\n"
-        f"Failures={str(failures)}"
+
+    for sleep, (name, client) in enumerate(clients.items()):
+        pending.add(
+            asyncio.create_task(
+                identify_inverter(sleep, name, client),
+                name=name,
+            )
+        )
+
+    while pending:
+        done, pending = await asyncio.wait(pending, return_when=asyncio.FIRST_COMPLETED)
+
+        for task in done:
+            if task.cancelled():
+                continue
+
+            try:
+                inverter = await task
+
+                for loser in pending:
+                    loser.cancel()
+
+                return inverter
+            except RuntimeError as ex:
+                failures.append(
+                    (
+                        task.get_name(),
+                        ex,
+                    )
+                )
+
+    raise DiscoveryError(
+        (
+            "Unable to connect to the inverter at "
+            f"host={host} port={port}, or your inverter is not supported yet.\n"
+            "Please see https://github.com/squishykid/solax/wiki/DiscoveryError\n"
+            f"Failures={str(failures)}"
+        )
     )
-    raise DiscoveryError(msg)
