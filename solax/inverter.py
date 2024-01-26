@@ -106,4 +106,4 @@ class Inverter:
         return cls._schema
 
     def __str__(self) -> str:
-        return f"{self.__class__.__name__} :: {self.http_client}"
+        return f"{self.__class__.__name__}::{self.http_client}"

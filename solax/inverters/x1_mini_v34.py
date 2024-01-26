@@ -27,6 +27,7 @@ class X1MiniV34(Inverter):
                     [vol.Coerce(float)],
                     vol.Any(
                         vol.Length(min=69, max=69),
+                        vol.Length(min=100, max=100),
                         vol.Length(min=200, max=200),
                     ),
                 )
