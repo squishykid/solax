@@ -10,8 +10,7 @@ class Packer(Protocol):  # pragma: no cover
      data into one raw value
     """
 
-    def __call__(self, *vals: float) -> float:
-        ...
+    def __call__(self, *vals: float) -> float: ...
 
 
 PackerBuilderResult = Tuple[Tuple[int, ...], Packer]
@@ -24,8 +23,7 @@ class PackerBuilder(Protocol):  # pragma: no cover
     raw values to be fed to the packer
     """
 
-    def __call__(self, *indexes: int) -> PackerBuilderResult:
-        ...
+    def __call__(self, *indexes: int) -> PackerBuilderResult: ...
 
 
 def __u16_packer(*values: float) -> float:
