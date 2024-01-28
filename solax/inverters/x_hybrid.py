@@ -1,6 +1,6 @@
 import voluptuous as vol
 
-from solax.inverter import Inverter, InverterHttpClient, Method, ResponseParser
+from solax.inverter import Inverter, InverterHttpClient, Method
 from solax.units import Total, Units
 
 
@@ -31,9 +31,9 @@ class XHybrid(Inverter):
     def _build(cls, host, port, pwd="", params_in_query=True):
         base = "http://{}:{}/api/realTimeData.htm"
         url = base.format(host, port)
-        http_client = InverterHttpClient.build_w_url(url, Method.GET)
-        response_parser = ResponseParser(cls._schema, cls.response_decoder())
-        return cls(http_client, response_parser)
+        http_client = InverterHttpClient(url=url, method=Method.GET, pwd="")
+
+        return cls(http_client)
 
     @classmethod
     def build_all_variants(cls, host, port, pwd=""):

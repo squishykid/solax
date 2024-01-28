@@ -27,33 +27,31 @@ class Inverter:
     # pylint: enable=C0301
     _schema = vol.Schema({})  # type: vol.Schema
 
-    def __init__(
-        self, http_client: InverterHttpClient, response_parser: ResponseParser
-    ):
+    def __init__(self, http_client: InverterHttpClient):
         self.manufacturer = "Solax"
-        self.response_parser = response_parser
         self.http_client = http_client
+
+        schema = type(self).schema()
+        response_decoder = type(self).response_decoder()
+        self.response_parser = ResponseParser(schema, response_decoder)
 
     @classmethod
     def _build(cls, host, port, pwd="", params_in_query=True):
         url = utils.to_url(host, port)
-        http_client = InverterHttpClient(url, Method.POST, pwd)
+        http_client = InverterHttpClient(url=url, method=Method.POST, pwd=pwd)
         if params_in_query:
-            http_client.with_default_query()
+            http_client = http_client.with_default_query()
         else:
-            http_client.with_default_data()
+            http_client = http_client.with_default_data()
 
-        schema = cls.schema()
-        response_decoder = cls.response_decoder()
-        response_parser = ResponseParser(schema, response_decoder)
-        return cls(http_client, response_parser)
+        return cls(http_client)
 
     @classmethod
     def build_all_variants(cls, host, port, pwd=""):
-        versions = [
+        versions = {
             cls._build(host, port, pwd, True),
             cls._build(host, port, pwd, False),
-        ]
+        }
         return versions
 
     async def get_data(self) -> InverterResponse:

@@ -33,7 +33,7 @@ async def rt_request(inv: Inverter, retry, t_wait=0) -> InverterResponse:
 
 
 async def real_time_api(ip_address, port=80, pwd=""):
-    i = await discover(ip_address, port, pwd)
+    i = await discover(ip_address, port, pwd, return_when=asyncio.FIRST_COMPLETED)
     return RealTimeAPI(i)
 
 
