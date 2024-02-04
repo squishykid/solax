@@ -1,4 +1,5 @@
 """ Units and different measurement types"""
+
 from enum import Enum
 from typing import NamedTuple, Union
 
