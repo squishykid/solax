@@ -1,7 +1,7 @@
 import voluptuous as vol
 
 from solax.inverter import Inverter, InverterHttpClient
-from solax.units import Total, Units
+from solax.units import DailyTotal, Measurement, Total, Units
 from solax.utils import div10, div100, pack_u16, to_signed, twoway_div10, twoway_div100
 
 
@@ -122,22 +122,26 @@ class QVOLTHYBG33P(Inverter):
                 Total(Units.KWH),
                 div10,
             ),
-            "Today's Battery Discharge Energy": (78, Units.KWH, div10),
-            "Today's Battery Charge Energy": (79, Units.KWH, div10),
+            "Today's Battery Discharge Energy": (78, DailyTotal(Units.KWH), div10),
+            "Today's Battery Charge Energy": (79, DailyTotal(Units.KWH), div10),
             "Total PV Energy": (pack_u16(80, 81), Total(Units.KWH), div10),
-            "Today's Energy": (82, Units.KWH, div10),
+            "Today's Energy": (82, DailyTotal(Units.KWH), div10),
             # 83-85: always 0
             "Total Feed-in Energy": (pack_u16(86, 87), Total(Units.KWH), div100),
             "Total Consumption": (pack_u16(88, 89), Total(Units.KWH), div100),
-            "Today's Feed-in Energy": (90, Units.KWH, div100),
+            "Today's Feed-in Energy": (90, DailyTotal(Units.KWH), div100),
             # 91: always 0
-            "Today's Consumption": (92, Units.KWH, div100),
+            "Today's Consumption": (92, DailyTotal(Units.KWH), div100),
             # 93-101: always 0
             # 102: always 1
             "Battery Remaining Capacity": (103, Units.PERCENT),
             # 104: always 1
             "Battery Temperature": (105, Units.C),
-            "Battery Remaining Energy": (106, Units.KWH, div10),
+            "Battery Remaining Energy": (
+                106,
+                Measurement(Units.KWH, storage=True),
+                div10,
+            ),
             # 107: always 256 or 0
             # 108: always 3504
             # 109: always 2400

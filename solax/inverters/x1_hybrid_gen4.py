@@ -1,7 +1,7 @@
 import voluptuous as vol
 
 from solax.inverter import Inverter
-from solax.units import Total, Units
+from solax.units import DailyTotal, Total, Units
 from solax.utils import div10, div100, pack_u16, to_signed
 
 
@@ -44,7 +44,7 @@ class X1HybridGen4(Inverter):
             "PV1 power": (8, Units.W),
             "PV2 power": (9, Units.W),
             "On-grid total yield": (pack_u16(11, 12), Total(Units.KWH), div10),
-            "On-grid daily yield": (13, Units.KWH, div10),
+            "On-grid daily yield": (13, DailyTotal(Units.KWH), div10),
             "Battery voltage": (14, Units.V, div100),
             "Battery current": (15, Units.A, div100),
             "Battery power": (16, Units.W),

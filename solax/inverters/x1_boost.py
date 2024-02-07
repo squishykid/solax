@@ -1,7 +1,7 @@
 import voluptuous as vol
 
 from solax.inverter import Inverter
-from solax.units import Total, Units
+from solax.units import DailyTotal, Total, Units
 from solax.utils import div10, div100, pack_u16, to_signed
 
 
@@ -46,7 +46,7 @@ class X1Boost(Inverter):
             "PV2 Power": (8, Units.W),
             "AC Frequency": (9, Units.HZ, div100),
             "Total Generated Energy": (pack_u16(11, 12), Total(Units.KWH), div10),
-            "Today's Generated Energy": (13, Total(Units.KWH), div10),
+            "Today's Generated Energy": (13, DailyTotal(Units.KWH), div10),
             "Inverter Temperature": (39, Units.C),
             "Exported Power": (48, Units.W, to_signed),
             "Total Export Energy": (pack_u16(50, 51), Total(Units.KWH), div100),

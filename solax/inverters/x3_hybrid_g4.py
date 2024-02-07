@@ -1,7 +1,7 @@
 import voluptuous as vol
 
 from solax.inverter import Inverter
-from solax.units import Total, Units
+from solax.units import DailyTotal, Measurement, Total, Units
 from solax.utils import (
     div10,
     div100,
@@ -104,25 +104,29 @@ class X3HybridG4(Inverter):
             "Load/Generator Power": (47, Units.W, to_signed),
             "Radiator Temperature": (54, Units.C, to_signed),
             "Yield total": (pack_u16(68, 69), Total(Units.KWH), div10),
-            "Yield today": (70, Units.KWH, div10),
+            "Yield today": (70, DailyTotal(Units.KWH), div10),
             "Battery Discharge Energy total": (
                 pack_u16(74, 75),
                 Total(Units.KWH),
                 div10,
             ),
             "Battery Charge Energy total": (pack_u16(76, 77), Total(Units.KWH), div10),
-            "Battery Discharge Energy today": (78, Units.KWH, div10),
-            "Battery Charge Energy today": (79, Units.KWH, div10),
+            "Battery Discharge Energy today": (78, DailyTotal(Units.KWH), div10),
+            "Battery Charge Energy today": (79, DailyTotal(Units.KWH), div10),
             "PV Energy total": (pack_u16(80, 81), Total(Units.KWH), div10),
             "EPS Energy total": (pack_u16(83, 84), Total(Units.KWH), div10),
-            "EPS Energy today": (85, Units.KWH, div10),
+            "EPS Energy today": (85, DailyTotal(Units.KWH), div10),
             "Feed-in Energy": (pack_u16(86, 87), Total(Units.KWH), div100),
             "Consumed Energy": (pack_u16(88, 89), Total(Units.KWH), div100),
             "Feed-in Energy total": (pack_u16(90, 91), Total(Units.KWH), div100),
             "Consumed Energy total": (pack_u16(92, 93), Total(Units.KWH), div100),
             "Battery Remaining Capacity": (103, Units.PERCENT),
             "Battery Temperature": (105, Units.C, to_signed),
-            "Battery Remaining Energy": (106, Units.KWH, div10),
+            "Battery Remaining Energy": (
+                106,
+                Measurement(Units.KWH, storage=True),
+                div10,
+            ),
             "Battery mode": (168, Units.NONE),
             "Battery mode text": (168, Units.NONE, X3HybridG4._decode_battery_mode),
             "Battery Voltage": (pack_u16(169, 170), Units.V, div100),

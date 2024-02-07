@@ -1,7 +1,7 @@
 import voluptuous as vol
 
 from solax.inverter import Inverter
-from solax.units import Total, Units
+from solax.units import DailyTotal, Total, Units
 from solax.utils import startswith
 
 
@@ -34,7 +34,7 @@ class X3(Inverter):
             "Network Voltage Phase 1": (5, Units.V),
             "AC Power": (6, Units.W),
             "Inverter Temperature": (7, Units.C),
-            "Today's Energy": (8, Units.KWH),
+            "Today's Energy": (8, DailyTotal(Units.KWH)),
             "Total Energy": (9, Total(Units.KWH)),
             "Exported Power": (10, Units.W),
             "PV1 Power": (11, Units.W),

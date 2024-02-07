@@ -1,7 +1,7 @@
 import voluptuous as vol
 
 from solax.inverter import Inverter
-from solax.units import Total, Units
+from solax.units import DailyTotal, Total, Units
 from solax.utils import div10, div100, to_signed
 
 
@@ -44,7 +44,7 @@ class X1Smart(Inverter):
             "PV2 Power": (8, Units.W),
             "Grid Frequency": (9, Units.HZ, div100),
             "Total Energy": (11, Total(Units.KWH), div10),
-            "Today's Energy": (13, Units.KWH, div10),
+            "Today's Energy": (13, DailyTotal(Units.KWH), div10),
             "Inverter Temperature": (39, Units.C),
             "Exported Power": (48, Units.W, to_signed),
             "Total Feed-in Energy": (50, Total(Units.KWH), div100),

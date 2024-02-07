@@ -1,7 +1,7 @@
 import voluptuous as vol
 
 from solax.inverter import Inverter, InverterHttpClient, Method
-from solax.units import Total, Units
+from solax.units import DailyTotal, Total, Units
 
 
 class XHybrid(Inverter):
@@ -55,7 +55,7 @@ class XHybrid(Inverter):
             "Network Voltage": (5, Units.V),
             "Power Now": (6, Units.W),
             "Inverter Temperature": (7, Units.C),
-            "Today's Energy": (8, Units.KWH),
+            "Today's Energy": (8, DailyTotal(Units.KWH)),
             "Total Energy": (9, Total(Units.KWH)),
             "Exported Power": (10, Units.W),
             "PV1 Power": (11, Units.W),

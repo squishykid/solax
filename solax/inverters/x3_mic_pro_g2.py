@@ -1,7 +1,7 @@
 import voluptuous as vol
 
 from solax.inverter import Inverter
-from solax.units import Total, Units
+from solax.units import DailyTotal, Total, Units
 from solax.utils import div10, div100, pack_u16, to_signed, to_signed32, twoway_div10
 
 
@@ -69,7 +69,7 @@ class X3MicProG2(Inverter):
             # "Run Mode": (21, Units.NONE),
             "Run Mode": (21, Units.NONE, X3MicProG2._decode_run_mode),
             "Total Yield": (pack_u16(22, 23), Total(Units.KWH), div10),
-            "Daily Yield": (24, Units.KWH, div10),
+            "Daily Yield": (24, DailyTotal(Units.KWH), div10),
             "Feed-in Power ": (pack_u16(72, 73), Units.W, to_signed32),
             "Total Feed-in Energy": (pack_u16(74, 75), Total(Units.KWH), div100),
             "Total Consumption": (pack_u16(76, 77), Total(Units.KWH), div100),
