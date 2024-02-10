@@ -17,7 +17,7 @@ echo "Running mypy..."
 mypy --exclude venv .
 
 echo "Running flake8..."
-flake8 --ignore=E501 solax tests
+flake8 --ignore=E501,E704 solax tests
 
 echo "Running pylint..."
 pylint -d 'C0111' solax tests
