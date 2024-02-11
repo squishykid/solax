@@ -423,6 +423,25 @@ X1_BOOST_VALUES = {
     "Total Import Energy": 81.84,
 }
 
+X1_BOOST_VALUES_OVERFLOWN = {
+    "AC Voltage": 237.4,
+    "AC Output Current": 6.7,
+    "AC Output Power": 1581,
+    "PV1 Voltage": 397.3,
+    "PV2 Voltage": 233.8,
+    "PV1 Current": 4.1,
+    "PV2 Current": 5.7,
+    "PV1 Power": 1628,
+    "PV2 Power": 1336,
+    "AC Frequency": 49.96,
+    "Total Generated Energy": 14055.6,
+    "Today's Generated Energy": 1.3,
+    "Inverter Temperature": 36,
+    "Exported Power": 1444,
+    "Total Export Energy": 11348.18,
+    "Total Import Energy": 1850.05,
+}
+
 QVOLTHYBG33P_VALUES = {
     "Network Voltage Phase 1": 221.4,
     "Network Voltage Phase 2": 223.8,
