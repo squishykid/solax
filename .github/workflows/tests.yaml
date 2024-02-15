@@ -32,7 +32,7 @@ jobs:
         isort --check-only --profile black .
     - name: Lint with flake8
       run: |
-        flake8 --ignore=E501 solax tests
+        flake8 --ignore=E501,E704 solax tests
     - name: Lint with pylint
       run: |
         pylint -d 'C0111' solax tests

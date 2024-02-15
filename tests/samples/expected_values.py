@@ -365,6 +365,26 @@ X1_MINI_VALUES_V34 = {
     "Inverter Temperature": 41,
 }
 
+
+X1_MINI_VALUES_V34_VER3 = {
+    "Network Voltage": 234.8,
+    "Output Current": 0.7,
+    "AC Power": 144.0,
+    "PV1 Voltage": 96.6,
+    "PV2 Voltage": 0.0,
+    "PV1 Current": 1.6,
+    "PV2 Current": 0.0,
+    "PV1 Power": 154.0,
+    "PV2 Power": 0.0,
+    "Grid Frequency": 49.94,
+    "Total Energy": 6.7,
+    "Today's Energy": 3.1,
+    "Total Feed-in Energy": 2.5,
+    "Total Consumption": 0.0,
+    "Power Now": 0.0,
+    "Inverter Temperature": 39.0,
+}
+
 X1_SMART_VALUES = {
     "Network Voltage": 239.6,
     "Output Current": 12.6,
@@ -401,6 +421,25 @@ X1_BOOST_VALUES = {
     "Exported Power": 10,
     "Total Export Energy": 0.87,
     "Total Import Energy": 81.84,
+}
+
+X1_BOOST_VALUES_OVERFLOWN = {
+    "AC Voltage": 237.4,
+    "AC Output Current": 6.7,
+    "AC Output Power": 1581,
+    "PV1 Voltage": 397.3,
+    "PV2 Voltage": 233.8,
+    "PV1 Current": 4.1,
+    "PV2 Current": 5.7,
+    "PV1 Power": 1628,
+    "PV2 Power": 1336,
+    "AC Frequency": 49.96,
+    "Total Generated Energy": 14055.6,
+    "Today's Generated Energy": 1.3,
+    "Inverter Temperature": 36,
+    "Exported Power": 1444,
+    "Total Export Energy": 11348.18,
+    "Total Import Energy": 1850.05,
 }
 
 QVOLTHYBG33P_VALUES = {
