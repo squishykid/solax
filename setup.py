@@ -18,6 +18,7 @@ setuptools.setup(
         "aiohttp>=3.5.4, <4",
         "async_timeout>=4.0.2",
         "voluptuous>=0.11.5",
+        "pycryptodome>=3.19.0",
     ],
     setup_requires=[
         "setuptools_scm",
