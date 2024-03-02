@@ -9,6 +9,8 @@ from weakref import WeakValueDictionary
 
 import aiohttp
 
+__all__ = ("InverterHttpClient", "Method")
+
 if sys.version_info >= (3, 10):
     from dataclasses import KW_ONLY
 

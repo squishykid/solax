@@ -1,3 +1,5 @@
+from typing import Any, Dict, Optional
+
 import voluptuous as vol
 
 from solax.inverter import Inverter
@@ -14,13 +16,13 @@ class X1HybridGen4(Inverter):
                 "sn",
             ): str,
             vol.Required("ver"): str,
-            vol.Required("Data"): vol.Schema(
+            vol.Required("data"): vol.Schema(
                 vol.All(
                     [vol.Coerce(float)],
                     vol.Length(min=200, max=200),
                 )
             ),
-            vol.Required("Information"): vol.Schema(vol.All(vol.Length(min=9, max=10))),
+            vol.Required("information"): vol.Schema(vol.All(vol.Length(min=9, max=10))),
         },
         extra=vol.REMOVE_EXTRA,
     )
@@ -54,3 +56,7 @@ class X1HybridGen4(Inverter):
             "Total feed-in energy": (pack_u16(34, 35), Total(Units.KWH), div100),
             "Total consumption": (pack_u16(36, 37), Total(Units.KWH), div100),
         }
+
+    @classmethod
+    def inverter_serial_number_getter(cls, response: Dict[str, Any]) -> Optional[str]:
+        return response["information"][2]

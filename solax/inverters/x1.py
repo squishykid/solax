@@ -1,3 +1,5 @@
+from typing import Any, Dict, Optional
+
 import voluptuous as vol
 
 from solax.inverter import Inverter
@@ -10,9 +12,9 @@ class X1(Inverter):
     _schema = vol.Schema(
         {
             vol.Required("type"): vol.All(str, startswith("X1-")),
-            vol.Required("SN"): str,
+            vol.Required("sn"): str,
             vol.Required("ver"): str,
-            vol.Required("Data"): vol.Schema(
+            vol.Required("data"): vol.Schema(
                 vol.All(
                     [vol.Coerce(float)],
                     vol.Any(
@@ -22,7 +24,7 @@ class X1(Inverter):
                     ),
                 )
             ),
-            vol.Required("Information"): vol.Schema(vol.All(vol.Length(min=9, max=9))),
+            vol.Required("information"): vol.Schema(vol.All(vol.Length(min=9, max=9))),
         },
         extra=vol.REMOVE_EXTRA,
     )
@@ -59,3 +61,7 @@ class X1(Inverter):
         }
 
     # pylint: enable=duplicate-code
+
+    @classmethod
+    def inverter_serial_number_getter(cls, response: Dict[str, Any]) -> Optional[str]:
+        return response["information"][3]

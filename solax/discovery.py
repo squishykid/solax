@@ -10,6 +10,8 @@ from async_timeout import timeout
 from solax.inverter import Inverter
 from solax.inverter_http_client import InverterHttpClient
 
+__all__ = ("discover", "DiscoveryKeywords", "DiscoveryError")
+
 if sys.version_info >= (3, 10):
     from importlib.metadata import entry_points
 else:

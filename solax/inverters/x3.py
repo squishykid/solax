@@ -1,3 +1,5 @@
+from typing import Any, Dict, Optional
+
 import voluptuous as vol
 
 from solax.inverter import Inverter
@@ -6,23 +8,23 @@ from solax.utils import startswith
 
 
 class X3(Inverter):
+    # pylint: disable=duplicate-code
     _schema = vol.Schema(
         {
             vol.Required("type"): vol.All(str, startswith("X3-")),
-            vol.Required("SN"): str,
+            vol.Required("sn"): str,
             vol.Required("ver"): str,
-            vol.Required("Data"): vol.Schema(
+            vol.Required("data"): vol.Schema(
                 vol.All(
                     [vol.Coerce(float)],
                     vol.Any(vol.Length(min=102, max=103), vol.Length(min=107, max=107)),
                 )
             ),
-            vol.Required("Information"): vol.Schema(vol.All(vol.Length(min=9, max=9))),
+            vol.Required("information"): vol.Schema(vol.All(vol.Length(min=9, max=9))),
         },
         extra=vol.REMOVE_EXTRA,
     )
 
-    # pylint: disable=duplicate-code
     @classmethod
     def response_decoder(cls):
         return {
@@ -61,3 +63,7 @@ class X3(Inverter):
             "EPS Power": (55, Units.W),
             "EPS Frequency": (56, Units.HZ),
         }
+
+    @classmethod
+    def inverter_serial_number_getter(cls, response: Dict[str, Any]) -> Optional[str]:
+        return response["information"][3]

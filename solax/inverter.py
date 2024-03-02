@@ -1,4 +1,5 @@
-from typing import Dict, Tuple
+from abc import abstractmethod
+from typing import Any, Dict, Optional, Tuple
 
 import aiohttp
 import voluptuous as vol
@@ -33,7 +34,14 @@ class Inverter:
 
         schema = type(self).schema()
         response_decoder = type(self).response_decoder()
-        self.response_parser = ResponseParser(schema, response_decoder)
+        dongle_serial_number_getter = type(self).dongle_serial_number_getter
+        inverter_serial_number_getter = type(self).inverter_serial_number_getter
+        self.response_parser = ResponseParser(
+            schema,
+            response_decoder,
+            dongle_serial_number_getter,
+            inverter_serial_number_getter,
+        )
 
     @classmethod
     def _build(cls, host, port, pwd="", params_in_query=True):
@@ -102,6 +110,15 @@ class Inverter:
         Return schema
         """
         return cls._schema
+
+    @classmethod
+    def dongle_serial_number_getter(cls, response: Dict[str, Any]) -> Optional[str]:
+        return response["sn"]
+
+    @classmethod
+    @abstractmethod
+    def inverter_serial_number_getter(cls, response: Dict[str, Any]) -> Optional[str]:
+        raise NotImplementedError  # pragma: no cover
 
     def __str__(self) -> str:
         return f"{self.__class__.__name__}::{self.http_client}"

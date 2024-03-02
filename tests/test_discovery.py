@@ -27,6 +27,12 @@ async def test_discovery(inverters_fixture):
     inverters = await solax.discover(*conn, return_when=asyncio.ALL_COMPLETED)
     assert inverter_class in {type(inverter) for inverter in inverters}
 
+    for inverter in inverters:
+        if isinstance(inverter, inverter_class):
+            data = await inverter.get_data()
+            assert "X" * 7 in (data.inverter_serial_number or "X" * 7)
+            assert data.serial_number == data.dongle_serial_number
+
 
 @pytest.mark.asyncio
 async def test_real_time_api(inverters_fixture):

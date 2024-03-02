@@ -1,3 +1,5 @@
+from typing import Any, Dict, Optional
+
 import voluptuous as vol
 
 from solax.inverter import Inverter
@@ -19,13 +21,13 @@ class X1Boost(Inverter):
                 "sn",
             ): str,
             vol.Required("ver"): str,
-            vol.Required("Data"): vol.Schema(
+            vol.Required("data"): vol.Schema(
                 vol.All(
                     [vol.Coerce(float)],
                     vol.Length(min=200, max=200),
                 )
             ),
-            vol.Required("Information"): vol.Schema(
+            vol.Required("information"): vol.Schema(
                 vol.All(vol.Length(min=10, max=10))
             ),
         },
@@ -52,6 +54,10 @@ class X1Boost(Inverter):
             "Total Export Energy": (pack_u16(50, 51), Total(Units.KWH), div100),
             "Total Import Energy": (pack_u16(52, 53), Total(Units.KWH), div100),
         }
+
+    @classmethod
+    def inverter_serial_number_getter(cls, response: Dict[str, Any]) -> Optional[str]:
+        return response["information"][2]
 
     @classmethod
     def build_all_variants(cls, host, port, pwd=""):

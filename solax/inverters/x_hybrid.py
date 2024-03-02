@@ -1,3 +1,5 @@
+from typing import Any, Dict, Optional
+
 import voluptuous as vol
 
 from solax.inverter import Inverter, InverterHttpClient, Method
@@ -15,14 +17,14 @@ class XHybrid(Inverter):
             vol.Required("method"): str,
             vol.Required("version"): str,
             vol.Required("type"): str,
-            vol.Required("SN"): str,
-            vol.Required("Data"): vol.Schema(
+            vol.Required("sn"): str,
+            vol.Required("data"): vol.Schema(
                 vol.All(
                     [vol.Coerce(float)],
                     vol.Any(vol.Length(min=58, max=58), vol.Length(min=68, max=68)),
                 )
             ),
-            vol.Required("Status"): vol.All(vol.Coerce(int), vol.Range(min=0)),
+            vol.Required("status"): vol.All(vol.Coerce(int), vol.Range(min=0)),
         },
         extra=vol.REMOVE_EXTRA,
     )
@@ -74,3 +76,7 @@ class XHybrid(Inverter):
             "EPS Power": (55, Units.W),
             "EPS Frequency": (56, Units.HZ),
         }
+
+    @classmethod
+    def inverter_serial_number_getter(cls, response: Dict[str, Any]) -> Optional[str]:
+        return None
