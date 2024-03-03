@@ -8,29 +8,12 @@ from voluptuous import Invalid, MultipleInvalid
 from voluptuous.humanize import humanize_error
 
 from solax.units import SensorUnit
-from solax.utils import PackerBuilderResult, contains_none_zero_value
+from solax.utils import PackerBuilderResult
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.setLevel(logging.INFO)
 
 InverterResponse = namedtuple("InverterResponse", "data, serial_number, version, type")
-
-_KEY_DATA = "Data"
-_KEY_SERIAL = "SN"
-_KEY_VERSION = "version"
-_KEY_VER = "ver"
-_KEY_TYPE = "type"
-
-
-GenericResponseSchema = vol.Schema(
-    {
-        vol.Required(_KEY_DATA): vol.Schema(contains_none_zero_value),
-        vol.Required(vol.Or(_KEY_SERIAL, _KEY_SERIAL.lower())): vol.All(),
-        vol.Required(vol.Or(_KEY_VERSION, _KEY_VER)): vol.All(),
-        vol.Required(_KEY_TYPE): vol.All(),
-    },
-    extra=vol.REMOVE_EXTRA,
-)
 
 SensorIndexSpec = Union[int, PackerBuilderResult]
 ResponseDecoder = Dict[
@@ -44,8 +27,7 @@ ResponseDecoder = Dict[
 
 class ResponseParser:
     def __init__(self, schema: vol.Schema, decoder: ResponseDecoder):
-        self.schema = vol.And(schema, GenericResponseSchema)
-
+        self.schema = schema
         self.response_decoder = decoder
 
     def _decode_map(self) -> Dict[str, SensorIndexSpec]:
@@ -100,8 +82,8 @@ class ResponseParser:
             _ = humanize_error(json_response, ex)
             raise
         return InverterResponse(
-            data=self.map_response(response[_KEY_DATA]),
-            serial_number=response.get(_KEY_SERIAL, response.get(_KEY_SERIAL.lower())),
-            version=response.get(_KEY_VER, response.get(_KEY_VERSION)),
-            type=response[_KEY_TYPE],
+            data=self.map_response(response["Data"]),
+            serial_number=response.get("SN", response.get("sn")),
+            version=response.get("ver", response.get("version")),
+            type=response["type"],
         )
