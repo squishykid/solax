@@ -2,7 +2,15 @@ import voluptuous as vol
 
 from solax.inverter import Inverter
 from solax.units import Total, Units
-from solax.utils import div10, div100, pack_u16, to_signed, to_signed32, twoway_div10, twoway_div100
+from solax.utils import (
+    div10,
+    div100,
+    pack_u16,
+    to_signed,
+    to_signed32,
+    twoway_div10,
+    twoway_div100,
+)
 
 
 class X3HybridG4(Inverter):
@@ -55,7 +63,7 @@ class X3HybridG4(Inverter):
             2: "Back Up Mode",
             3: "Feed-in Priority",
         }.get(value, f"unmapped value '{value}'")
-    
+
     @classmethod
     def response_decoder(cls):
         return {
@@ -96,7 +104,11 @@ class X3HybridG4(Inverter):
             "Radiator Temperature": (54, Units.C, to_signed),
             "Yield total": (pack_u16(68, 69), Total(Units.KWH), div10),
             "Yield today": (70, Units.KWH, div10),
-            "Battery Discharge Energy total": (pack_u16(74, 75), Total(Units.KWH), div10),
+            "Battery Discharge Energy total": (
+                pack_u16(74, 75),
+                Total(Units.KWH),
+                div10,
+            ),
             "Battery Charge Energy total": (pack_u16(76, 77), Total(Units.KWH), div10),
             "Battery Discharge Energy today": (78, Units.KWH, div10),
             "Battery Charge Energy today": (79, Units.KWH, div10),
