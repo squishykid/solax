@@ -272,7 +272,7 @@ X3_HYBRID_G4_VALUES = {
     "Feed-in Energy": 0.0,
     "Consumed Energy": 20.09,
     "Feed-in Energy total": 12345.6,
-    "Consumed Energy total": 3548.2
+    "Consumed Energy total": 3548.2,
     "Battery Remaining Capacity": 30.0,
     "Battery Temperature": 22.0,
     "Battery Remaining Energy": 5.7,
