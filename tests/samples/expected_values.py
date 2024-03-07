@@ -266,7 +266,6 @@ X3_HYBRID_G4_VALUES = {
     "Battery Charge Energy total": 1565.0,
     "Battery Discharge Energy today": 9.4,
     "Battery Charge Energy today": 10.4,
-    "Battery Discharge Energy today": 34.6,
     "EPS Energy total": 13.4,
     "EPS Energy today": 0.7,
     "Feed-in Energy": 0.0,
