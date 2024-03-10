@@ -21,15 +21,22 @@ _KEY_VERSION = "version"
 _KEY_VER = "ver"
 _KEY_TYPE = "type"
 
-
-GenericResponseSchema = vol.Schema(
-    {
-        vol.Required(_KEY_DATA): vol.Schema(contains_none_zero_value),
-        vol.Required(vol.Or(_KEY_SERIAL, _KEY_SERIAL.lower())): vol.All(),
-        vol.Required(vol.Or(_KEY_VERSION, _KEY_VER)): vol.All(),
-        vol.Required(_KEY_TYPE): vol.All(),
-    },
-    extra=vol.REMOVE_EXTRA,
+GenericResponseSchema = vol.All(
+    vol.Any(
+        vol.Schema({vol.Required(_KEY_SERIAL.lower()): str}, extra=vol.ALLOW_EXTRA),
+        vol.Schema({vol.Required(_KEY_SERIAL): str}, extra=vol.ALLOW_EXTRA),
+    ),
+    vol.Any(
+        vol.Schema({vol.Required(_KEY_VERSION): str}, extra=vol.ALLOW_EXTRA),
+        vol.Schema({vol.Required(_KEY_VER): str}, extra=vol.ALLOW_EXTRA),
+    ),
+    vol.Schema(
+        {
+            vol.Required(_KEY_TYPE): vol.Any(int, str),
+            vol.Required(_KEY_DATA): vol.Schema(contains_none_zero_value),
+        },
+        extra=vol.ALLOW_EXTRA,
+    ),
 )
 
 SensorIndexSpec = Union[int, PackerBuilderResult]
@@ -44,7 +51,7 @@ ResponseDecoder = Dict[
 
 class ResponseParser:
     def __init__(self, schema: vol.Schema, decoder: ResponseDecoder):
-        self.schema = vol.And(schema, GenericResponseSchema)
+        self.schema = vol.And(GenericResponseSchema, schema)
 
         self.response_decoder = decoder
 

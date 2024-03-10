@@ -102,4 +102,4 @@ def contains_none_zero_value(value: List[Number]):
     if isinstance(value, list):
         if len(value) != 0 and any((v != 0 for v in value)):
             return value
-    raise Invalid("All elements in the list {actual} are zero")
+    raise Invalid("All elements in the list are zero")
