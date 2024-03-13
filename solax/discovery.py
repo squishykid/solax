@@ -75,6 +75,7 @@ class DiscoveryState:
                 task = asyncio.create_task(self._discovery_task(i), name=f"{i}")
                 task.add_done_callback(self._task_handler)
                 self._tasks.add(task)
+                await asyncio.sleep(1)
 
         while len(self._tasks) > 0:
             logging.debug("%d discovery tasks are still running...", len(self._tasks))
