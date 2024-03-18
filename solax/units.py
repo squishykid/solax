@@ -9,6 +9,7 @@ class Units(Enum):
 
     W = "W"
     KWH = "kWh"
+    WH = "Wh"
     A = "A"
     V = "V"
     C = "°C"
