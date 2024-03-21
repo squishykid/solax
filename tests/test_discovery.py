@@ -16,6 +16,7 @@ async def test_discovery_with_model(inverters_fixture):
     conn, inverter_class, _ = inverters_fixture
     rt_api = await solax.real_time_api(*conn, "", inverter_class.__name__)
     assert rt_api.inverter.__class__ == inverter_class
+    assert inverter_class.__name__ in solax.discovery.get_models()
 
 
 @pytest.mark.asyncio

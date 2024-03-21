@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import typing
+from typing import List
 
 from solax.inverter import Inverter, InverterError
 from solax.inverters import (
@@ -102,3 +103,9 @@ async def discover(host, port, pwd="", model=None) -> Inverter:
     discover_state = DiscoveryState()
     await discover_state.discover(host, port, pwd, model)
     return discover_state.get_discovered_inverter()
+
+
+def get_models() -> List[str]:
+    models = list(map(lambda inverter: inverter.__name__, REGISTRY))
+    models.sort()
+    return models
