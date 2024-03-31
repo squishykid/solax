@@ -1,8 +1,9 @@
+from typing import Any, Dict, Optional
+
 import voluptuous as vol
 
-from solax import utils
-from solax.inverter import Inverter, InverterHttpClient, Method, ResponseParser
-from solax.units import Total, Units
+from solax.inverter import Inverter
+from solax.units import DailyTotal, Total, Units
 from solax.utils import div10, div100, to_signed
 
 
@@ -20,13 +21,13 @@ class X1Smart(Inverter):
                 "sn",
             ): str,
             vol.Required("ver"): str,
-            vol.Required("Data"): vol.Schema(
+            vol.Required("data"): vol.Schema(
                 vol.All(
                     [vol.Coerce(float)],
                     vol.Length(min=200, max=200),
                 )
             ),
-            vol.Required("Information"): vol.Schema(vol.All(vol.Length(min=8, max=8))),
+            vol.Required("information"): vol.Schema(vol.All(vol.Length(min=8, max=8))),
         },
         extra=vol.REMOVE_EXTRA,
     )
@@ -45,7 +46,7 @@ class X1Smart(Inverter):
             "PV2 Power": (8, Units.W),
             "Grid Frequency": (9, Units.HZ, div100),
             "Total Energy": (11, Total(Units.KWH), div10),
-            "Today's Energy": (13, Units.KWH, div10),
+            "Today's Energy": (13, DailyTotal(Units.KWH), div10),
             "Inverter Temperature": (39, Units.C),
             "Exported Power": (48, Units.W, to_signed),
             "Total Feed-in Energy": (50, Total(Units.KWH), div100),
@@ -53,20 +54,8 @@ class X1Smart(Inverter):
         }
 
     @classmethod
-    def _build(cls, host, port, pwd="", params_in_query=True):
-        url = utils.to_url(host, port)
-        http_client = InverterHttpClient(url, Method.POST, pwd)
-        if params_in_query:
-            http_client.with_default_query()
-        else:
-            http_client.with_default_data()
-
-        headers = {"X-Forwarded-For": "5.8.8.8"}
-        http_client.with_headers(headers)
-        schema = cls._schema
-        response_decoder = cls.response_decoder()
-        response_parser = ResponseParser(schema, response_decoder)
-        return cls(http_client, response_parser)
+    def inverter_serial_number_getter(cls, response: Dict[str, Any]) -> Optional[str]:
+        return response["information"][2]
 
     @classmethod
     def build_all_variants(cls, host, port, pwd=""):
@@ -74,4 +63,8 @@ class X1Smart(Inverter):
             cls._build(host, port, pwd, True),
             cls._build(host, port, pwd, False),
         ]
+        for inverter in versions:
+            inverter.http_client = inverter.http_client.with_headers(
+                {"X-Forwarded-For": "5.8.8.8"}
+            )
         return versions

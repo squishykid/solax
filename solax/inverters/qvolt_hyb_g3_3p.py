@@ -1,8 +1,9 @@
+from typing import Any, Dict, Optional
+
 import voluptuous as vol
 
-from solax import utils
-from solax.inverter import Inverter, InverterHttpClient, Method, ResponseParser
-from solax.units import Total, Units
+from solax.inverter import Inverter, InverterHttpClient
+from solax.units import DailyTotal, Measurement, Total, Units
 from solax.utils import div10, div100, pack_u16, to_signed, twoway_div10, twoway_div100
 
 
@@ -42,10 +43,8 @@ class QVOLTHYBG33P(Inverter):
                 3: "Feed-in Priority",
             }.get(value, f"unmapped value '{value}'")
 
-    def __init__(
-        self, http_client: InverterHttpClient, response_parser: ResponseParser
-    ):
-        super().__init__(http_client, response_parser)
+    def __init__(self, http_client: InverterHttpClient, *args, **kwargs):
+        super().__init__(http_client, *args, **kwargs)
         self.manufacturer = "Qcells"
 
     _schema = vol.Schema(
@@ -53,13 +52,13 @@ class QVOLTHYBG33P(Inverter):
             vol.Required("type"): vol.All(int, 14),
             vol.Required("sn"): str,
             vol.Required("ver"): str,
-            vol.Required("Data"): vol.Schema(
+            vol.Required("data"): vol.Schema(
                 vol.All(
                     [vol.Coerce(float)],
                     vol.Length(min=200, max=200),
                 )
             ),
-            vol.Required("Information"): vol.Schema(
+            vol.Required("information"): vol.Schema(
                 vol.All(vol.Length(min=10, max=10))
             ),
         },
@@ -125,22 +124,26 @@ class QVOLTHYBG33P(Inverter):
                 Total(Units.KWH),
                 div10,
             ),
-            "Today's Battery Discharge Energy": (78, Units.KWH, div10),
-            "Today's Battery Charge Energy": (79, Units.KWH, div10),
+            "Today's Battery Discharge Energy": (78, DailyTotal(Units.KWH), div10),
+            "Today's Battery Charge Energy": (79, DailyTotal(Units.KWH), div10),
             "Total PV Energy": (pack_u16(80, 81), Total(Units.KWH), div10),
-            "Today's Energy": (82, Units.KWH, div10),
+            "Today's Energy": (82, DailyTotal(Units.KWH), div10),
             # 83-85: always 0
             "Total Feed-in Energy": (pack_u16(86, 87), Total(Units.KWH), div100),
             "Total Consumption": (pack_u16(88, 89), Total(Units.KWH), div100),
-            "Today's Feed-in Energy": (90, Units.KWH, div100),
+            "Today's Feed-in Energy": (90, DailyTotal(Units.KWH), div100),
             # 91: always 0
-            "Today's Consumption": (92, Units.KWH, div100),
+            "Today's Consumption": (92, DailyTotal(Units.KWH), div100),
             # 93-101: always 0
             # 102: always 1
             "Battery Remaining Capacity": (103, Units.PERCENT),
             # 104: always 1
             "Battery Temperature": (105, Units.C),
-            "Battery Remaining Energy": (106, Units.KWH, div10),
+            "Battery Remaining Energy": (
+                106,
+                Measurement(Units.KWH, storage=True),
+                div10,
+            ),
             # 107: always 256 or 0
             # 108: always 3504
             # 109: always 2400
@@ -161,16 +164,10 @@ class QVOLTHYBG33P(Inverter):
         }
 
     @classmethod
-    def _build(cls, host, port, pwd="", params_in_query=True):
-        url = utils.to_url(host, port)
-        http_client = InverterHttpClient(url, Method.POST, pwd).with_default_data()
-
-        schema = cls._schema
-        response_decoder = cls.response_decoder()
-        response_parser = ResponseParser(schema, response_decoder)
-        return cls(http_client, response_parser)
+    def inverter_serial_number_getter(cls, response: Dict[str, Any]) -> Optional[str]:
+        return response["information"][2]
 
     @classmethod
     def build_all_variants(cls, host, port, pwd=""):
-        versions = [cls._build(host, port, pwd)]
+        versions = [cls._build(host, port, pwd, False)]
         return versions

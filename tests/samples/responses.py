@@ -1517,7 +1517,7 @@ X1_HYBRID_G3_2X_MPPT_RESPONSE = {
         3.000,
         3,
         "X1-Hybiyd-G3",
-        "YYYYYYYYYYYYYY",
+        "XXXXXXXXXXXXXX",
         1,
         3.11,
         0.00,
@@ -1535,7 +1535,7 @@ X1_HYBRID_G3_2X_MPPT_RESPONSE = {
 
 X1_HYBRID_G4_RESPONSE = {
     "type": 15,
-    "sn": "SXxxxxxxxx",
+    "sn": "SXXXXXXXXX",
     "ver": "3.003.02",
     "Data": [
         2470,
@@ -1742,7 +1742,7 @@ X1_HYBRID_G4_RESPONSE = {
     "Information": [
         5.000,
         15,
-        "H450xxxxxxxxxx",
+        "H450XXXXXXXXXX",
         8,
         1.24,
         0.00,
@@ -2614,7 +2614,7 @@ X3_HYBRID_G3_2X_MPPT_RESPONSE_V34_EPS_MODE = {
 }
 
 X3_HYBRID_G4_RESPONSE = {
-    "sn": "SR3xxxxxxx",
+    "sn": "SR3XXXXXXX",
     "ver": "3.006.04",
     "type": 14,
     "Data": [
@@ -2919,11 +2919,11 @@ X3_HYBRID_G4_RESPONSE = {
         0,
         0,
     ],
-    "Information": [10.000, 14, "H34A**********", 8, 1.23, 0.00, 1.24, 1.09, 0.00, 1],
+    "Information": [10.000, 14, "H34AXXXXXXXXXX", 8, 1.23, 0.00, 1.24, 1.09, 0.00, 1],
 }
 
 X3_MICPRO_G2_RESPONSE = {
-    "sn": "SRE*******",
+    "sn": "SREXXXXXXX",
     "ver": "3.008.10",
     "type": 16,
     "Data": [
@@ -3028,11 +3028,11 @@ X3_MICPRO_G2_RESPONSE = {
         0,
         0,
     ],
-    "Information": [4.000, 16, "MC20**********", 8, 1.20, 0.00, 1.18, 1.00, 0.00, 1],
+    "Information": [4.000, 16, "MC20XXXXXXXXXX", 8, 1.20, 0.00, 1.18, 1.00, 0.00, 1],
 }
 
 QVOLTHYBG33P_RESPONSE_V34 = {
-    "sn": "SWX***",
+    "sn": "SWXXXX",
     "ver": "2.034.06",
     "type": 14,
     "Data": [
@@ -3237,5 +3237,5 @@ QVOLTHYBG33P_RESPONSE_V34 = {
         0,
         0,
     ],
-    "Information": [12.0, 14, "H34***", 1, 1.15, 0.0, 1.14, 1.07, 0.0, 1],
+    "Information": [12.0, 14, "H34XXXXXXXX", 1, 1.15, 0.0, 1.14, 1.07, 0.0, 1],
 }

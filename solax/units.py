@@ -22,12 +22,20 @@ class Measurement(NamedTuple):
 
     unit: Units
     is_monotonic: bool = False
+    resets_daily: bool = False
+    storage: bool = False
 
 
 class Total(Measurement):
     """A Measurement where the values are continuously increasing."""
 
     is_monotonic: bool = True
+
+
+class DailyTotal(Measurement):
+    """A Measurement where the values are reset daily."""
+
+    resets_daily: bool = True
 
 
 SensorUnit = Union[Measurement, Total]
