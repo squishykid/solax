@@ -41,6 +41,7 @@ setuptools.setup(
             "x1_smart = solax.inverters.x1_smart:X1Smart",
             "x3 = solax.inverters.x3:X3",
             "x3_hybrid_g4 = solax.inverters.x3_hybrid_g4:X3HybridG4",
+            "x3_ultra = solax.inverters.x3_ultra:X3Ultra",
             "x3_mic_pro_g2 = solax.inverters.x3_mic_pro_g2:X3MicProG2",
             "x3_v34 = solax.inverters.x3_v34:X3V34",
             "x_hybrid = solax.inverters.x_hybrid:XHybrid",
