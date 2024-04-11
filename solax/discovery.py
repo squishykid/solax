@@ -3,7 +3,7 @@ import logging
 import sys
 from asyncio import Future, Task
 from collections import defaultdict
-from typing import Dict, Literal, Sequence, Set, TypedDict, Union, cast
+from typing import Dict, Literal, Sequence, Set, Type, TypedDict, Union, cast
 
 from solax.inverter import Inverter
 from solax.inverter_http_client import InverterHttpClient
@@ -21,14 +21,18 @@ else:
     from typing_extensions import Unpack
 
 # registry of inverters
-REGISTRY = {ep.load() for ep in entry_points(group="solax.inverter")}
+REGISTRY: Set[Type[Inverter]] = {
+    ep.load()
+    for ep in entry_points(group="solax.inverter")
+    if issubclass(ep.load(), Inverter)
+}
 
 logging.basicConfig(level=logging.INFO)
 
 
 class DiscoveryKeywords(TypedDict, total=False):
-    inverters: Sequence[Inverter]
-    return_when: Union[Literal["ALL_COMPLETED"], Literal["FIRST_COMPLETED"]]
+    inverters: Sequence[Type[Inverter]]
+    return_when: Literal["ALL_COMPLETED", "FIRST_COMPLETED"]
 
 
 if sys.version_info >= (3, 9):
