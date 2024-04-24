@@ -14,6 +14,8 @@ __all__ = ("InverterHttpClient", "Method")
 if sys.version_info >= (3, 10):
     from dataclasses import KW_ONLY
 
+
+REQUEST_TIMEOUT = 5.0
 _CACHE: WeakValueDictionary[int, InverterHttpClient] = WeakValueDictionary()
 
 
@@ -107,7 +109,9 @@ class InverterHttpClient:
     async def get(self):
         url = self.url + "?" + self.query if self.query else self.url
         async with aiohttp.ClientSession() as session:
-            async with session.get(url, headers=self.headers) as req:
+            async with session.get(
+                url, headers=self.headers, timeout=REQUEST_TIMEOUT
+            ) as req:
                 req.raise_for_status()
                 resp = await req.read()
         return resp
@@ -116,7 +120,9 @@ class InverterHttpClient:
         url = self.url + "?" + self.query if self.query else self.url
         data = self.data.encode("utf-8") if self.data else None
         async with aiohttp.ClientSession() as session:
-            async with session.post(url, headers=self.headers, data=data) as req:
+            async with session.post(
+                url, headers=self.headers, data=data, timeout=REQUEST_TIMEOUT
+            ) as req:
                 req.raise_for_status()
                 resp = await req.read()
         return resp

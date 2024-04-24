@@ -16,7 +16,6 @@ setuptools.setup(
     packages=setuptools.find_packages(exclude=["tests", "tests.*"]),
     install_requires=[
         "aiohttp>=3.5.4, <4",
-        "async_timeout>=4.0.2",
         "voluptuous>=0.11.5",
         "importlib_metadata>=3.6; python_version<'3.10'",
         "typing_extensions>=4.1.0; python_version<'3.11'",
