@@ -37,7 +37,7 @@ class X1HybridGen4(Inverter):
         return {
             "AC voltage R": (0, Units.V, div10),
             "AC current": (1, Units.A, div10),
-            "AC power": (2, Units.W),
+            "AC power": (2, Units.W, to_signed),
             "Grid frequency": (3, Units.HZ, div100),
             "PV1 voltage": (4, Units.V, div10),
             "PV2 voltage": (5, Units.V, div10),
