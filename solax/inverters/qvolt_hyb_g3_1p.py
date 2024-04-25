@@ -10,7 +10,6 @@ from solax.utils import (
     div1000,
     pack_u16,
     to_signed,
-    to_signed32,
     twoway_div10,
     twoway_div100,
 )
@@ -113,7 +112,8 @@ class QVOLTHYBG31P(Inverter):
             # 25: always 0
             # 26-27: jumping around
             # 28-31: always 0
-            "Current grid power": (pack_u16(32, 33), Units.W, to_signed32),
+            "Current grid power": (32, Units.W, to_signed),
+            # 33: if [32] > 32767 : 65535 ? 0
             "Total grid export": (pack_u16(34, 35), Total(Units.KWH), div100),
             "Total grid import": (pack_u16(36, 37), Total(Units.KWH), div100),
             "Current power usage": (38, Units.W, to_signed),
