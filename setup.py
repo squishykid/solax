@@ -33,7 +33,7 @@ setuptools.setup(
     entry_points={
         "solax.inverter": [
             "qvolt_hyb_g3_3p = solax.inverters.qvolt_hyb_g3_3p:QVOLTHYBG33P",
-            "qvolt_hyb_g3_1p = solax.inverters.qvolt_hyb_g3_3p:QVOLTHYBG31P",
+            "qvolt_hyb_g3_1p = solax.inverters.qvolt_hyb_g3_1p:QVOLTHYBG31P",
             "x1 = solax.inverters.x1:X1",
             "x1_boost = solax.inverters.x1_boost:X1Boost",
             "x1_hybrid_gen4 = solax.inverters.x1_hybrid_gen4:X1HybridGen4",
