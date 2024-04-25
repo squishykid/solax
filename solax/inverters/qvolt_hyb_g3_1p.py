@@ -7,6 +7,7 @@ from solax.units import DailyTotal, Measurement, Total, Units
 from solax.utils import (
     div10,
     div100,
+    div1000,
     pack_u16,
     to_signed,
     to_signed32,
@@ -143,7 +144,11 @@ class QVOLTHYBG31P(Inverter):
             # 101-109: fixed values
             # 110: battery type!?
             # 111-115: mysterious stuff
-            "Total battery energy throughput": (pack_u16(116, 117), Total(Units.WH)),
+            "Total battery energy throughput": (
+                pack_u16(116, 117),
+                Measurement(Units.KWH, storage=True),
+                div1000,
+            ),
             # 118-124: BMS serial number, ASCII, little-endian, 2 chars per register
             # 125-131: Battery 1 serial number, ASCII, little-endian, 2 chars per register
             # 132-138: Battery 2 serial number, ASCII, little-endian, 2 chars per register
