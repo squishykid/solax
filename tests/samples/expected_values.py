@@ -548,9 +548,10 @@ QVOLTHYBG31P_VALUES = {
     "Total grid export": 1179.00,
     "Total grid import": 16.83,
     "Current power usage": 940,
+    "Total self-used solar": 2105.0,
     "Today's grid export": 0.10,
     "Today's grid import": 1.63,
     "Today's solar yield": 8.3,
-    "Total battery energy throughput": 1398396,
+    "Total battery energy throughput": 1398.396,
     "Battery Operation mode": "Feed-in Priority",
 }

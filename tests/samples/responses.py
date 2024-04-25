@@ -3241,7 +3241,7 @@ QVOLTHYBG33P_RESPONSE_V34 = {
 }
 
 QVOLTHYBG31P_RESPONSE = {
-    "sn": "SXK*******",
+    "sn": "SXKXXXXXXX",
     "ver": "3.001.03",
     "type": 15,
     "Data": [
@@ -3446,5 +3446,5 @@ QVOLTHYBG31P_RESPONSE = {
         0,
         0,
     ],
-    "Information": [6.000, 15, "H460**********", 8, 1.29, 0.00, 1.27, 1.03, 0.00, 1],
+    "Information": [6.000, 15, "H460XXXXXXXXXX", 8, 1.29, 0.00, 1.27, 1.03, 0.00, 1],
 }
