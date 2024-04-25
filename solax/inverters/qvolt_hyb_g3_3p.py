@@ -18,6 +18,7 @@ class QVOLTHYBG33P(Inverter):
         Postprocessors used only in the QVOLTHYBG33P inverter sensor_map.
         """
 
+        # pylint: disable=duplicate-code
         @staticmethod
         def inverter_modes(value):
             return {
@@ -34,6 +35,7 @@ class QVOLTHYBG33P(Inverter):
                 10: "Standby",
             }.get(value, f"unmapped value '{value}'")
 
+        # pylint: disable=duplicate-code
         @staticmethod
         def battery_modes(value):
             return {
@@ -47,6 +49,7 @@ class QVOLTHYBG33P(Inverter):
         super().__init__(http_client, *args, **kwargs)
         self.manufacturer = "Qcells"
 
+    # pylint: disable=duplicate-code
     _schema = vol.Schema(
         {
             vol.Required("type"): vol.All(int, 14),
