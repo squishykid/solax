@@ -62,6 +62,10 @@ def div100(val):
     return val / 100
 
 
+def div1000(val):
+    return val / 1000
+
+
 INT16_MAX = 0x7FFF
 INT32_MAX = 0x7FFFFFFF
 
