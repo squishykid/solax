@@ -1,6 +1,20 @@
+from __future__ import annotations
+
+import dataclasses
+import sys
+from dataclasses import dataclass, field
 from enum import Enum
+from typing import Dict, Optional
+from weakref import WeakValueDictionary
 
 import aiohttp
+
+__all__ = ("InverterHttpClient", "Method")
+
+if sys.version_info >= (3, 10):
+    from dataclasses import KW_ONLY
+
+_CACHE: WeakValueDictionary[int, InverterHttpClient] = WeakValueDictionary()
 
 
 class Method(Enum):
@@ -8,40 +22,75 @@ class Method(Enum):
     POST = 2
 
 
+_kwargs: Dict[str, bool] = {}
+
+if sys.version_info >= (3, 11):
+    _kwargs["slots"] = True
+    _kwargs["weakref_slot"] = True
+
+
+@dataclass(frozen=True, **_kwargs)
 class InverterHttpClient:
-    def __init__(self, url, method: Method = Method.POST, pwd=""):
-        """Initialize the Http client."""
-        self.url = url
-        self.method = method
-        self.pwd = pwd
-        self.headers = None
-        self.data = None
-        self.query = ""
+    """Initialize the Http client."""
 
-    @classmethod
-    def build_w_url(cls, url, method: Method = Method.POST):
-        http_client = cls(url, method, "")
-        return http_client
+    if sys.version_info >= (3, 10):
+        _: KW_ONLY
 
-    def with_headers(self, headers):
-        self.headers = headers
-        return self
+    url: str
+    method: Method
+    pwd: str
+    headers: Dict[str, str] = field(default_factory=dict)
+    data: Optional[bytes] = None
+    query: str = ""
 
-    def with_default_data(self):
+    def __hash__(self):
+        return id(self)
+
+    def replace(self, **kwargs) -> InverterHttpClient:
+        fields = dataclasses.fields(InverterHttpClient)
+        data = {}
+        values = []
+
+        for fld in fields:
+            if fld.name in kwargs:
+                value = kwargs.pop(fld.name)
+            else:
+                value = getattr(self, fld.name)
+
+            data[fld.name] = value
+
+            if isinstance(value, dict):
+                value = dict(value)
+                values.append(tuple(value.items()))
+            else:
+                values.append(value)
+
+            data[fld.name] = value
+
+        key = hash(tuple(values))
+        cached = _CACHE.get(key)
+
+        if cached is None:
+            cached = _CACHE[key] = InverterHttpClient(**data)
+
+        return cached
+
+    def with_headers(self, headers) -> InverterHttpClient:
+        return self.replace(headers=dict(headers))
+
+    def with_default_data(self) -> InverterHttpClient:
         data = "optType=ReadRealTimeData"
         if self.pwd:
             data = data + "&pwd=" + self.pwd
         return self.with_data(data)
 
-    def with_data(self, data):
-        self.data = data
-        return self
+    def with_data(self, data) -> InverterHttpClient:
+        return self.replace(data=data)
 
-    def with_query(self, query):
-        self.query = query
-        return self
+    def with_query(self, query) -> InverterHttpClient:
+        return self.replace(query=query)
 
-    def with_default_query(self):
+    def with_default_query(self) -> InverterHttpClient:
         if self.pwd:
             base = "optType=ReadRealTimeData&pwd={}&"
             query = base.format(self.pwd)

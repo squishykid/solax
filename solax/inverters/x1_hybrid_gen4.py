@@ -1,8 +1,9 @@
+from typing import Any, Dict, Optional
+
 import voluptuous as vol
 
-from solax import utils
-from solax.inverter import Inverter, InverterHttpClient, Method, ResponseParser
-from solax.units import Total, Units
+from solax.inverter import Inverter
+from solax.units import DailyTotal, Total, Units
 from solax.utils import div10, div100, pack_u16, to_signed
 
 
@@ -15,28 +16,20 @@ class X1HybridGen4(Inverter):
                 "sn",
             ): str,
             vol.Required("ver"): str,
-            vol.Required("Data"): vol.Schema(
+            vol.Required("data"): vol.Schema(
                 vol.All(
                     [vol.Coerce(float)],
                     vol.Length(min=200, max=200),
                 )
             ),
-            vol.Required("Information"): vol.Schema(vol.All(vol.Length(min=9, max=10))),
+            vol.Required("information"): vol.Schema(vol.All(vol.Length(min=9, max=10))),
         },
         extra=vol.REMOVE_EXTRA,
     )
 
     @classmethod
-    def _build(cls, host, port, pwd="", params_in_query=True):
-        url = utils.to_url(host, port)
-        http_client = InverterHttpClient(url, Method.POST, pwd).with_default_data()
-
-        response_parser = ResponseParser(cls._schema, cls.response_decoder())
-        return cls(http_client, response_parser)
-
-    @classmethod
     def build_all_variants(cls, host, port, pwd=""):
-        versions = [cls._build(host, port, pwd)]
+        versions = [cls._build(host, port, pwd, False)]
         return versions
 
     @classmethod
@@ -53,7 +46,7 @@ class X1HybridGen4(Inverter):
             "PV1 power": (8, Units.W),
             "PV2 power": (9, Units.W),
             "On-grid total yield": (pack_u16(11, 12), Total(Units.KWH), div10),
-            "On-grid daily yield": (13, Units.KWH, div10),
+            "On-grid daily yield": (13, DailyTotal(Units.KWH), div10),
             "Battery voltage": (14, Units.V, div100),
             "Battery current": (15, Units.A, div100),
             "Battery power": (16, Units.W),
@@ -63,3 +56,7 @@ class X1HybridGen4(Inverter):
             "Total feed-in energy": (pack_u16(34, 35), Total(Units.KWH), div100),
             "Total consumption": (pack_u16(36, 37), Total(Units.KWH), div100),
         }
+
+    @classmethod
+    def inverter_serial_number_getter(cls, response: Dict[str, Any]) -> Optional[str]:
+        return response["information"][2]

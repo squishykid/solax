@@ -1,7 +1,9 @@
+from typing import Any, Dict, Optional
+
 import voluptuous as vol
 
 from solax.inverter import Inverter
-from solax.units import Total, Units
+from solax.units import DailyTotal, Total, Units
 from solax.utils import startswith
 
 
@@ -10,15 +12,15 @@ class X1Mini(Inverter):
     _schema = vol.Schema(
         {
             vol.Required("type"): vol.All(str, startswith("X1-")),
-            vol.Required("SN"): str,
+            vol.Required("sn"): str,
             vol.Required("ver"): str,
-            vol.Required("Data"): vol.Schema(
+            vol.Required("data"): vol.Schema(
                 vol.All(
                     [vol.Coerce(float)],
                     vol.Length(min=69, max=69),
                 )
             ),
-            vol.Required("Information"): vol.Schema(vol.All(vol.Length(min=9, max=9))),
+            vol.Required("information"): vol.Schema(vol.All(vol.Length(min=9, max=9))),
         },
         extra=vol.REMOVE_EXTRA,
     )
@@ -34,7 +36,7 @@ class X1Mini(Inverter):
             "Network Voltage": (5, Units.V),
             "AC Power": (6, Units.W),
             "Inverter Temperature": (7, Units.C),
-            "Today's Energy": (8, Units.KWH),
+            "Today's Energy": (8, DailyTotal(Units.KWH)),
             "Total Energy": (9, Total(Units.KWH)),
             "Exported Power": (10, Units.W),
             "PV1 Power": (11, Units.W),
@@ -46,3 +48,7 @@ class X1Mini(Inverter):
         }
 
     # pylint: enable=duplicate-code
+
+    @classmethod
+    def inverter_serial_number_getter(cls, response: Dict[str, Any]) -> Optional[str]:
+        return response["information"][3]

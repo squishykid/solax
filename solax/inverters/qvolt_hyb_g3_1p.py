@@ -1,8 +1,9 @@
+from typing import Any, Dict, Optional
+
 import voluptuous as vol
 
-from solax import utils
-from solax.inverter import Inverter, InverterHttpClient, Method, ResponseParser
-from solax.units import Total, Units
+from solax.inverter import Inverter, InverterHttpClient
+from solax.units import DailyTotal, Measurement, Total, Units
 from solax.utils import (
     div10,
     div100,
@@ -50,10 +51,8 @@ class QVOLTHYBG31P(Inverter):
                 3: "Feed-in Priority",
             }.get(value, f"unmapped value '{value}'")
 
-    def __init__(
-        self, http_client: InverterHttpClient, response_parser: ResponseParser
-    ):
-        super().__init__(http_client, response_parser)
+    def __init__(self, http_client: InverterHttpClient, *args, **kwargs):
+        super().__init__(http_client, *args, **kwargs)
         self.manufacturer = "Qcells"
 
     _schema = vol.Schema(
@@ -61,13 +60,13 @@ class QVOLTHYBG31P(Inverter):
             vol.Required("type"): vol.All(int, 15),
             vol.Required("sn"): str,
             vol.Required("ver"): str,
-            vol.Required("Data"): vol.Schema(
+            vol.Required("data"): vol.Schema(
                 vol.All(
                     [vol.Coerce(float)],
                     vol.Length(min=200, max=200),
                 )
             ),
-            vol.Required("Information"): vol.Schema(
+            vol.Required("information"): vol.Schema(
                 vol.All(vol.Length(min=10, max=10))
             ),
         },
@@ -89,7 +88,7 @@ class QVOLTHYBG31P(Inverter):
             "PV2 Power": (9, Units.W),
             "Inverter status": (10, Units.NONE, cls.Processors.inverter_modes),
             "Total inverter yield": (pack_u16(11, 12), Total(Units.KWH), div10),
-            "Today's inverter yield": (13, Units.KWH, div10),
+            "Today's inverter yield": (13, DailyTotal(Units.KWH), div10),
             "Battery Voltage": (14, Units.V, div100),
             "Battery Current": (15, Units.A, twoway_div100),
             "Battery Power": (16, Units.W, to_signed),
@@ -101,7 +100,11 @@ class QVOLTHYBG31P(Inverter):
                 div10,
             ),
             "Total battery charged energy": (pack_u16(21, 22), Total(Units.KWH), div10),
-            "Battery Remaining Energy": (23, Units.KWH, div10),
+            "Battery Remaining Energy": (
+                23,
+                Measurement(Units.KWH, storage=True),
+                div10,
+            ),
             # 24: always 100. probably 10.0%, minimum charge left before switching to grid
             # 25: always 0
             # 26-27: jumping around
@@ -124,10 +127,10 @@ class QVOLTHYBG31P(Inverter):
             # 70: fluctuates quite wildly
             # 72-73: 32 bit pack?
             # 74-77: fixed values
-            "Today's grid export": (pack_u16(78, 79), Units.KWH, div100),
-            "Today's grid import": (pack_u16(80, 81), Units.KWH, div100),
+            "Today's grid export": (pack_u16(78, 79), DailyTotal(Units.KWH), div100),
+            "Today's grid import": (pack_u16(80, 81), DailyTotal(Units.KWH), div100),
             # 82-84: always 0
-            "Today's solar yield": (85, Units.KWH, div10),
+            "Today's solar yield": (85, DailyTotal(Units.KWH), div10),
             # 86: something daily
             # 87: something else daily
             # 88-89: always 0
@@ -152,16 +155,10 @@ class QVOLTHYBG31P(Inverter):
         }
 
     @classmethod
-    def _build(cls, host, port, pwd="", params_in_query=True):
-        url = utils.to_url(host, port)
-        http_client = InverterHttpClient(url, Method.POST, pwd).with_default_data()
-
-        schema = cls._schema
-        response_decoder = cls.response_decoder()
-        response_parser = ResponseParser(schema, response_decoder)
-        return cls(http_client, response_parser)
+    def inverter_serial_number_getter(cls, response: Dict[str, Any]) -> Optional[str]:
+        return response["information"][2]
 
     @classmethod
     def build_all_variants(cls, host, port, pwd=""):
-        versions = [cls._build(host, port, pwd)]
+        versions = [cls._build(host, port, pwd, False)]
         return versions

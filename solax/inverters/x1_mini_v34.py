@@ -1,7 +1,9 @@
+from typing import Any, Dict, Optional
+
 import voluptuous as vol
 
 from solax.inverter import Inverter
-from solax.units import Total, Units
+from solax.units import DailyTotal, Total, Units
 from solax.utils import div10, div100
 
 
@@ -22,7 +24,7 @@ class X1MiniV34(Inverter):
                 "sn",
             ): str,
             vol.Required("ver"): str,
-            vol.Required("Data"): vol.Schema(
+            vol.Required("data"): vol.Schema(
                 vol.All(
                     [vol.Coerce(float)],
                     vol.Any(
@@ -32,7 +34,7 @@ class X1MiniV34(Inverter):
                     ),
                 )
             ),
-            vol.Required("Information"): vol.Schema(
+            vol.Required("information"): vol.Schema(
                 vol.Any(vol.Length(min=9, max=9), vol.Length(min=10, max=10))
             ),
         },
@@ -53,7 +55,7 @@ class X1MiniV34(Inverter):
             "PV2 Power": (8, Units.W),
             "Grid Frequency": (9, Units.HZ, div100),
             "Total Energy": (11, Total(Units.KWH), div10),
-            "Today's Energy": (13, Units.KWH, div10),
+            "Today's Energy": (13, DailyTotal(Units.KWH), div10),
             "Total Feed-in Energy": (41, Total(Units.KWH), div10),
             "Total Consumption": (42, Total(Units.KWH), div10),
             "Power Now": (43, Units.W, div10),
@@ -61,3 +63,7 @@ class X1MiniV34(Inverter):
         }
 
     # pylint: enable=duplicate-code
+
+    @classmethod
+    def inverter_serial_number_getter(cls, response: Dict[str, Any]) -> Optional[str]:
+        return response["information"][2]
