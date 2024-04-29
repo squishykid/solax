@@ -127,7 +127,11 @@ class X3Ultra(Inverter):
                 div100,
             ),
             "Battery Remaining Capacity": (158, Units.PERCENT),
-            "Battery Remaining Energy": (106, Measurement(Units.KWH), div10),
+            "Battery Remaining Energy": (
+                106,
+                Measurement(Units.KWH, storage=True),
+                div10,
+            ),
             "Inverter Power": (159, Units.W, div10),
         }
 
