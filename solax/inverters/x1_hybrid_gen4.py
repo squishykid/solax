@@ -52,6 +52,7 @@ class X1HybridGen4(Inverter):
             "Battery power": (16, Units.W),
             "Battery temperature": (17, Units.C),
             "Battery SoC": (18, Units.PERCENT),
+            "Inverter Temperature": (26, Units.C),
             "Grid power": (32, Units.W, to_signed),
             "Total feed-in energy": (pack_u16(34, 35), Total(Units.KWH), div100),
             "Total consumption": (pack_u16(36, 37), Total(Units.KWH), div100),
