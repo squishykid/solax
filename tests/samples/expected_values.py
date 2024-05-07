@@ -517,6 +517,7 @@ X1_HYBRID_G4_VALUES = {
     "Battery power": 541.0,
     "Battery temperature": 26.0,
     "Battery SoC": 82.0,
+    "Inverter Temperature": 30.0,
     "Grid power": 1.0,
     "Total feed-in energy": 286.7,
     "Total consumption": 6.2,
