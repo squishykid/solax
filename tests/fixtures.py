@@ -1,4 +1,5 @@
 from collections import namedtuple
+from copy import copy
 
 import pytest
 
@@ -306,3 +307,27 @@ def inverters_garbage_fixture(httpserver, request):
         query_string=request.param.query_string,
     ).respond_with_json({"bingo": "bango"})
     yield ((httpserver.host, httpserver.port), request.param.inverter)
+
+
+@pytest.fixture(params=INVERTERS_UNDER_TEST)
+def inverters_fixture_all_zero(httpserver, request):
+    """Use defined responses but replace the data with all zero values.
+    Testing incorrect responses.
+    """
+
+    response = request.param.response
+    response = copy(response)
+    response["Data"] = [0] * (len(response["Data"]))
+
+    httpserver.expect_request(
+        uri=request.param.uri,
+        method=request.param.method,
+        query_string=request.param.query_string,
+        headers=request.param.headers,
+        data=request.param.data,
+    ).respond_with_json(response)
+    yield (
+        (httpserver.host, httpserver.port),
+        request.param.inverter,
+        request.param.values,
+    )

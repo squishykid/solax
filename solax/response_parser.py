@@ -9,7 +9,7 @@ from voluptuous import Invalid, MultipleInvalid
 from voluptuous.humanize import humanize_error
 
 from solax.units import SensorUnit
-from solax.utils import PackerBuilderResult
+from solax.utils import PackerBuilderResult, contains_none_zero_value
 
 __all__ = ("ResponseParser", "InverterResponse", "ResponseDecoder")
 
@@ -39,6 +39,28 @@ class InverterResponse(
         return self.dongle_serial_number
 
 
+_KEY_DATA = "data"
+_KEY_SERIAL = "sn"
+_KEY_VERSION = "version"
+_KEY_VER = "ver"
+_KEY_TYPE = "type"
+
+
+GenericResponseSchema = vol.All(
+    vol.Schema({vol.Required(_KEY_SERIAL): str}, extra=vol.ALLOW_EXTRA),
+    vol.Any(
+        vol.Schema({vol.Required(_KEY_VERSION): str}, extra=vol.ALLOW_EXTRA),
+        vol.Schema({vol.Required(_KEY_VER): str}, extra=vol.ALLOW_EXTRA),
+    ),
+    vol.Schema(
+        {
+            vol.Required(_KEY_TYPE): vol.Any(int, str),
+            vol.Required(_KEY_DATA): vol.Schema(contains_none_zero_value),
+        },
+        extra=vol.ALLOW_EXTRA,
+    ),
+)
+
 ProcessorTuple = Tuple[Callable[[Any], Any], ...]
 SensorIndexSpec = Union[int, PackerBuilderResult]
 ResponseDecoder = Dict[
@@ -55,7 +77,7 @@ class ResponseParser:
         dongle_serial_number_getter: Callable[[Dict[str, Any]], Optional[str]],
         inverter_serial_number_getter: Callable[[Dict[str, Any]], Optional[str]],
     ) -> None:
-        self.schema = schema
+        self.schema = vol.And(GenericResponseSchema, schema)
         self.response_decoder = decoder
         self.dongle_serial_number_getter = dongle_serial_number_getter
         self.inverter_serial_number_getter = inverter_serial_number_getter
@@ -115,9 +137,9 @@ class ResponseParser:
             raise
 
         return InverterResponse(
-            data=self.map_response(response["data"]),
+            data=self.map_response(response[_KEY_DATA]),
             dongle_serial_number=self.dongle_serial_number_getter(response),
-            version=response.get("ver", response.get("version")),
-            type=response["type"],
+            version=response.get(_KEY_VER, response.get(_KEY_VERSION)),
+            type=response[_KEY_TYPE],
             inverter_serial_number=self.inverter_serial_number_getter(response),
         )
