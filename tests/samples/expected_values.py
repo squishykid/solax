@@ -244,7 +244,6 @@ X3_HYBRID_G4_VALUES = {
     "Grid 1 Frequency": 50.01,
     "Grid 2 Frequency": 50.01,
     "Grid 3 Frequency": 50.01,
-    "Run mode": 2.0,
     "Run mode text": "Normal",
     "EPS 1 Voltage": 0.0,
     "EPS 2 Voltage": 0.0,
