@@ -436,6 +436,25 @@ X1_BOOST_VALUES = {
     "Total Import Energy": 81.84,
 }
 
+X1_BOOST_VALUES_V3 = {
+    "AC Voltage": 228.1,
+    "AC Output Current": 3.1,
+    "AC Output Power": 703.0,
+    "PV1 Voltage": 120.7,
+    "PV2 Voltage": 125.4,
+    "PV1 Current": 2.9,
+    "PV2 Current": 2.9,
+    "PV1 Power": 356.0,
+    "PV2 Power": 365.0,
+    "AC Frequency": 50.02,
+    "Total Generated Energy": 2029.3,
+    "Today's Generated Energy": 5.0,
+    "Inverter Temperature": 30.0,
+    "Exported Power": 0.0,
+    "Total Export Energy": 0.0,
+    "Total Import Energy": 0.0,
+}
+
 X1_BOOST_VALUES_OVERFLOWN = {
     "AC Voltage": 237.4,
     "AC Output Current": 6.7,

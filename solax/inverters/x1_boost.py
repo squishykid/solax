@@ -24,7 +24,10 @@ class X1Boost(Inverter):
             vol.Required("data"): vol.Schema(
                 vol.All(
                     [vol.Coerce(float)],
-                    vol.Length(min=200, max=200),
+                    vol.Any(
+                        vol.Length(min=100, max=100),
+                        vol.Length(min=200, max=200),
+                    ),
                 )
             ),
             vol.Required("information"): vol.Schema(
