@@ -9,14 +9,14 @@ from solax.utils import div10, div100, pack_u16, to_signed
 
 class X1Boost(Inverter):
     """
-    X1-Boost with Pocket WiFi 2.034.06
+    X1-Boost with Pocket WiFi 2.034.06 or 3.009.03
     Includes X-Forwarded-For for direct LAN API access
     """
 
     # pylint: disable=duplicate-code
     _schema = vol.Schema(
         {
-            vol.Required("type", "type"): vol.All(int, 4),
+            vol.Required("type", "type"): int,
             vol.Required(
                 "sn",
             ): str,
