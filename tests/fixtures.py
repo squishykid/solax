@@ -149,7 +149,6 @@ INVERTERS_UNDER_TEST = [
         headers=X_FORWARDED_HEADER,
         data=None,
     ),
-
     InverterUnderTest(
         uri="/",
         method="POST",
@@ -160,7 +159,6 @@ INVERTERS_UNDER_TEST = [
         headers=X_FORWARDED_HEADER,
         data=None,
     ),
-
     InverterUnderTest(
         uri="/",
         method="POST",

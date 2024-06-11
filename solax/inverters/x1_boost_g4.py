@@ -22,10 +22,7 @@ class X1BoostG4(Inverter):
             ): str,
             vol.Required("ver"): str,
             vol.Required("data"): vol.Schema(
-                vol.All(
-                    [vol.Coerce(float)],
-                    vol.Length(min=100, max=100)
-                )
+                vol.All([vol.Coerce(float)], vol.Length(min=100, max=100))
             ),
             vol.Required("information"): vol.Schema(
                 vol.All(vol.Length(min=10, max=10))
