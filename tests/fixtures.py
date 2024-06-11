@@ -9,6 +9,7 @@ from tests.samples.expected_values import (
     X1_BOOST_VALUES,
     X1_BOOST_VALUES_OVERFLOWN,
     X1_BOOST_VALUES_V3,
+    X1_BOOST_VALUES_G4_V3,
     X1_HYBRID_G4_VALUES,
     X1_MINI_VALUES,
     X1_MINI_VALUES_V34,
@@ -31,6 +32,7 @@ from tests.samples.responses import (
     X1_BOOST_RESPONSE,
     X1_BOOST_RESPONSE_OVERFLOWN,
     X1_BOOST_RESPONSE_V3,
+    X1_BOOST_RESPONSE_G4_V3,
     X1_HYBRID_G3_2X_MPPT_RESPONSE,
     X1_HYBRID_G3_RESPONSE,
     X1_HYBRID_G4_RESPONSE,
@@ -147,6 +149,18 @@ INVERTERS_UNDER_TEST = [
         headers=X_FORWARDED_HEADER,
         data=None,
     ),
+
+    InverterUnderTest(
+        uri="/",
+        method="POST",
+        query_string="optType=ReadRealTimeData",
+        response=X1_BOOST_RESPONSE_G4_V3,
+        inverter=inverter.X1BoostG4,
+        values=X1_BOOST_VALUES_G4_V3,
+        headers=X_FORWARDED_HEADER,
+        data=None,
+    ),
+
     InverterUnderTest(
         uri="/",
         method="POST",

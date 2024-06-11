@@ -27,7 +27,6 @@ XHYBRID_VALUES = {
     "Grid Imported Energy": 42,
 }
 
-
 X3_VALUES = {
     "PV1 Current": 0,
     "PV2 Current": 1,
@@ -378,7 +377,6 @@ X1_MINI_VALUES_V34 = {
     "Inverter Temperature": 41,
 }
 
-
 X1_MINI_VALUES_V34_VER3 = {
     "Network Voltage": 234.8,
     "Output Current": 0.7,
@@ -472,6 +470,25 @@ X1_BOOST_VALUES_OVERFLOWN = {
     "Exported Power": 1444,
     "Total Export Energy": 11348.18,
     "Total Import Energy": 1850.05,
+}
+
+X1_BOOST_VALUES_G4_V3 = {
+    "AC Voltage": 239.7,
+    "AC Output Current": 0.9,
+    "AC Output Power": 128.0,
+    "PV1 Voltage": 164.5,
+    "PV2 Voltage": 0.0,
+    "PV1 Current": 0.8,
+    "PV2 Current": 0.0,
+    "PV1 Power": 138.0,
+    "PV2 Power": 0.0,
+    "AC Frequency": 50.02,
+    "Total Generated Energy": 7.8,
+    "Today's Generated Energy": 6.8,
+    "Inverter Temperature": 17.9,
+    "Exported Power": 0.0,
+    "Total Export Energy": 0.0,
+    "Total Import Energy": 0.0,
 }
 
 QVOLTHYBG33P_VALUES = {
