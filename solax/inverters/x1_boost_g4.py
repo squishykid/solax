@@ -46,7 +46,6 @@ class X1BoostG4(Inverter):
             "AC Frequency": (2, Units.HZ, div100),
             "Total Generated Energy": (pack_u16(19, 20), Total(Units.KWH), div10),
             "Today's Generated Energy": (21, DailyTotal(Units.KWH), div10),
-            "Inverter Temperature": (28, Units.C, div10),
             "Exported Power": (pack_u16(72, 73), Units.W, to_signed),
             "Total Export Energy": (pack_u16(74, 75), Total(Units.KWH), div100),
             "Total Import Energy": (pack_u16(76, 77), Total(Units.KWH), div100),

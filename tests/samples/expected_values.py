@@ -485,7 +485,6 @@ X1_BOOST_VALUES_G4_V3 = {
     "AC Frequency": 50.02,
     "Total Generated Energy": 7.8,
     "Today's Generated Energy": 6.8,
-    "Inverter Temperature": 17.9,
     "Exported Power": 0.0,
     "Total Export Energy": 0.0,
     "Total Import Energy": 0.0,
