@@ -55,7 +55,7 @@ class QVOLTHYBG33P(Inverter):
             vol.Required("data"): vol.Schema(
                 vol.All(
                     [vol.Coerce(float)],
-                    vol.Length(min=200, max=200),
+                    vol.Length(min=200, max=400),
                 )
             ),
             vol.Required("information"): vol.Schema(
