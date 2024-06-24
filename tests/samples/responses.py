@@ -1754,7 +1754,7 @@ X1_HYBRID_G4_RESPONSE = {
 }
 
 X3_EVC_RESPONSE = {
-    "type": "1",
+    "type": 1,
     "SN": "SQXXXXXXXX",
     "ver": "3.007.05",
     "Data": [
