@@ -132,7 +132,6 @@ X3_EVC_VALUES = {
     "Type Power": 87,
     "Type Phase": 88,
     "Type Charger": 89,
-
 }
 
 X3V34_HYBRID_VALUES = {
