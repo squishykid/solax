@@ -11,6 +11,7 @@ from .x3_mic_pro_g2 import X3MicProG2
 from .x3_ultra import X3Ultra
 from .x3_v34 import X3V34
 from .x_hybrid import XHybrid
+from .x3_evc import X3EVC
 
 __all__ = [
     "QVOLTHYBG33P",
@@ -26,4 +27,5 @@ __all__ = [
     "X1HybridGen4",
     "X3MicProG2",
     "X3Ultra",
+    "X3EVC",
 ]
