@@ -3,7 +3,7 @@ from typing import Any, Dict, Optional
 import voluptuous as vol
 
 from solax.inverter import Inverter
-from solax.units import DailyTotal, Measurement, Total, Units
+from solax.units import Total, Units
 from solax.utils import (
     div10,
     div100,
