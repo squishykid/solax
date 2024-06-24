@@ -102,6 +102,39 @@ X3_HYBRID_VALUES = {
     "EPS Frequency": 0,
 }
 
+X3_EVC_VALUES = {
+    "Device State": "Preparing",
+    "Device Mode": "STOP",
+    "EQ Single": 1.2,
+    "EQ Total": 2.9,
+    "Total Charger Power": 11,
+    "Voltage A": 0.02,
+    "Voltage B": 0.03,
+    "Voltage C": 0.04,
+    "Current A": 0.05,
+    "Current B": 0.06,
+    "Current C": 0.07,
+    "Charger Power A": 8,
+    "Charger Power B": 9,
+    "Charger Power C": 10,
+    "Extern Current A": 0.016,
+    "Extern Current B": 0.017,
+    "Extern Current C": 0.018,
+    "Extern Power A": 19,
+    "Extern Power B": 20,
+    "Extern Power C": 21,
+    "Extern Total Power": 22,
+    "Temperature Plug": 23,
+    "Temperature PCB": 24,
+    "CP State": 26,
+    "Charging Duration": 161,
+    "OCPP Offline Mode": 85,
+    "Type Power": 87,
+    "Type Phase": 88,
+    "Type Charger": 89,
+
+}
+
 X3V34_HYBRID_VALUES = {
     "Network Voltage Phase 1": 246.8,
     "Network Voltage Phase 2": 249,
