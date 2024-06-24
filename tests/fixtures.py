@@ -19,6 +19,7 @@ from tests.samples.expected_values import (
     X3_MICPRO_G2_VALUES,
     X3_ULTRA_VALUES,
     X3_VALUES,
+    X3_EVC_VALUES,
     X3V34_HYBRID_VALUES,
     X3V34_HYBRID_VALUES_EPS_MODE,
     X3V34_HYBRID_VALUES_NEGATIVE_POWER,
@@ -46,6 +47,7 @@ from tests.samples.responses import (
     X3_ULTRA_RESPONSE,
     XHYBRID_DE01_RESPONSE,
     XHYBRID_DE02_RESPONSE,
+    X3_EVC_RESPONSE,
 )
 
 X_FORWARDED_HEADER = {"X-Forwarded-For": "5.8.8.8"}
@@ -232,6 +234,16 @@ INVERTERS_UNDER_TEST = [
         response=X3_HYBRID_G4_RESPONSE,
         inverter=inverter.X3HybridG4,
         values=X3_HYBRID_G4_VALUES,
+        headers=None,
+        data="optType=ReadRealTimeData",
+    ),
+    InverterUnderTest(
+        uri="/",
+        method="POST",
+        query_string=None,
+        response=X3_EVC_RESPONSE,
+        inverter=inverter.X3EVC,
+        values=X3_EVC_VALUES,
         headers=None,
         data="optType=ReadRealTimeData",
     ),
