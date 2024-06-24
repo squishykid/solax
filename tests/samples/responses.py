@@ -1855,7 +1855,6 @@ X3_EVC_RESPONSE = {
         94,
         95,
     ],
-    "Information": [0.000, 5, "X3-Hybiyd-G3", "XXXXXXX", 1, 3.00, 0.00, 3.17, 1.01],
     "Information": [
         11.000,
         1,
