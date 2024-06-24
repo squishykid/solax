@@ -104,7 +104,7 @@ X3_HYBRID_VALUES = {
 
 X3_EVC_VALUES = {
     "Device State": "Preparing",
-    "Device Mode": "STOP",
+    "Device Mode": "FAST",
     "EQ Single": 1.2,
     "EQ Total": 2.9,
     "Total Charger Power": 11,
