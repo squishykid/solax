@@ -27,5 +27,5 @@ __all__ = [
     "X1HybridGen4",
     "X3MicProG2",
     "X3Ultra",
-    "X3EVC",
+    "X3EVC"
 ]
