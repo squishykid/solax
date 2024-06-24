@@ -16,7 +16,7 @@ from solax.utils import (
 
 
 class X3EVC(Inverter):
-    """X3 EVC """
+    """X3 EVC"""
 
     # pylint: disable=duplicate-code
     _schema = vol.Schema(
@@ -70,7 +70,11 @@ class X3EVC(Inverter):
             "Device State": (0, Units.NONE, X3EVC._decode_device_state),
             "Device Mode": (1, Units.NONE, X3EVC._decode_device_mode),
             "EQ Single": (12, Total(Units.KWH), div10),
-            "EQ Total": (pack_u16(14, 15), Total(Units.KWH), twoway_div10), # not sure if correct
+            "EQ Total": (
+                pack_u16(14, 15),
+                Total(Units.KWH),
+                twoway_div10,
+            ),  # not sure if correct
             "Total Charger Power": (11, Units.W),
             "Voltage A": (2, Units.V, div100),
             "Voltage B": (3, Units.V, div100),
