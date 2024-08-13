@@ -54,12 +54,14 @@ class X1MiniV34(Inverter):
             "PV1 Power": (7, Units.W),
             "PV2 Power": (8, Units.W),
             "Grid Frequency": (9, Units.HZ, div100),
+            "Mode": (10, None),
             "Total Energy": (11, Total(Units.KWH), div10),
             "Today's Energy": (13, DailyTotal(Units.KWH), div10),
-            "Total Feed-in Energy": (41, Total(Units.KWH), div10),
+            "Operating Hours": (41, None),
             "Total Consumption": (42, Total(Units.KWH), div10),
             "Power Now": (43, Units.W, div10),
             "Inverter Temperature": (55, Units.C),
+            "Ambient Temperature": (39, Units.C),
         }
 
     # pylint: enable=duplicate-code
