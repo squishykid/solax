@@ -6,6 +6,7 @@ import pytest
 import solax.inverters as inverter
 from tests.samples.expected_values import (
     QVOLTHYBG33P_VALUES,
+    QVOLTHYBG33P_VALUES_V3_15,
     X1_BOOST_VALUES,
     X1_BOOST_VALUES_G4_V3,
     X1_BOOST_VALUES_OVERFLOWN,
@@ -28,6 +29,7 @@ from tests.samples.expected_values import (
     XHYBRID_VALUES,
 )
 from tests.samples.responses import (
+    QVOLTHYBG33P_RESPONSE_V3_15,
     QVOLTHYBG33P_RESPONSE_V34,
     X1_BOOST_AIR_MINI_RESPONSE,
     X1_BOOST_RESPONSE,
@@ -298,6 +300,16 @@ INVERTERS_UNDER_TEST = [
         response=QVOLTHYBG33P_RESPONSE_V34,
         inverter=inverter.QVOLTHYBG33P,
         values=QVOLTHYBG33P_VALUES,
+        headers=None,
+        data=None,
+    ),
+    InverterUnderTest(
+        uri="/",
+        method="POST",
+        query_string="",
+        response=QVOLTHYBG33P_RESPONSE_V3_15,
+        inverter=inverter.QVOLTHYBG33P,
+        values=QVOLTHYBG33P_VALUES_V3_15,
         headers=None,
         data=None,
     ),
