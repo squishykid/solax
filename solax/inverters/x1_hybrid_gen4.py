@@ -19,7 +19,7 @@ class X1HybridGen4(Inverter):
             vol.Required("data"): vol.Schema(
                 vol.All(
                     [vol.Coerce(float)],
-                    vol.Length(min=200, max=200),
+                    vol.Length(min=200, max=300),
                 )
             ),
             vol.Required("information"): vol.Schema(vol.All(vol.Length(min=9, max=10))),

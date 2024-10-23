@@ -651,3 +651,27 @@ X3_ULTRA_VALUES = {
     "Battery Remaining Energy": 1.7,
     "Inverter Power": 66.4,
 }
+
+X1_HYBRID_G4_V_3_018_VALUES = {
+    "AC voltage R": 244.1,
+    "AC current": 1.7,
+    "AC power": 384.0,
+    "Grid frequency": 49.89,
+    "PV1 voltage": 264.1,
+    "PV2 voltage": 265.2,
+    "PV1 current": 5.7,
+    "PV2 current": 5.6,
+    "PV1 power": 1523.0,
+    "PV2 power": 1511.0,
+    "On-grid total yield": 198.8,
+    "On-grid daily yield": 4.6,
+    "Battery voltage": 241.0,
+    "Battery current": 11.0,
+    "Battery power": 2665.0,
+    "Battery temperature": 16.0,
+    "Battery SoC": 53.0,
+    "Inverter Temperature": 28.0,
+    "Grid power": 0.0,
+    "Total feed-in energy": 41.20,
+    "Total consumption": 13.2,
+}
