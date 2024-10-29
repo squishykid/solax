@@ -72,7 +72,7 @@ class X3MicProG2(Inverter):
             "Run Mode": (21, Units.NONE, X3MicProG2._decode_run_mode),
             "Total Yield": (pack_u16(22, 23), Total(Units.KWH), div10),
             "Daily Yield": (24, DailyTotal(Units.KWH), div10),
-            "Feed-in Power ": (pack_u16(72, 73), Units.W, to_signed32),
+            "Feed-in Power": (pack_u16(72, 73), Units.W, to_signed32),
             "Total Feed-in Energy": (pack_u16(74, 75), Total(Units.KWH), div100),
             "Total Consumption": (pack_u16(76, 77), Total(Units.KWH), div100),
         }
