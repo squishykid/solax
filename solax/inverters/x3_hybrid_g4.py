@@ -118,8 +118,10 @@ class X3HybridG4(Inverter):
             "PV Energy total": (pack_u16(80, 81), Total(Units.KWH), div10),
             "EPS Energy total": (pack_u16(83, 84), Total(Units.KWH), div10),
             "EPS Energy today": (85, DailyTotal(Units.KWH), div10),
-            "Feed-in Energy today": (pack_u16(90, 91), DailyTotal(Units.KWH), div100),
-            "Consumed Energy today": (pack_u16(92, 93), DailyTotal(Units.KWH), div100),
+            #TODO: Partially reverting b2a9ac5 until last_reset is fixed in
+            # HA core - closed PR https://github.com/home-assistant/core/pull/114743
+            "Feed-in Energy today": (pack_u16(90, 91), Total(Units.KWH), div100),
+            "Consumed Energy today": (pack_u16(92, 93), Total(Units.KWH), div100),
             "Feed-in Energy total": (pack_u16(86, 87), Total(Units.KWH), div100),
             "Consumed Energy total": (pack_u16(88, 89), Total(Units.KWH), div100),
             "Battery Remaining Capacity": (103, Units.PERCENT),
