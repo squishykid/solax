@@ -45,6 +45,7 @@ setuptools.setup(
             "x3_mic_pro_g2 = solax.inverters.x3_mic_pro_g2:X3MicProG2",
             "x3_v34 = solax.inverters.x3_v34:X3V34",
             "x_hybrid = solax.inverters.x_hybrid:XHybrid",
+            "x3_evc = solax.inverters.x3_evc:X3EVC",
         ],
     },
 )

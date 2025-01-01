@@ -98,7 +98,7 @@ class X3HybridG4(Inverter):
             "EPS 1 Power": (29, Units.W, to_signed),
             "EPS 2 Power": (30, Units.W, to_signed),
             "EPS 3 Power": (31, Units.W, to_signed),
-            "Grid Power ": (pack_u16(34, 35), Units.W, to_signed32),
+            "Grid Power": (pack_u16(34, 35), Units.W, to_signed32),
             # 'Battery Voltage' is twice in the json response and covered with 169, 170 below.
             # "Battery Voltage": (39, Units.V, div100),
             "Battery Current": (40, Units.A, twoway_div100),
@@ -118,10 +118,10 @@ class X3HybridG4(Inverter):
             "PV Energy total": (pack_u16(80, 81), Total(Units.KWH), div10),
             "EPS Energy total": (pack_u16(83, 84), Total(Units.KWH), div10),
             "EPS Energy today": (85, DailyTotal(Units.KWH), div10),
-            "Feed-in Energy": (pack_u16(86, 87), Total(Units.KWH), div100),
-            "Consumed Energy": (pack_u16(88, 89), Total(Units.KWH), div100),
-            "Feed-in Energy total": (pack_u16(90, 91), Total(Units.KWH), div100),
-            "Consumed Energy total": (pack_u16(92, 93), Total(Units.KWH), div100),
+            "Feed-in Energy today": (pack_u16(90, 91), DailyTotal(Units.KWH), div100),
+            "Consumed Energy today": (pack_u16(92, 93), DailyTotal(Units.KWH), div100),
+            "Feed-in Energy total": (pack_u16(86, 87), Total(Units.KWH), div100),
+            "Consumed Energy total": (pack_u16(88, 89), Total(Units.KWH), div100),
             "Battery Remaining Capacity": (103, Units.PERCENT),
             "Battery Temperature": (105, Units.C, to_signed),
             "Battery Remaining Energy": (

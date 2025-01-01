@@ -92,7 +92,7 @@ class X3Ultra(Inverter):
             "EPS 1 Power": (29, Units.W, to_signed),
             "EPS 2 Power": (30, Units.W, to_signed),
             "EPS 3 Power": (31, Units.W, to_signed),
-            "Grid Power ": (pack_u16(34, 35), Units.W, to_signed32),
+            "Grid Power": (pack_u16(34, 35), Units.W, to_signed32),
             "Battery 1 Voltage": (39, Units.V, div10),
             "Battery 2 Voltage": (132, Units.V, div10),
             "Battery 1 Current": (40, Units.A, twoway_div100),

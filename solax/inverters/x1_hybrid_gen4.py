@@ -19,7 +19,7 @@ class X1HybridGen4(Inverter):
             vol.Required("data"): vol.Schema(
                 vol.All(
                     [vol.Coerce(float)],
-                    vol.Length(min=200, max=200),
+                    vol.Length(min=200, max=300),
                 )
             ),
             vol.Required("information"): vol.Schema(vol.All(vol.Length(min=9, max=10))),
@@ -49,7 +49,7 @@ class X1HybridGen4(Inverter):
             "On-grid daily yield": (13, DailyTotal(Units.KWH), div10),
             "Battery voltage": (14, Units.V, div100),
             "Battery current": (15, Units.A, div100),
-            "Battery power": (16, Units.W),
+            "Battery power": (16, Units.W, to_signed),
             "Battery temperature": (17, Units.C),
             "Battery SoC": (18, Units.PERCENT),
             "Inverter Temperature": (26, Units.C),
