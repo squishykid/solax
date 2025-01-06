@@ -428,6 +428,25 @@ X1_MINI_VALUES_V34_VER3 = {
     "Inverter Temperature": 39.0,
 }
 
+
+X1_MINI_G4_VALUES = {
+    "AC Voltage": 226.1,
+    "AC Output Current": 0.4,
+    "AC Output Power": 0.0,
+    "PV1 Voltage": 77.9,
+    "PV2 Voltage": 0.0,
+    "PV1 Current": 0.0,
+    "PV2 Current": 0.0,
+    "PV1 Power": 0.0,
+    "PV2 Power": 0.0,
+    "AC Frequency": 50.04,
+    "Total Generated Energy": 638.3,
+    "Today's Generated Energy": 1.1,
+    "Exported Power": 0.0,
+    "Total Export Energy": 0.0,
+    "Total Import Energy": 0.0,
+}
+
 X1_SMART_VALUES = {
     "Network Voltage": 239.6,
     "Output Current": 12.6,

@@ -7,16 +7,20 @@ from solax.units import DailyTotal, Total, Units
 from solax.utils import div10, div100, pack_u16, to_signed
 
 
-class X1BoostG4(Inverter):
+class X1G4Series(Inverter):
     """
+    Tested with
     X1-Boost gen 4 with Pocket WiFi 3.009.03
+    and
+    X1-Mini gen 4 WIFI+LAN 1.001.20
+
     Includes X-Forwarded-For for direct LAN API access
     """
 
     # pylint: disable=duplicate-code
     _schema = vol.Schema(
         {
-            vol.Required("type", "type"): vol.All(int, 18),
+            vol.Required("type", "type"): vol.All(int, vol.Any(18, 22)),
             vol.Required(
                 "sn",
             ): str,
