@@ -6,16 +6,16 @@ import solax
 from solax import InverterResponse
 from solax.discovery import REGISTRY, DiscoveryError
 from solax.inverter import InverterError
-from solax.inverters import X1Boost
+from solax.inverters import X1BoostAirMini
 
 
-class DelayedX1Boost(X1Boost):
+class DelayedX1Boost(X1BoostAirMini):
     async def get_data(self) -> InverterResponse:
         await asyncio.sleep(10)
         return await super().get_data()
 
 
-class DelayedFailedX1Boost(X1Boost):
+class DelayedFailedX1Boost(X1BoostAirMini):
     async def make_request(self) -> InverterResponse:
         await asyncio.sleep(5)
         raise InverterError
@@ -38,7 +38,7 @@ async def test_discovery(inverters_fixture):
 async def test_real_time_api(inverters_fixture):
     conn, inverter_class, _ = inverters_fixture
 
-    if inverter_class is not X1Boost:
+    if inverter_class is not X1BoostAirMini:
         pytest.skip()
 
     rt_api = await solax.real_time_api(*conn)
@@ -51,7 +51,7 @@ async def test_discovery_cancelled_error_while_staggering(
 ):
     conn, inverter_class, _ = inverters_fixture
 
-    if inverter_class is not X1Boost:
+    if inverter_class is not X1BoostAirMini:
         pytest.skip()
 
     task = asyncio.create_task(
@@ -69,7 +69,7 @@ async def test_discovery_cancelled_error_after_staggering(
 ):
     conn, inverter_class, _ = inverters_fixture
 
-    if inverter_class is not X1Boost:
+    if inverter_class is not X1BoostAirMini:
         pytest.skip()
 
     inverters = set(REGISTRY)
@@ -90,7 +90,7 @@ async def test_discovery_first_completed_after_staggering(
 ):
     conn, inverter_class, _ = inverters_fixture
 
-    if inverter_class is not X1Boost:
+    if inverter_class is not X1BoostAirMini:
         pytest.skip()
 
     inverter = await solax.discover(
@@ -105,7 +105,7 @@ async def test_discovery_not_first_completed_after_staggering(
 ):
     conn, inverter_class, _ = inverters_fixture
 
-    if inverter_class is not X1Boost:
+    if inverter_class is not X1BoostAirMini:
         pytest.skip()
 
     inverters = await solax.discover(
