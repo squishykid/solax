@@ -306,7 +306,6 @@ X3_HYBRID_G4_VALUES = {
     "Battery Remaining Capacity": 30.0,
     "Battery Temperature": 22.0,
     "Battery Remaining Energy": 3.3,
-    "Battery mode": 0.0,
     "Battery mode text": "Self Use Mode",
     "Battery Voltage": 234.6,
 }
