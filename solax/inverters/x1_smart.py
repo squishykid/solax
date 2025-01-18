@@ -24,10 +24,10 @@ class X1Smart(Inverter):
             vol.Required("data"): vol.Schema(
                 vol.All(
                     [vol.Coerce(float)],
-                    vol.Length(min=200, max=200),
+                    vol.Length(min=100, max=200),
                 )
             ),
-            vol.Required("information"): vol.Schema(vol.All(vol.Length(min=8, max=8))),
+            vol.Required("information"): vol.Schema(vol.All(vol.Length(min=8, max=10))),
         },
         extra=vol.REMOVE_EXTRA,
     )
