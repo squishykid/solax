@@ -130,7 +130,7 @@ class X3HybridG4(Inverter):
                 div10,
             ),
             # "Battery mode": (168, Units.NONE), # Only use the index once due to HA uids
-            "Battery mode text": (168, Units.NONE, X3HybridG4._decode_battery_mode),
+            "Battery mode": (168, Units.NONE, X3HybridG4._decode_battery_mode),
             "Battery Voltage": (pack_u16(169, 170), Units.V, div100),
         }
 
