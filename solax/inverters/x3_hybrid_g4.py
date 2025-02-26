@@ -27,7 +27,7 @@ class X3HybridG4(Inverter):
             vol.Required("data"): vol.Schema(
                 vol.All(
                     [vol.Coerce(float)],
-                    vol.Length(min=300, max=300),
+                    vol.Length(min=200, max=300),
                 )
             ),
             vol.Required("information"): vol.Schema(
@@ -39,7 +39,12 @@ class X3HybridG4(Inverter):
 
     @classmethod
     def build_all_variants(cls, host, port, pwd=""):
-        return [cls._build(host, port, pwd, False)]
+        versions = [cls._build(host, port, pwd, False)]
+        for inverter in versions:
+            inverter.http_client = inverter.http_client.with_headers(
+                {"X-Forwarded-For": "5.8.8.8"}
+            )
+        return versions
 
     @classmethod
     def _decode_run_mode(cls, run_mode):
