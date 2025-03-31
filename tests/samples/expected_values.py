@@ -427,7 +427,6 @@ X1_MINI_VALUES_V34_VER3 = {
     "Inverter Temperature": 39.0,
 }
 
-
 X1_MINI_G4_VALUES = {
     "AC Voltage": 226.1,
     "AC Output Current": 0.4,
@@ -557,6 +556,55 @@ X1_BOOST_VALUES_G4_V3 = {
     "Exported Power": 0.0,
     "Total Export Energy": 0.0,
     "Total Import Energy": 0.0,
+}
+
+X1_LITE_LV_80_VALUES = {
+    "AC Voltage": 239.7,
+    "AC Output Current": 0.9,
+    "AC Output Power": 1280,
+    "AC Frequency": 50.02,
+    "Grid PF": 100.0,
+    "AC Voltage Out": 229.5,
+    "AC Frequency Out": 49.9,
+    "Grid Power": 0.0,
+    "Hourly Energy": 82.24,
+    "PV1 Voltage": 328.7,
+    "PV2 Voltage": 256.1,
+    "PV3 Voltage": 0.0,
+    "PV1 Current": 11.0,
+    "PV2 Current": 9.6,
+    "PV3 Current": 0.0,
+    "PV1 Power": 189.5,
+    "PV2 Power": 98.5,
+    "PV3 Power": 0.0,
+    "Total PV Power": 0.0,
+    "Today's PV Energy": 0.2,
+    "Total PV Energy": 255.0,
+    "Battery Type": 0.0,
+    "Battery voltage": 52.6,
+    "Battery current": -7.3,
+    "Total Battery power": -38.8,
+    "Battery SoC": 62.0,
+    "Battery Temperature 1": 19.0,
+    "Battery Temperature 2": 21.0,
+    "Battery Temperature 3": 22.0,
+    "Battery Temperature 4": 19.0,
+    "Battery Temperature": 19.0,
+    "Battery Charge total": 111.4,
+    "Battery Discharge total": 163.0,
+    "Battery Charge today": 0.0,
+    "Battery Discharge today": 4.0,
+    "Charging Duration": 0.0,
+    "Today's Battery Discharge": 0.0,
+    "Total Battery Discharge": 163.0,
+    "Today's Battery Charge": 4.0,
+    "Total Battery Charge": 111.4,
+    "Today's Generated Energy": 0.0,
+    "Total Generated Energy": 120.6,
+    "Today's EPS Energy": 4.7,
+    "Total EPS Energy": 224.5,
+    "Today's Import Energy": 3.2,
+    "Total Import Energy": 282.9,
 }
 
 QVOLTHYBG33P_VALUES = {
