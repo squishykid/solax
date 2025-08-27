@@ -12,14 +12,12 @@ class X1LiteLV(Inverter):
     _schema = vol.Schema(
         {
             vol.Required("type"): int,
-            vol.Required(
-                "sn",
-            ): str,
+            vol.Required("sn"): str,
             vol.Required("ver"): str,
             vol.Required("data"): vol.Schema(
                 vol.All(
                     [vol.Coerce(float)],
-                    vol.Length(min=200, max=200),
+                    vol.Length(min=200, max=300),
                 )
             ),
             vol.Required("information"): vol.Schema(vol.All(vol.Length(min=1, max=15))),
