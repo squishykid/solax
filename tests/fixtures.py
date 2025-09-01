@@ -12,7 +12,8 @@ from tests.samples.expected_values import (
     X1_BOOST_VALUES_V3,
     X1_HYBRID_G4_V_3_018_VALUES,
     X1_HYBRID_G4_VALUES,
-    X1_LITE_LV_80_VALUES,
+    X1_LITE_LV_80_v002_VALUES,
+    X1_LITE_LV_80_v005_VALUES,
     X1_MINI_G4_VALUES,
     X1_MINI_VALUES,
     X1_MINI_VALUES_V34,
@@ -29,7 +30,7 @@ from tests.samples.expected_values import (
     X3V34_HYBRID_VALUES,
     X3V34_HYBRID_VALUES_EPS_MODE,
     X3V34_HYBRID_VALUES_NEGATIVE_POWER,
-    XHYBRID_VALUES,
+    XHYBRID_VALUES, X1_LITE_LV_80_v005_VALUES,
 )
 from tests.samples.responses import (
     QVOLTHYBG33P_RESPONSE_V34,
@@ -42,7 +43,7 @@ from tests.samples.responses import (
     X1_HYBRID_G3_RESPONSE,
     X1_HYBRID_G4_RESPONSE,
     X1_HYBRID_G4_V_3_018_RESPONSE,
-    X1_LITE_LV_80_RESPONSE,
+    X1_LITE_LV_80_v002_RESPONSE,
     X1_MINI_G4,
     X1_MINI_RESPONSE_V34,
     X1_MINI_RESPONSE_V34_VER3,
@@ -59,7 +60,7 @@ from tests.samples.responses import (
     X3_MICPRO_G2_RESPONSE,
     X3_ULTRA_RESPONSE,
     XHYBRID_DE01_RESPONSE,
-    XHYBRID_DE02_RESPONSE,
+    XHYBRID_DE02_RESPONSE, X1_LITE_LV_80_v005_RESPONSE,
 )
 
 X_FORWARDED_HEADER = {"X-Forwarded-For": "5.8.8.8"}
@@ -203,9 +204,19 @@ INVERTERS_UNDER_TEST = [
         uri="/",
         method="POST",
         query_string="optType=ReadRealTimeData",
-        response=X1_LITE_LV_80_RESPONSE,
+        response=X1_LITE_LV_80_v002_RESPONSE,
         inverter=inverter.X1LiteLV,
-        values=X1_LITE_LV_80_VALUES,
+        values=X1_LITE_LV_80_v002_VALUES,
+        headers=None,
+        data=None,
+    ),
+    InverterUnderTest(
+        uri="/",
+        method="POST",
+        query_string="optType=ReadRealTimeData",
+        response=X1_LITE_LV_80_v005_RESPONSE,
+        inverter=inverter.X1LiteLV,
+        values=X1_LITE_LV_80_v005_VALUES,
         headers=None,
         data=None,
     ),
