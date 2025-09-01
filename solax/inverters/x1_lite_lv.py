@@ -1,10 +1,10 @@
 from typing import Any, Dict, Optional
+
 import voluptuous as vol
-from solax import utils
+
 from solax.inverter import Inverter
-from solax.inverter_http_client import  InverterHttpClient, Method
 from solax.units import Total, Units
-from solax.utils import div10, div100, pack_u16, to_signed, to_signed32, twoway_div10
+from solax.utils import div10, div100, pack_u16, to_signed, twoway_div10
 
 
 class X1LiteLV(Inverter):
@@ -36,13 +36,13 @@ class X1LiteLV(Inverter):
         :return:
         """
         return {
-            "AC Voltage": (0, Units.V, div10),  ## ++
+            "AC Voltage": (0, Units.V, div10),
             "AC Current": (1, Units.A, twoway_div10),
             "AC Power": (2, Units.W, to_signed),
             "AC Frequency": (3, Units.HZ, div100),
             "Grid PF": (4, Units.PERCENT, div10),
             ###################################
-            "AC Voltage Out": (97, Units.V, div10),  ## ++
+            "AC Voltage Out": (97, Units.V, div10),
             # "AC Current Out": (98, Units.A, twoway_div10),
             # "AC Power Out": (99, Units.W, to_signed),
             "AC Frequency Out": (101, Units.HZ, div10),
@@ -64,8 +64,8 @@ class X1LiteLV(Inverter):
             "PV2 Power": (12, Units.W),
             "PV3 Power": (13, Units.W),
             "Total PV Power": (14, Total(Units.KWH.value), to_signed),
-            "Daily PV Energy": (52, Total(Units.KWH.value), twoway_div10),  ## ++
-            "Total PV Energy": (53, Total(Units.KWH.value), twoway_div10),  ## ++
+            "Daily PV Energy": (52, Total(Units.KWH.value), twoway_div10),
+            "Total PV Energy": (53, Total(Units.KWH.value), twoway_div10),
             ################################
             "Inverter Temperature": (68, Units.C, div10),
             "Inverter Temperature 1": (69, Units.C, div10),
@@ -77,7 +77,7 @@ class X1LiteLV(Inverter):
             "Battery Current": (24, Units.A, twoway_div10),
             "Total Battery power": (25, Units.W, twoway_div10),
             ###########################
-            "Battery SoC": (75, Units.PERCENT, div10),  ## ++
+            "Battery SoC": (75, Units.PERCENT, div10),
             "Battery Temperature 1": (72, Units.C),
             "Battery Temperature 2": (73, Units.C),
             "Battery Temperature 3": (74, Units.C),
@@ -85,16 +85,36 @@ class X1LiteLV(Inverter):
             "Battery Temperature": (79, Units.C),
             ####################################
             "Daily Battery Discharge": (30, Total(Units.KWH.value), div10),
-            "Total Battery Discharge": (pack_u16(28, 29), Total(Units.KWH.value), twoway_div10),
+            "Total Battery Discharge": (
+                pack_u16(28, 29),
+                Total(Units.KWH.value),
+                twoway_div10,
+            ),
             "Daily Battery Charge": (31, Total(Units.KWH.value), div10),
-            "Total Battery Charge": (pack_u16(26, 27), Total(Units.KWH.value), twoway_div10),
+            "Total Battery Charge": (
+                pack_u16(26, 27),
+                Total(Units.KWH.value),
+                twoway_div10,
+            ),
             ################
-            "Daily Inverter Output": (21, Total(Units.KWH.value), div10),  ## ++
-            "Total Inverter Output": (pack_u16(17, 18), Total(Units.KWH.value), div10),  ## ++
-            "Daily Inverter EPS Energy": (46, Total(Units.KWH.value), div10),  ## ++
-            "Total Inverter EPS Energy": (pack_u16(47, 48), Total(Units.KWH.value), div10),  ## ++
-            "Daily Imported Energy": (40, Total(Units.KWH.value), div10),  ## ++
-            "Total Imported Energy": (pack_u16(36, 37), Total(Units.KWH.value), div10),  ## ++
+            "Daily Inverter Output": (21, Total(Units.KWH.value), div10),
+            "Total Inverter Output": (
+                pack_u16(17, 18),
+                Total(Units.KWH.value),
+                div10,
+            ),
+            "Daily Inverter EPS Energy": (46, Total(Units.KWH.value), div10),
+            "Total Inverter EPS Energy": (
+                pack_u16(47, 48),
+                Total(Units.KWH.value),
+                div10,
+            ),
+            "Daily Imported Energy": (40, Total(Units.KWH.value), div10),
+            "Total Imported Energy": (
+                pack_u16(36, 37),
+                Total(Units.KWH.value),
+                div10,
+            ),
         }
 
     @classmethod
@@ -108,11 +128,13 @@ class X1LiteLV(Inverter):
         return info[2] if len(info) > 2 else None
 
     @classmethod
-    def inverter_versions_getter(cls, response: Dict[str, Any]) -> Optional[Dict[str, str]]:
+    def inverter_versions_getter(
+        cls, response: Dict[str, Any]
+    ) -> Optional[Dict[str, str]]:
         i = response["information"]
         return {
-            "Main DSP": f'{i[4]:03.2f}',
-            "Slave DSP": f'{i[5]:03.2f}',
-            "ARM": f'{i[6]:03.2f}-{i[7]:03.2f}',
-            "Module version": response['ver']
+            "Main DSP": f"{i[4]:03.2f}",
+            "Slave DSP": f"{i[5]:03.2f}",
+            "ARM": f"{i[6]:03.2f}-{i[7]:03.2f}",
+            "Module version": response["ver"],
         }
