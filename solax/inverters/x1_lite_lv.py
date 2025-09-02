@@ -52,7 +52,7 @@ class X1LiteLV(Inverter):
             "Grid Power": (32, Units.W, twoway_div10),
             # "Grid power 1": (33, Units.W, twoway_div10),
             # "Grid power 2": (34, Units.W, twoway_div10),
-            "Hourly Energy": (51, Total(Units.KWH.value), div100),
+            "Hourly Energy": (51, Total(Units.KWH), div100),
             ###############################
             "PV1 Voltage": (5, Units.V, div10),
             "PV2 Voltage": (7, Units.V, div10),
@@ -63,9 +63,9 @@ class X1LiteLV(Inverter):
             "PV1 Power": (11, Units.W),
             "PV2 Power": (12, Units.W),
             "PV3 Power": (13, Units.W),
-            "Total PV Power": (14, Total(Units.KWH.value), to_signed),
-            "Daily PV Energy": (52, Total(Units.KWH.value), twoway_div10),
-            "Total PV Energy": (53, Total(Units.KWH.value), twoway_div10),
+            "Total PV Power": (14, Total(Units.KWH), to_signed),
+            "Daily PV Energy": (52, Total(Units.KWH), twoway_div10),
+            "Total PV Energy": (53, Total(Units.KWH), twoway_div10),
             ################################
             "Inverter Temperature": (68, Units.C, div10),
             "Inverter Temperature 1": (69, Units.C, div10),
@@ -84,35 +84,35 @@ class X1LiteLV(Inverter):
             "Battery Temperature 4": (78, Units.C),
             "Battery Temperature": (79, Units.C),
             ####################################
-            "Daily Battery Discharge": (30, Total(Units.KWH.value), div10),
+            "Daily Battery Discharge": (30, Total(Units.KWH), div10),
             "Total Battery Discharge": (
                 pack_u16(28, 29),
-                Total(Units.KWH.value),
+                Total(Units.KWH),
                 twoway_div10,
             ),
-            "Daily Battery Charge": (31, Total(Units.KWH.value), div10),
+            "Daily Battery Charge": (31, Total(Units.KWH), div10),
             "Total Battery Charge": (
                 pack_u16(26, 27),
-                Total(Units.KWH.value),
+                Total(Units.KWH),
                 twoway_div10,
             ),
             ################
-            "Daily Inverter Output": (21, Total(Units.KWH.value), div10),
+            "Daily Inverter Output": (21, Total(Units.KWH), div10),
             "Total Inverter Output": (
                 pack_u16(17, 18),
-                Total(Units.KWH.value),
+                Total(Units.KWH),
                 div10,
             ),
-            "Daily Inverter EPS Energy": (46, Total(Units.KWH.value), div10),
+            "Daily Inverter EPS Energy": (46, Total(Units.KWH), div10),
             "Total Inverter EPS Energy": (
                 pack_u16(47, 48),
-                Total(Units.KWH.value),
+                Total(Units.KWH),
                 div10,
             ),
-            "Daily Imported Energy": (40, Total(Units.KWH.value), div10),
+            "Daily Imported Energy": (40, Total(Units.KWH), div10),
             "Total Imported Energy": (
                 pack_u16(36, 37),
-                Total(Units.KWH.value),
+                Total(Units.KWH),
                 div10,
             ),
         }

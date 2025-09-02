@@ -560,8 +560,8 @@ X1_BOOST_VALUES_G4_V3 = {
 
 X1_LITE_LV_80_v002_VALUES = {
     "AC Voltage": 239.7,
-    "AC Output Current": 0.9,
-    "AC Output Power": 1280,
+    "AC Current": 0.9,
+    "AC Power": 1280,
     "AC Frequency": 50.02,
     "Grid PF": 100.0,
     "AC Voltage Out": 229.5,
@@ -607,8 +607,8 @@ X1_LITE_LV_80_v002_VALUES = {
 }
 X1_LITE_LV_80_v005_VALUES = {
     "AC Voltage": 0,
-    "AC Output Current": 0,
-    "AC Output Power": 0,
+    "AC Current": 0,
+    "AC Power": 0,
     "AC Frequency": 0,
     "Grid PF": 100.0,
     "AC Voltage Out": 229.4,
