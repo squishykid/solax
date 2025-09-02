@@ -614,7 +614,7 @@ X1_LITE_LV_80_v005_VALUES = {
     "AC Voltage Out": 229.4,
     "AC Frequency Out": 49.9,
     "Grid Power": 0.0,
-    "Hourly Energy": 123.24,
+    "Hourly Energy": 123.23,
     "PV1 Voltage": 327.9,
     "PV2 Voltage": 288.5,
     "PV3 Voltage": 0.0,
