@@ -63,7 +63,7 @@ class X1LiteLV(Inverter):
             "PV1 Power": (11, Units.W),
             "PV2 Power": (12, Units.W),
             "PV3 Power": (13, Units.W),
-            "Total PV Power": (14, Total(Units.KWH), to_signed),
+            "Total PV Power": (14, Units.W),
             "Daily PV Energy": (52, Total(Units.KWH), twoway_div10),
             "Total PV Energy": (53, Total(Units.KWH), twoway_div10),
             ################################
