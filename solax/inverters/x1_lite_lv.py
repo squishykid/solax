@@ -84,15 +84,15 @@ class X1LiteLV(Inverter):
             "Battery Temperature 4": (78, Units.C),
             "Battery Temperature": (79, Units.C),
             ####################################
-            "Daily Battery Discharge": (30, Total(Units.KWH), div10),
-            "Total Battery Discharge": (
-                pack_u16(28, 29),
+            "Daily Battery Charge": (30, Total(Units.KWH), div10),
+            "Total Battery Charge": (
+                pack_u16(26, 27),
                 Total(Units.KWH),
                 twoway_div10,
             ),
-            "Daily Battery Charge": (31, Total(Units.KWH), div10),
-            "Total Battery Charge": (
-                pack_u16(26, 27),
+            "Daily Battery Discharge": (31, Total(Units.KWH), div10),
+            "Total Battery Discharge": (
+                pack_u16(28, 29),
                 Total(Units.KWH),
                 twoway_div10,
             ),
