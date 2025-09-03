@@ -126,7 +126,6 @@ class ResponseParser:
         """
 
         raw_json = resp.decode("utf-8").replace(",,", ",0.0,").replace(",,", ",0.0,")
-        _LOGGER.info("Received response: %s", raw_json)
         json_response = {}
         for key, value in json.loads(raw_json).items():
             json_response[key.lower()] = value
