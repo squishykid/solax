@@ -127,14 +127,14 @@ class X1LiteLV(Inverter):
         info = response.get("information", [])
         return info[2] if len(info) > 2 else None
 
-    @classmethod
-    def inverter_versions_getter(
-        cls, response: Dict[str, Any]
-    ) -> Optional[Dict[str, str]]:
-        i = response["information"]
-        return {
-            "Main DSP": f"{i[4]:03.2f}",
-            "Slave DSP": f"{i[5]:03.2f}",
-            "ARM": f"{i[6]:03.2f}-{i[7]:03.2f}",
-            "Module version": response["ver"],
-        }
+    # @classmethod
+    # def inverter_versions_getter(
+    #     cls, response: Dict[str, Any]
+    # ) -> Optional[Dict[str, str]]:
+    #     i = response["information"]
+    #     return {
+    #         "Main DSP": f"{i[4]:03.2f}",
+    #         "Slave DSP": f"{i[5]:03.2f}",
+    #         "ARM": f"{i[6]:03.2f}-{i[7]:03.2f}",
+    #         "Module version": response["ver"],
+    #     }
