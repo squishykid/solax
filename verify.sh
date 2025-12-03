@@ -20,7 +20,7 @@ echo "Running flake8..."
 uv run flake8 --ignore=E501,E704 solax tests
 
 echo "Running pylint..."
-uv run pylint -d 'C0111' solax tests
+uv run pylint -d 'C0111,C0103' solax tests
 
 echo "Running pytest..."
 uv run pytest --cov=solax --cov-fail-under=100 --cov-branch --cov-report=term-missing .

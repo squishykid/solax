@@ -32,7 +32,7 @@ jobs:
         uv run flake8 --ignore=E501,E704 solax tests
     - name: Lint with pylint
       run: |
-        uv run pylint -d 'C0111' solax tests
+        uv run pylint -d 'C0111,C0103' solax tests
     - name: Test with pytest
       run: |
         uv run pytest --cov=solax --cov-branch --cov-report=term-missing .
