@@ -83,6 +83,7 @@ class X3HybridG4(Inverter):
             "Grid 1 Power": (6, Units.W, to_signed),
             "Grid 2 Power": (7, Units.W, to_signed),
             "Grid 3 Power": (8, Units.W, to_signed),
+            "Grid T Power": (9, Units.W, to_signed),
             "PV1 Voltage": (10, Units.V, div10),
             "PV2 Voltage": (11, Units.V, div10),
             "PV1 Current": (12, Units.A, div10),
