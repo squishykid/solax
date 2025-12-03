@@ -8,19 +8,19 @@ python setup.py install
 pip install --upgrade flake8 pylint pytest pytest-cov pytest-asyncio pytest-httpserver black mypy
 
 echo "Running black..."
-black --check .
+uv run black --check .
 
 echo "Running isort"
-isort --profile black .
+uv run isort --profile black .
 
 echo "Running mypy..."
-mypy --exclude venv .
+uv run mypy --exclude venv .
 
 echo "Running flake8..."
-flake8 --ignore=E501,E704 solax tests
+uv run flake8 --ignore=E501,E704 solax tests
 
 echo "Running pylint..."
-pylint -d 'C0111' solax tests
+uv run pylint -d 'C0111' solax tests
 
 echo "Running pytest..."
-pytest --cov=solax --cov-fail-under=100 --cov-branch --cov-report=term-missing .
+uv run pytest --cov=solax --cov-fail-under=100 --cov-branch --cov-report=term-missing .
