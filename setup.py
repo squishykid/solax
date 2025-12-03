@@ -28,7 +28,7 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     entry_points={
         "solax.inverter": [
             "qvolt_hyb_g3_3p = solax.inverters.qvolt_hyb_g3_3p:QVOLTHYBG33P",
