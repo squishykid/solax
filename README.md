@@ -60,6 +60,7 @@ These inverters have been tested and confirmed to be working. If your inverter i
 
 * SK-TL5000E
 * X1 Hybrid Gen4
+* X1-VAST (type 34) — 37 sensors, most complete single-phase profile. All sensors verified against the official SolaX app. See comments in `x1_hybrid_gen4.py` for undocumented data points open for investigation.
 
 You can get the list of supported inverters by looking up the `solax.inverter` entry points:
 

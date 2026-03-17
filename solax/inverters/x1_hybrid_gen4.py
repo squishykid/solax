@@ -11,7 +11,7 @@ class X1HybridGen4(Inverter):
     # pylint: disable=duplicate-code
     _schema = vol.Schema(
         {
-            vol.Required("type"): vol.All(int, 15),
+            vol.Required("type"): vol.All(int, vol.Any(15, 34)),
             vol.Required(
                 "sn",
             ): str,
@@ -48,7 +48,7 @@ class X1HybridGen4(Inverter):
             "On-grid total yield": (pack_u16(11, 12), Total(Units.KWH), div10),
             "On-grid daily yield": (13, DailyTotal(Units.KWH), div10),
             "Battery voltage": (14, Units.V, div100),
-            "Battery current": (15, Units.A, div100),
+            "Battery current": (15, Units.A, to_signed, div100),
             "Battery power": (16, Units.W, to_signed),
             "Battery temperature": (17, Units.C),
             "Battery SoC": (18, Units.PERCENT),
@@ -56,6 +56,32 @@ class X1HybridGen4(Inverter):
             "Grid power": (32, Units.W, to_signed),
             "Total feed-in energy": (pack_u16(34, 35), Total(Units.KWH), div100),
             "Total consumption": (pack_u16(36, 37), Total(Units.KWH), div100),
+            "Run mode": (10, Units.NONE),
+            "Battery remaining energy": (23, Units.KWH, div10),
+            "EPS power": (28, Units.W, to_signed),
+            "EPS voltage": (29, Units.V, div10),
+            "EPS current": (30, Units.A, to_signed, div10),
+            "Total PV Energy": (54, Total(Units.KWH), div10),
+            "EPS Energy total": (83, Total(Units.KWH), div10),
+            "EPS Energy today": (84, DailyTotal(Units.KWH), div10),
+            "Total battery discharge energy": (19, Total(Units.KWH), div10),
+            "Total battery charge energy": (21, Total(Units.KWH), div10),
+            "PV daily yield": (85, DailyTotal(Units.KWH), div10),
+            "Battery discharge energy today": (86, DailyTotal(Units.KWH), div10),
+            "Battery charge energy today": (87, DailyTotal(Units.KWH), div10),
+            "Battery health": (24, Units.PERCENT),
+            "Radiator temperature": (39, Units.C, to_signed),
+            "Load power": (38, Units.W),
+            "Feed-in energy today": (78, DailyTotal(Units.KWH), div100),
+            "Grid import energy today": (80, DailyTotal(Units.KWH), div100),
+            "Consumption today": (52, DailyTotal(Units.KWH), div100),
+            # 40: 256 (0x100), possible status/fault bitmask
+            # 41-42: unknown, possibly redundant battery charge/discharge counters
+            # 44: ~= Battery charge energy today * 100, likely redundant
+            # 45-46: unknown, slowly changing values
+            # 47: similar to Load power [38], likely redundant
+            # 76: /10=0.4, likely redundant with Grid import energy today [80]
+            # 56-59: large values (60928, 65535...), possibly encoded firmware/timestamp data
         }
 
     @classmethod
