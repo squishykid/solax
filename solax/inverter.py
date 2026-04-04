@@ -91,7 +91,7 @@ class Inverter:
         for name, mapping in cls.response_decoder().items():
             unit = Measurement(Units.NONE)
 
-            (idx, unit_or_measurement, *_) = mapping
+            idx, unit_or_measurement, *_ = mapping
 
             if isinstance(unit_or_measurement, Units):
                 unit = Measurement(unit_or_measurement)
