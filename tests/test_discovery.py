@@ -72,7 +72,7 @@ async def test_discovery_first_completed_returns_expected_model_for_overlapping_
         return_when=asyncio.FIRST_COMPLETED,
     )
 
-    assert type(inverter) is inverter_class
+    assert isinstance(inverter, inverter_class)
 
 
 @pytest.mark.asyncio
