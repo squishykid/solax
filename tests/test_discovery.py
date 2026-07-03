@@ -35,38 +35,44 @@ async def test_discovery(inverters_fixture):
 
 
 @pytest.mark.asyncio
-async def test_discovery_x1_hybrid_gen4_is_not_misdetected_as_x1_lite_lv(inverters_fixture):
-    conn, inverter_class, _ = inverters_fixture
-
-    if inverter_class is not X1HybridGen4:
-        pytest.skip()
-
-    inverters = await solax.discover(
-        *conn,
-        inverters=[X1HybridGen4, X1LiteLV],
-        return_when=asyncio.ALL_COMPLETED,
-    )
-    discovered_types = {type(inverter) for inverter in inverters}
-
-    assert discovered_types == {X1HybridGen4}
-
-
-@pytest.mark.asyncio
-async def test_discovery_first_completed_prefers_correct_model_for_x1_hybrid_gen4(
+async def test_discovery_returns_only_expected_model_for_overlapping_schemas(
     inverters_fixture,
 ):
     conn, inverter_class, _ = inverters_fixture
 
-    if inverter_class is not X1HybridGen4:
+    overlapping_inverters = {X1HybridGen4, X1LiteLV}
+
+    if inverter_class not in overlapping_inverters:
+        pytest.skip()
+
+    inverters = await solax.discover(
+        *conn,
+        inverters=list(overlapping_inverters),
+        return_when=asyncio.ALL_COMPLETED,
+    )
+    discovered_types = {type(inverter) for inverter in inverters}
+
+    assert discovered_types == {inverter_class}
+
+
+@pytest.mark.asyncio
+async def test_discovery_first_completed_returns_expected_model_for_overlapping_schemas(
+    inverters_fixture,
+):
+    conn, inverter_class, _ = inverters_fixture
+
+    overlapping_inverters = [X1LiteLV, X1HybridGen4]
+
+    if inverter_class not in set(overlapping_inverters):
         pytest.skip()
 
     inverter = await solax.discover(
         *conn,
-        inverters=[X1LiteLV, X1HybridGen4],
+        inverters=overlapping_inverters,
         return_when=asyncio.FIRST_COMPLETED,
     )
 
-    assert type(inverter) is X1HybridGen4
+    assert type(inverter) is inverter_class
 
 
 @pytest.mark.asyncio
