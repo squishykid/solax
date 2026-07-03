@@ -6,7 +6,7 @@ import solax
 from solax import InverterResponse
 from solax.discovery import REGISTRY, DiscoveryError
 from solax.inverter import InverterError
-from solax.inverters import X1Boost
+from solax.inverters import X1Boost, X1HybridGen4, X1LiteLV
 
 
 class DelayedX1Boost(X1Boost):
@@ -32,6 +32,47 @@ async def test_discovery(inverters_fixture):
             data = await inverter.get_data()
             assert "X" * 7 in (data.inverter_serial_number or "X" * 7)
             assert data.serial_number == data.dongle_serial_number
+
+
+@pytest.mark.asyncio
+async def test_discovery_returns_only_expected_model_for_overlapping_schemas(
+    inverters_fixture,
+):
+    conn, inverter_class, _ = inverters_fixture
+
+    overlapping_inverters = {X1HybridGen4, X1LiteLV}
+
+    if inverter_class not in overlapping_inverters:
+        pytest.skip()
+
+    inverters = await solax.discover(
+        *conn,
+        inverters=list(overlapping_inverters),
+        return_when=asyncio.ALL_COMPLETED,
+    )
+    discovered_types = {type(inverter) for inverter in inverters}
+
+    assert discovered_types == {inverter_class}
+
+
+@pytest.mark.asyncio
+async def test_discovery_first_completed_returns_expected_model_for_overlapping_schemas(
+    inverters_fixture,
+):
+    conn, inverter_class, _ = inverters_fixture
+
+    overlapping_inverters = [X1LiteLV, X1HybridGen4]
+
+    if inverter_class not in set(overlapping_inverters):
+        pytest.skip()
+
+    inverter = await solax.discover(
+        *conn,
+        inverters=overlapping_inverters,
+        return_when=asyncio.FIRST_COMPLETED,
+    )
+
+    assert isinstance(inverter, inverter_class)
 
 
 @pytest.mark.asyncio
@@ -111,7 +152,7 @@ async def test_discovery_not_first_completed_after_staggering(
     inverters = await solax.discover(
         *conn,
         inverters=[DelayedX1Boost, DelayedFailedX1Boost],
-        return_when=asyncio.FIRST_EXCEPTION
+        return_when=asyncio.FIRST_EXCEPTION,
     )
     assert DelayedX1Boost in {type(inverter) for inverter in inverters}
 
