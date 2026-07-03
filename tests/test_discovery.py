@@ -6,7 +6,7 @@ import solax
 from solax import InverterResponse
 from solax.discovery import REGISTRY, DiscoveryError
 from solax.inverter import InverterError
-from solax.inverters import X1Boost
+from solax.inverters import X1Boost, X1HybridGen4, X1LiteLV
 
 
 class DelayedX1Boost(X1Boost):
@@ -32,6 +32,41 @@ async def test_discovery(inverters_fixture):
             data = await inverter.get_data()
             assert "X" * 7 in (data.inverter_serial_number or "X" * 7)
             assert data.serial_number == data.dongle_serial_number
+
+
+@pytest.mark.asyncio
+async def test_discovery_x1_hybrid_gen4_is_not_misdetected_as_x1_lite_lv(inverters_fixture):
+    conn, inverter_class, _ = inverters_fixture
+
+    if inverter_class is not X1HybridGen4:
+        pytest.skip()
+
+    inverters = await solax.discover(
+        *conn,
+        inverters=[X1HybridGen4, X1LiteLV],
+        return_when=asyncio.ALL_COMPLETED,
+    )
+    discovered_types = {type(inverter) for inverter in inverters}
+
+    assert discovered_types == {X1HybridGen4}
+
+
+@pytest.mark.asyncio
+async def test_discovery_first_completed_prefers_correct_model_for_x1_hybrid_gen4(
+    inverters_fixture,
+):
+    conn, inverter_class, _ = inverters_fixture
+
+    if inverter_class is not X1HybridGen4:
+        pytest.skip()
+
+    inverter = await solax.discover(
+        *conn,
+        inverters=[X1LiteLV, X1HybridGen4],
+        return_when=asyncio.FIRST_COMPLETED,
+    )
+
+    assert type(inverter) is X1HybridGen4
 
 
 @pytest.mark.asyncio
