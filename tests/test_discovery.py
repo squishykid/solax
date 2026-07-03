@@ -152,7 +152,7 @@ async def test_discovery_not_first_completed_after_staggering(
     inverters = await solax.discover(
         *conn,
         inverters=[DelayedX1Boost, DelayedFailedX1Boost],
-        return_when=asyncio.FIRST_EXCEPTION
+        return_when=asyncio.FIRST_EXCEPTION,
     )
     assert DelayedX1Boost in {type(inverter) for inverter in inverters}
 
