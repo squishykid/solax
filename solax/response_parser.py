@@ -16,7 +16,7 @@ __all__ = ("ResponseParser", "InverterResponse", "ResponseDecoder")
 if sys.version_info >= (3, 11):
     from typing import Unpack
 else:
-    from typing_extensions import Unpack
+    from typing_extensions import Unpack  # pragma: no cover
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.setLevel(logging.INFO)
@@ -46,7 +46,7 @@ _KEY_VER = "ver"
 _KEY_TYPE = "type"
 
 
-GenericResponseSchema = vol.All(
+GENERIC_RESPONSE_SCHEMA = vol.All(
     vol.Schema({vol.Required(_KEY_SERIAL): str}, extra=vol.ALLOW_EXTRA),
     vol.Any(
         vol.Schema({vol.Required(_KEY_VERSION): str}, extra=vol.ALLOW_EXTRA),
@@ -77,7 +77,7 @@ class ResponseParser:
         dongle_serial_number_getter: Callable[[Dict[str, Any]], Optional[str]],
         inverter_serial_number_getter: Callable[[Dict[str, Any]], Optional[str]],
     ) -> None:
-        self.schema = vol.And(GenericResponseSchema, schema)
+        self.schema = vol.And(GENERIC_RESPONSE_SCHEMA, schema)
         self.response_decoder = decoder
         self.dongle_serial_number_getter = dongle_serial_number_getter
         self.inverter_serial_number_getter = inverter_serial_number_getter
@@ -95,7 +95,7 @@ class ResponseParser:
         Return map of functions to be applied to each sensor value
         """
         for name, mapping in self.response_decoder.items():
-            (_, _, *processors) = mapping
+            _, _, *processors = mapping
             for processor in processors:
                 yield name, processor
 

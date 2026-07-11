@@ -11,7 +11,7 @@ class X1LiteLV(Inverter):
     # pylint: disable=duplicate-code
     _schema = vol.Schema(
         {
-            vol.Required("type"): int,
+            vol.Required("type"): vol.All(int, 103),
             vol.Required("sn"): str,
             vol.Required("ver"): str,
             vol.Required("data"): vol.Schema(

@@ -16,7 +16,7 @@ class XHybrid(Inverter):
         {
             vol.Required("method"): str,
             vol.Required("version"): str,
-            vol.Required("type"): str,
+            vol.Required("type"): vol.All(str, "AL_SE"),
             vol.Required("sn"): str,
             vol.Required("data"): vol.Schema(
                 vol.All(

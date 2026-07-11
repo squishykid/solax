@@ -11,7 +11,7 @@ import aiohttp
 
 __all__ = ("InverterHttpClient", "Method")
 
-if sys.version_info >= (3, 10):
+if sys.version_info >= (3, 10):  # pragma: no branch
     from dataclasses import KW_ONLY
 
 
@@ -26,7 +26,7 @@ class Method(Enum):
 
 _kwargs: Dict[str, bool] = {}
 
-if sys.version_info >= (3, 11):
+if sys.version_info >= (3, 11):  # pragma: no branch
     _kwargs["slots"] = True
     _kwargs["weakref_slot"] = True
 
@@ -35,7 +35,7 @@ if sys.version_info >= (3, 11):
 class InverterHttpClient:
     """Initialize the Http client."""
 
-    if sys.version_info >= (3, 10):
+    if sys.version_info >= (3, 10):  # pragma: no branch
         _: KW_ONLY
 
     url: str
