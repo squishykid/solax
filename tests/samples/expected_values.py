@@ -718,6 +718,8 @@ X1_HYBRID_G4_VALUES = {
     "Grid power": 1.0,
     "Total feed-in energy": 286.7,
     "Total consumption": 6.2,
+    "Load power": 236.0,
+    "Inverter Run Mode": 2.0,
 }
 
 X3_ULTRA_VALUES = {
@@ -805,4 +807,32 @@ X1_HYBRID_G4_V_3_018_VALUES = {
     "Grid power": 0.0,
     "Total feed-in energy": 41.20,
     "Total consumption": 13.2,
+    "Load power": 384.0,
+    "Inverter Run Mode": 2.0,
+}
+
+X1_HYBRID_GEN4_V_3_019_VALUES = {
+    "AC voltage R": 244.9,
+    "AC current": 1.7,
+    "AC power": 380.0,
+    "Grid frequency": 50.02,
+    "PV1 voltage": 272.5,
+    "PV2 voltage": 0.0,
+    "PV1 current": 0.4,
+    "PV2 current": 0.0,
+    "PV1 power": 134.0,
+    "PV2 power": 0.0,
+    "On-grid total yield": 10349.4,
+    "On-grid daily yield": 16.5,
+    "Battery voltage": 114.9,
+    "Battery current": -2.1,
+    "Battery power": -252.0,
+    "Battery temperature": 31.0,
+    "Battery SoC": 60.0,
+    "Inverter Temperature": 46.0,
+    "Grid power": 0.0,
+    "Load power": 380.0,
+    "Total feed-in energy": 3405.5,
+    "Total consumption": 11682.12,
+    "Inverter Run Mode": 2.0,
 }

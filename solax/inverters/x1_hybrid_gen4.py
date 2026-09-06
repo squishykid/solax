@@ -4,7 +4,7 @@ import voluptuous as vol
 
 from solax.inverter import Inverter
 from solax.units import DailyTotal, Total, Units
-from solax.utils import div10, div100, pack_u16, to_signed
+from solax.utils import div10, div100, pack_u16, to_signed, twoway_div100
 
 
 class X1HybridGen4(Inverter):
@@ -48,12 +48,14 @@ class X1HybridGen4(Inverter):
             "On-grid total yield": (pack_u16(11, 12), Total(Units.KWH), div10),
             "On-grid daily yield": (13, DailyTotal(Units.KWH), div10),
             "Battery voltage": (14, Units.V, div100),
-            "Battery current": (15, Units.A, div100),
+            "Battery current": (15, Units.A, twoway_div100),
             "Battery power": (16, Units.W, to_signed),
             "Battery temperature": (17, Units.C),
             "Battery SoC": (18, Units.PERCENT),
             "Inverter Temperature": (26, Units.C),
             "Grid power": (32, Units.W, to_signed),
+            "Load power": (38, Units.W, to_signed),
+            "Inverter Run Mode": (10, Units.NONE),
             "Total feed-in energy": (pack_u16(34, 35), Total(Units.KWH), div100),
             "Total consumption": (pack_u16(36, 37), Total(Units.KWH), div100),
         }
